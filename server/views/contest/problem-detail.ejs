@@ -1,40 +1,88 @@
-<%- include('../partials/contest-head', { title: '题目详情', nav: 'problems' }) %>
+<%
+  var cid = (typeof contestId !== 'undefined') ? contestId : '';
+  var pid = (typeof problemId !== 'undefined') ? problemId : '';
+%>
+<%- include('../partials/contest-head', { title: '题目详情', nav: 'problems', contestId: cid }) %>
 <% var pageScript = '/js/contest/problem-detail.js' %>
 
-<div class="mb-16"><a href="/contest/problems">← 返回题目列表</a></div>
+<div class="mb-16"><a href="/contest/contests/<%= cid %>/problems">← 返回题目列表</a></div>
 
 <div class="grid-2" style="grid-template-columns: 1.6fr 1fr; align-items:start">
   <div>
+    <!-- 题目描述 -->
     <div class="panel-oj">
       <div class="panel-heading">
-        <span class="mono text-muted" id="p-id" style="margin-right:10px">-</span>
+        <span class="mono text-muted" id="p-letter" style="margin-right:10px">-</span>
         <span id="p-title">加载中…</span>
-        <span class="pull-right" id="p-diff"></span>
+        <span class="pull-right" id="p-contest"></span>
       </div>
       <div class="panel-body">
-        <div id="p-tags" style="margin-bottom:8px"></div>
         <div id="p-desc" class="md_display_div"></div>
       </div>
     </div>
 
+    <!-- Web IDE：统一浏览器运行环境 -->
     <div class="panel-oj">
       <div class="panel-heading">
-        提交代码
-        <span class="pull-right" id="precheck-status" style="font-size:12px"></span>
+        Web IDE
+        <span class="pull-right text-muted" style="font-size:12px" id="runtime-status"></span>
       </div>
       <div class="panel-body">
         <div class="form-group" style="margin-bottom:10px">
-          <select class="form-control" id="submit-lang" style="display:inline-block;width:150px">
-            <option value="cpp">C++ (g++)</option>
+          <select class="form-control" id="ide-lang" style="display:inline-block;width:150px">
+            <option value="cpp">C++11</option>
+            <option value="c">C11</option>
             <option value="python">Python 3</option>
           </select>
-          <button class="btn btn-info btn-sm" id="precheck-btn" type="button">本地预检 (公开样例)</button>
+          <select class="form-control" id="ide-opt" style="display:inline-block;width:140px" title="本地运行默认快速编译(-O0)；性能模式(-O2)用于估算程序运行性能">
+            <option value="-O0">快速编译 (-O0)</option>
+            <option value="-O2">性能模式 (-O2)</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="ide-run" type="button">▶ 运行代码</button>
+          <button class="btn btn-info btn-sm" id="ide-run-samples" type="button">运行样例</button>
+          <label class="text-muted" style="font-size:12px;margin-left:8px;cursor:pointer" title="自动 PCH：含 bits/stdc++.h 用 bits.pch，含 iostream 用 iostream.pch，否则不预编译。可显著缩短 STL 头解析（一次性生成成本约 1s，常驻浏览器）">
+            <input type="checkbox" id="ide-pch" checked> PCH 加速（自动）
+          </label>
         </div>
-        <textarea class="editor-oj" id="submit-code" spellcheck="false" placeholder="#include <iostream>
+
+        <!-- 代码编辑器 -->
+        <textarea class="editor-oj" id="ide-code" spellcheck="false" placeholder="#include <iostream>
 int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
-        <div class="mt-16" id="precheck-result" style="display:none"></div>
-        <div class="flex-between mt-16">
-          <span class="text-muted" style="font-size:13px">预检通过后提交，正式评测由可信 Worker 执行</span>
+
+        <!-- 自定义输入 -->
+        <div class="mt-16" id="ide-input-wrap">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px">自定义输入（stdin）</div>
+          <textarea class="form-control editor-oj" id="ide-input" rows="3" spellcheck="false" placeholder="在此输入标准输入，点击「运行代码」将在浏览器内本地执行"></textarea>
+        </div>
+
+        <!-- 运行结果 -->
+        <div class="mt-16" id="ide-output-wrap" style="display:none">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px">运行结果</div>
+          <div class="flex-between">
+            <span id="ide-output-head" class="mono text-muted"></span>
+            <span id="ide-time" style="font-weight:600;font-size:14px"></span>
+          </div>
+          <div id="ide-timing" class="text-muted" style="font-size:12px;margin:2px 0 4px"></div>
+          <pre class="output-oj" id="ide-output"></pre>
+        </div>
+
+        <!-- 样例自测结果 -->
+        <div class="mt-16" id="ide-samples-wrap" style="display:none">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px">公开样例自测</div>
+          <div id="ide-samples-result"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 提交（正式评测走服务器，此处保留入口，评测逻辑不变） -->
+    <div class="panel-oj">
+      <div class="panel-heading">
+        提交正式评测
+        <span class="pull-right" id="precheck-status" style="font-size:12px"></span>
+      </div>
+      <div class="panel-body">
+        <div class="flex-between">
+          <span class="text-muted" style="font-size:13px">本地自测通过后提交，正式结果由服务器评测</span>
           <button class="btn btn-primary" id="submit-btn">提交</button>
         </div>
         <div id="submit-result" class="mt-16" style="display:none">
@@ -62,15 +110,22 @@ int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
       </div>
     </div>
     <div class="panel-oj">
-      <div class="panel-heading">本地预检说明</div>
+      <div class="panel-heading">浏览器运行环境</div>
       <div class="panel-body" style="font-size:13px;line-height:1.9">
-        预检在<b>你的浏览器（WebAssembly）</b>内对<b>公开样例</b>试跑，不接触隐藏测试点、不安装任何软件。<br>
-        · C/C++：WASM 编译器<br>
-        · Python：Pyodide<br>
-        正式评测由<b>可信评测机（WSL+Isolate）</b>执行。
+        「运行代码」与「运行样例」均在<b>你的浏览器（WebAssembly）</b>内本地执行，<b>不安装任何软件、不接触隐藏测试点</b>。<br>
+        · C / C++：Runno · WASI Clang 编译器<br>
+        · Python：Runno · Pyodide<br>
+        本地运行结果仅供自测参考，正式评测由<b>服务器</b>执行。
       </div>
     </div>
   </div>
 </div>
 
-<%- include('../partials/contest-foot') %>
+<script>window.__CONTEST_ID__ = '<%= cid %>'; window.__PROBLEM_ID__ = '<%= pid %>';</script>
+
+<!-- 浏览器运行时（Runno）：ES Module 加载，需 COOP/COEP 头 -->
+<script type="module" src="/js/contest/runno-loader.js"></script>
+<!-- 轻量运行管线：Artifact Cache + 分段计时 + 预热（P0/P1 性能优化） -->
+<script type="module" src="/js/contest/ide-runner.js"></script>
+
+<%- include('../partials/contest-foot', { pageScript: pageScript }) %>

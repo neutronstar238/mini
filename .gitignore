@@ -13,6 +13,7 @@ worker/node_modules/
 # 本地运行产物与离线包
 local/work/
 local/offline-packages/
+compat-tests/
 
 # 系统 / 编辑器 / IDE 工具
 .DS_Store
@@ -24,3 +25,7 @@ node_modules/
 # 计划与参考资料（含真实域名/备案号等个人信息，不入库）
 paper/
 CCPCOJ/
+
+# 自托管 Runno 运行时大二进制（clang/wasm-ld/python wasm 及 sysroot，约 74MB）
+# 部署时按 deploy/README 从 Runno 官方下载放置；仓库仅保留 JS 运行时代码
+server/public/js/runno/langs/
