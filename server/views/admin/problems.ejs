@@ -1,0 +1,31 @@
+<%- include('../partials/admin-head', { title: '题目管理', nav: 'problems' }) %>
+<% var pageScript = '/js/admin/problems.js' %>
+
+<h2 class="page-title">题目管理</h2>
+<div class="flex-between mb-16"><span class="text-muted">管理隐藏测试点、限制与版本</span><button class="btn btn-primary btn-sm" id="new-problem-btn">+ 新建题目</button></div>
+
+<div class="panel-oj">
+  <table class="table-oj table-striped table-hover" style="margin-bottom:0">
+    <thead><tr><th style="width:60px">ID</th><th>标题</th><th style="width:80px">难度</th><th style="width:110px">限制</th><th style="width:70px">测试点</th><th style="width:60px">版本</th><th style="width:140px">操作</th></tr></thead>
+    <tbody id="problem-tbody"><tr><td colspan="7" class="empty">加载中…</td></tr></tbody>
+  </table>
+</div>
+
+<div class="panel-oj" id="problem-editor" style="display:none">
+  <div class="panel-heading flex-between"><span id="editor-title">新建题目</span><button class="btn btn-default btn-sm" id="editor-close">关闭</button></div>
+  <div class="panel-body">
+    <div class="grid-2">
+      <div class="form-group"><label>标题</label><input class="form-control" id="e-title"></div>
+      <div class="form-group"><label>难度</label><select class="form-control" id="e-diff"><option>简单</option><option>中等</option><option>困难</option></select></div>
+      <div class="form-group"><label>时间限制 (ms)</label><input class="form-control" id="e-time" type="number" value="1000"></div>
+      <div class="form-group"><label>内存限制 (MB)</label><input class="form-control" id="e-mem" type="number" value="256"></div>
+    </div>
+    <div class="form-group"><label>题面</label><textarea class="form-control" id="e-desc" rows="6" style="height:auto"></textarea></div>
+    <div class="form-group"><label>标签（逗号分隔）</label><input class="form-control" id="e-tags" placeholder="入门,数学"></div>
+    <div class="form-group"><label>隐藏测试数据（每行：输入 | 答案，=== 分隔组）</label>
+      <textarea class="form-control mono" id="e-cases" rows="7" style="height:auto" placeholder="1 2 | 3&#10;===&#10;100 200 | 300"></textarea></div>
+    <div class="flex-between"><span class="text-muted" style="font-size:12px">隐藏测试点仅授权可信 Worker 拉取</span><button class="btn btn-primary" id="e-save">保存</button></div>
+  </div>
+</div>
+
+<%- include('../partials/admin-foot') %>

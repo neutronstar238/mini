@@ -1,0 +1,76 @@
+<%- include('../partials/contest-head', { title: '题目详情', nav: 'problems' }) %>
+<% var pageScript = '/js/contest/problem-detail.js' %>
+
+<div class="mb-16"><a href="/contest/problems">← 返回题目列表</a></div>
+
+<div class="grid-2" style="grid-template-columns: 1.6fr 1fr; align-items:start">
+  <div>
+    <div class="panel-oj">
+      <div class="panel-heading">
+        <span class="mono text-muted" id="p-id" style="margin-right:10px">-</span>
+        <span id="p-title">加载中…</span>
+        <span class="pull-right" id="p-diff"></span>
+      </div>
+      <div class="panel-body">
+        <div id="p-tags" style="margin-bottom:8px"></div>
+        <div id="p-desc" class="md_display_div"></div>
+      </div>
+    </div>
+
+    <div class="panel-oj">
+      <div class="panel-heading">
+        提交代码
+        <span class="pull-right" id="precheck-status" style="font-size:12px"></span>
+      </div>
+      <div class="panel-body">
+        <div class="form-group" style="margin-bottom:10px">
+          <select class="form-control" id="submit-lang" style="display:inline-block;width:150px">
+            <option value="cpp">C++ (g++)</option>
+            <option value="python">Python 3</option>
+          </select>
+          <button class="btn btn-info btn-sm" id="precheck-btn" type="button">本地预检 (公开样例)</button>
+        </div>
+        <textarea class="editor-oj" id="submit-code" spellcheck="false" placeholder="#include <iostream>
+int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
+        <div class="mt-16" id="precheck-result" style="display:none"></div>
+        <div class="flex-between mt-16">
+          <span class="text-muted" style="font-size:13px">预检通过后提交，正式评测由可信 Worker 执行</span>
+          <button class="btn btn-primary" id="submit-btn">提交</button>
+        </div>
+        <div id="submit-result" class="mt-16" style="display:none">
+          <div class="alert-oj alert-info-oj">
+            <div class="flex-between">
+              <span>本次提交：<b class="mono" id="sub-id"></b></span>
+              <span id="sub-status"></span>
+            </div>
+            <div class="mt-16" id="sub-cases"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel-oj">
+      <div class="panel-heading">限制</div>
+      <div class="panel-body" style="padding:8px 15px">
+        <div class="limit-row"><span class="k">时间限制</span><b class="mono" id="p-time">-</b></div>
+        <div class="limit-row"><span class="k">内存限制</span><b class="mono" id="p-mem">-</b></div>
+        <div class="limit-row"><span class="k">测试点数量</span><b class="mono" id="p-cases">-</b></div>
+        <div class="limit-row"><span class="k">提交数</span><b class="mono" id="p-subcnt">-</b></div>
+        <div class="limit-row"><span class="k">通过率</span><b class="mono" id="p-acrate">-</b></div>
+      </div>
+    </div>
+    <div class="panel-oj">
+      <div class="panel-heading">本地预检说明</div>
+      <div class="panel-body" style="font-size:13px;line-height:1.9">
+        预检在<b>你的浏览器（WebAssembly）</b>内对<b>公开样例</b>试跑，不接触隐藏测试点、不安装任何软件。<br>
+        · C/C++：WASM 编译器<br>
+        · Python：Pyodide<br>
+        正式评测由<b>可信评测机（WSL+Isolate）</b>执行。
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/contest-foot') %>

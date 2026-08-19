@@ -1,0 +1,12 @@
+<%- include('../partials/admin-head', { title: '审计', nav: 'audit' }) %>
+<% var pageScript = '/js/admin/audit.js' %>
+
+<h2 class="page-title">审计日志</h2>
+
+<div class="panel-oj">
+  <div class="panel-body" style="padding:6px 10px">
+    <div class="event-stream" id="audit-stream"><div class="text-muted" style="text-align:center;padding:20px 0">加载中…</div></div>
+  </div>
+</div>
+
+<%- include('../partials/admin-foot') %>

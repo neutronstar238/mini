@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>Mini-OJ 管理端</title>
+  <link rel="stylesheet" href="/css/ccpcoj.css">
+</head>
+<body class="cpc-body">
+  <div class="cpc-navbar cpc-navbar-admin">
+    <button type="button" class="navbar-toggle cpc-nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('show')">
+      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+    </button>
+    <a class="cpc-brand" href="/admin">Mini-OJ</a>
+    <span class="cpc-brand-subtitle">管理端 · 中心控制面</span>
+  </div>
+
+  <header class="cpc-header">
+    <ul id="sidebar_div" class="sidebar">
+      <li class="user_panel">
+        <% if (user) { %>
+          <div style="padding: 4px 0 8px;">
+            <span class="text-primary" style="font-weight:bold"><%= user.nickname || user.username %></span>
+            <span class="label label-danger" style="padding:1px 8px;border-radius:6px;font-size:12px">管理员</span>
+          </div>
+          <div style="padding-bottom:6px;">
+            <button class="btn btn-default btn-sm" id="logout-btn" style="width:100%">退出登录</button>
+          </div>
+        <% } %>
+      </li>
+      <hr>
+      <li <%= (typeof nav === 'undefined' || nav === 'overview') ? 'class="active"' : '' %>>
+        <a href="/admin/overview">总览</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'nodes') ? 'class="active"' : '' %>>
+        <a href="/admin/nodes">节点管理</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'certs') ? 'class="active"' : '' %>>
+        <a href="/admin/certs">证书/注册码</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'queue') ? 'class="active"' : '' %>>
+        <a href="/admin/queue">任务队列</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'problems') ? 'class="active"' : '' %>>
+        <a href="/admin/problems">题目管理</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'rejudge') ? 'class="active"' : '' %>>
+        <a href="/admin/rejudge">重判/抽查</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'audit') ? 'class="active"' : '' %>>
+        <a href="/admin/audit">审计</a>
+      </li>
+      <hr>
+    </ul>
+  </header>
+
+  <main class="cpc-main">

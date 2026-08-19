@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 · Mini-OJ 管理端</title>
+  <link rel="stylesheet" href="/css/ccpcoj.css">
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card-oj">
+      <div class="login-title">
+        <div class="cpc-brand">Mini-OJ</div>
+        <div class="sub">ADMIN · 管理端（仅管理员）</div>
+      </div>
+      <form id="login-form">
+        <div class="field"><label>管理员用户名</label><input class="form-control" id="login-username" placeholder="admin" autocomplete="username"></div>
+        <div class="field"><label>密码</label><input class="form-control" id="login-password" type="password" autocomplete="current-password"></div>
+        <p class="form-err" id="login-err"></p>
+        <button class="btn btn-primary btn-block-oj" type="submit" id="login-btn">进入管理后台</button>
+      </form>
+      <div class="demo-tip">演示管理员：<b>admin / admin123</b></div>
+    </div>
+  </div>
+  <div id="toast-root"></div>
+  <script src="/js/common.js"></script>
+  <script src="/js/admin/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<%- include('../partials/contest-head', { title: '榜单', nav: 'rank' }) %>
+<% var pageScript = '/js/contest/rank.js' %>
+
+<div class="flex-between mb-16">
+  <h2 class="page-title">榜单</h2>
+  <div>
+    <button class="btn btn-default btn-sm" id="mode-practice" onclick="setMode('practice')">练习榜</button>
+    <button class="btn btn-default btn-sm" id="mode-formal" onclick="setMode('formal')">正式榜 (仅可信)</button>
+  </div>
+</div>
+
+<div class="panel-oj">
+  <table class="table-oj table-striped table-hover" style="margin-bottom:0">
+    <thead>
+      <tr>
+        <th style="width:60px;text-align:center">#</th>
+        <th>用户</th>
+        <th style="width:100px;text-align:right">AC</th>
+        <th style="width:160px;text-align:right">总耗时 (ms)</th>
+      </tr>
+    </thead>
+    <tbody id="rank-tbody"><tr><td colspan="4" class="empty">加载中…</td></tr></tbody>
+  </table>
+</div>
+
+<%- include('../partials/contest-foot') %>

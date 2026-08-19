@@ -1,0 +1,18 @@
+<%- include('../partials/admin-head', { title: '任务队列', nav: 'queue' }) %>
+<% var pageScript = '/js/admin/queue.js' %>
+
+<h2 class="page-title">任务队列</h2>
+
+<div class="panel-oj">
+  <table class="table-oj table-striped table-hover" style="margin-bottom:0">
+    <thead>
+      <tr>
+        <th style="width:80px">RunID</th><th>用户</th><th>题目</th><th style="width:80px">Lang</th>
+        <th style="width:120px">状态</th><th style="width:60px">Attempt</th><th style="width:120px">Worker</th><th style="width:160px">提交时间</th>
+      </tr>
+    </thead>
+    <tbody id="queue-tbody"><tr><td colspan="8" class="empty">加载中…</td></tr></tbody>
+  </table>
+</div>
+
+<%- include('../partials/admin-foot') %>

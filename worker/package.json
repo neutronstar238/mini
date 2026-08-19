@@ -1,0 +1,15 @@
+{
+  "name": "mini-oj-trusted-worker",
+  "version": "1.0.0",
+  "description": "Mini-OJ 可信 Windows Judge Worker（Electron + WSL2 + Isolate 沙箱）",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "headless": "node judge/headless.js",
+    "gen-manifest": "node security/gen-runtime-manifest.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^30.0.0"
+  }
+}

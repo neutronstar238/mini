@@ -1,0 +1,107 @@
+/* ============================================================
+   登录页 —— 亮蓝渐变背景 · 白底圆角卡片 · 蓝色主按钮
+   与 ccpcoj.css 蓝白色板统一
+   ============================================================ */
+html, body {
+  height: 100%;
+  background: #eef4ff;
+}
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(96, 165, 250, 0.18) 0%, transparent 45%),
+    linear-gradient(135deg, #e7f0fe 0%, #f5f8fc 45%, #eaf3ff 100%);
+}
+.login-card-oj {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 18px 48px -18px rgba(13, 110, 253, 0.35);
+  padding: 34px 34px 30px;
+  animation: login-card-in 0.4s ease;
+}
+@keyframes login-card-in {
+  from { transform: translateY(18px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.login-title { text-align: center; margin: 0 0 22px; }
+.login-title .cpc-brand {
+  color: #0d6efd;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.login-title .cpc-brand::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #0d6efd 0%, #60a5fa 100%);
+  box-shadow: 0 4px 10px -3px rgba(13, 110, 253, 0.5);
+  display: inline-block;
+}
+.login-title .sub { color: #6b7280; font-size: 13px; margin-top: 6px; }
+.login-tabs {
+  display: flex;
+  margin-bottom: 22px;
+  background: #f0f6ff;
+  border-radius: 10px;
+  padding: 4px;
+}
+.login-tabs .tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  cursor: pointer;
+  color: #6b7280;
+  border: none;
+  background: none;
+  font-size: 14px;
+  border-radius: 8px;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.login-tabs .tab.active {
+  color: #0d6efd;
+  background: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
+}
+.field { margin-bottom: 16px; }
+.field label { font-weight: 500; color: #4b5563; display: block; margin-bottom: 6px; }
+.form-err { color: #dc3545; font-size: 13px; min-height: 18px; margin: 4px 0; }
+.btn-block-oj {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 9px;
+  border: none;
+  color: #fff;
+  box-shadow: 0 6px 16px -5px rgba(13, 110, 253, 0.5);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-block-oj:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -6px rgba(13, 110, 253, 0.55); }
+.btn-block-oj:active { transform: translateY(0); }
+.demo-tip {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+  padding: 12px;
+  border-radius: 9px;
+  background-color: #f0f6ff;
+  border: 1px dashed #c3d7f6;
+}
+.login-foot { text-align: center; color: #9aa3b2; font-size: 12px; margin-top: 18px; }

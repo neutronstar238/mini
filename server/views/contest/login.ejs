@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 · Mini-OJ 选手端</title>
+  <link rel="stylesheet" href="/css/ccpcoj.css">
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card-oj">
+      <div class="login-title">
+        <div class="cpc-brand">Mini-OJ</div>
+        <div class="sub">CONTEST · 选手端</div>
+      </div>
+      <div class="login-tabs">
+        <button class="tab active" data-tab="login">登录</button>
+        <button class="tab" data-tab="register">注册</button>
+      </div>
+
+      <form id="login-form" class="form-panel">
+        <div class="field"><label>用户名</label><input class="form-control" id="login-username" placeholder="user1" autocomplete="username"></div>
+        <div class="field"><label>密码</label><input class="form-control" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+        <p class="form-err" id="login-err"></p>
+        <button class="btn btn-primary btn-block-oj" type="submit" id="login-btn">进入比赛</button>
+      </form>
+
+      <form id="register-form" class="form-panel" style="display:none">
+        <div class="field"><label>用户名（3-20 位）</label><input class="form-control" id="reg-username" placeholder="contestant_01"></div>
+        <div class="field"><label>昵称（可选）</label><input class="form-control" id="reg-nickname" placeholder="不填则同用户名"></div>
+        <div class="field"><label>密码（至少 6 位）</label><input class="form-control" id="reg-password" type="password"></div>
+        <p class="form-err" id="reg-err"></p>
+        <button class="btn btn-success btn-block-oj" type="submit" id="reg-btn">注册选手</button>
+      </form>
+
+      <div class="demo-tip">演示账号：<b>admin / admin123</b> · <b>user1 / user123</b></div>
+    </div>
+  </div>
+  <div id="toast-root"></div>
+  <script src="/js/common.js"></script>
+  <script src="/js/contest/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name admin.example.com;
+    location ^~ /.well-known/acme-challenge/ {
+        root /www/wwwroot/admin.example.com;
+        allow all;
+        default_type text/plain;
+    }
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}

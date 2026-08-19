@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>Mini-OJ 选手端</title>
+  <link rel="stylesheet" href="/css/ccpcoj.css">
+</head>
+<body class="cpc-body">
+  <!-- 顶部导航（亮蓝白顶栏） -->
+  <div class="cpc-navbar">
+    <button type="button" class="navbar-toggle cpc-nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('show')">
+      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+    </button>
+    <a class="cpc-brand" href="/contest">Mini-OJ</a>
+    <span class="cpc-brand-subtitle">选手端 · 本地预检 + 可信边缘评测</span>
+  </div>
+
+  <header class="cpc-header">
+    <ul id="sidebar_div" class="sidebar">
+      <li class="user_panel">
+        <% if (user) { %>
+          <div style="padding: 4px 0 8px;">
+            <span class="text-primary" style="font-weight:bold"><%= user.nickname || user.username %></span>
+            <span class="label <%= user.role === 'admin' ? 'label-danger' : 'label-success' %>" style="padding:1px 8px;border-radius:6px;font-size:12px"><%= user.role === 'admin' ? '管理员' : '选手' %></span>
+          </div>
+          <div style="padding-bottom:6px;">
+            <button class="btn btn-default btn-sm" id="logout-btn" style="width:100%">退出登录</button>
+          </div>
+        <% } else { %>
+          <a href="/contest/login" class="btn btn-success btn-sm" style="width:100%;margin:4px 0">登录 / 注册</a>
+        <% } %>
+      </li>
+      <hr>
+      <li <%= (typeof nav === 'undefined' || nav === 'problems') ? 'class="active"' : '' %>>
+        <a href="/contest/problems">题目</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'class="active"' : '' %>>
+        <a href="/contest/submissions">我的提交</a>
+      </li>
+      <li <%= (typeof nav !== 'undefined' && nav === 'rank') ? 'class="active"' : '' %>>
+        <a href="/contest/rank">榜单</a>
+      </li>
+      <hr>
+    </ul>
+  </header>
+
+  <main class="cpc-main">

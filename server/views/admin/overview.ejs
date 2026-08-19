@@ -1,0 +1,24 @@
+<%- include('../partials/admin-head', { title: '总览', nav: 'overview' }) %>
+<% var pageScript = '/js/admin/overview.js' %>
+
+<h2 class="page-title">总览</h2>
+
+<div class="stat-cards" id="overview-cards">
+  <div class="stat-card"><div class="num">-</div><div class="lbl">用户</div></div>
+  <div class="stat-card"><div class="num">-</div><div class="lbl">题目</div></div>
+  <div class="stat-card"><div class="num">-</div><div class="lbl">提交</div></div>
+  <div class="stat-card warn"><div class="num">-</div><div class="lbl">排队</div></div>
+  <div class="stat-card"><div class="num">-</div><div class="lbl">评测中</div></div>
+  <div class="stat-card"><div class="num">-</div><div class="lbl">AC</div></div>
+  <div class="stat-card"><div class="num">-</div><div class="lbl">在线 Worker</div></div>
+  <div class="stat-card"><div class="num">-</div><div class="lbl">已审批 Worker</div></div>
+</div>
+
+<div class="panel-oj">
+  <div class="panel-heading">实时事件流</div>
+  <div class="panel-body" style="padding:6px 10px">
+    <div class="event-stream" id="event-stream"><div class="text-muted" style="text-align:center;padding:20px 0">等待事件…</div></div>
+  </div>
+</div>
+
+<%- include('../partials/admin-foot') %>
