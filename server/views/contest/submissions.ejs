@@ -1,8 +1,11 @@
-<%- include('../partials/contest-head', { title: '我的提交', nav: 'submissions' }) %>
+<%
+  var cid = (typeof contestId !== 'undefined') ? contestId : '';
+%>
+<%- include('../partials/contest-head', { title: '我的提交', nav: 'submissions', contestId: cid }) %>
 <% var pageScript = '/js/contest/submissions.js' %>
 
 <div class="flex-between mb-16">
-  <h2 class="page-title">我的提交</h2>
+  <h2 class="page-title">我的提交 <span class="mono text-muted" id="contest-title" style="font-size:14px"></span></h2>
   <div class="mono text-muted">排队 <b id="pending-count">0</b></div>
 </div>
 
@@ -49,4 +52,6 @@
   </div>
 </div>
 
-<%- include('../partials/contest-foot') %>
+<script>window.__CONTEST_ID__ = '<%= cid %>';</script>
+
+<%- include('../partials/contest-foot', { pageScript: pageScript }) %>

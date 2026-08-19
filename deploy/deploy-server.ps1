@@ -12,18 +12,22 @@
 #       占位域名 contest.example.com / admin.example.com 替换为真实域名。
 # ============================================================
 param(
-  [string]$ServerHost = "my-server",              # SSH 服务器别名/主机（部署时改为实际值）
+  [string]$ServerHost = "yqzl-server",              # SSH 服务器别名/主机（部署时改为实际值）
   [string]$LocalDir   = "e:\mini\server",
   # 真实部署域名（务必替换为实际域名后再运行）
-  [string]$DomainContest = "contest.example.com",
-  [string]$DomainAdmin   = "admin.example.com"
+  [string]$DomainContest = "contest.mini.nstarzx.cn",
+  [string]$DomainAdmin   = "admin.mini.nstarzx.cn"
 )
 
 $ErrorActionPreference = "Stop"
 
 function Step($m) { Write-Host "`n==> $m" -ForegroundColor Cyan }
-function Ssh([string]$cmd) { ssh $ServerHost $cmd }
-function Scp([string]$src, [string]$dst) { scp $src "$ServerHost`:$dst" }
+function Ssh([string]$cmd) { ssh.exe $ServerHost $cmd }
+# Scp：源 + 目标远程路径，自动拼接 $ServerHost:；额外参数（如 -r）可选
+function Scp {
+  param([string]$Src, [string]$Dst, [string[]]$Extra = @())
+  scp.exe @Extra $Src "$ServerHost`:$Dst"
+}
 
 # ---------- 1. 本地打包 ----------
 Step "1/4 本地打包 server（排除 node_modules/data）"
@@ -41,38 +45,39 @@ Write-Host "打包完成: $tmp"
 
 # ---------- 2. 上传代码到两个站点目录 ----------
 Step "2/4 上传代码到服务器（contest / admin 目录）"
-Scp -r "$tmp\*" "/www/wwwroot/$DomainContest/"
-Scp -r "$tmp\*" "/www/wwwroot/$DomainAdmin/"
+Scp -Src "$tmp\*" -Dst "/www/wwwroot/$DomainContest/" -Extra @('-r')
+Scp -Src "$tmp\*" -Dst "/www/wwwroot/$DomainAdmin/" -Extra @('-r')
 Write-Host "代码上传完成"
 
 # ---------- 3. 生成并上传远程部署脚本 ----------
 Step "3/4 生成远程部署脚本 deploy-remote.sh"
-$remoteScript = @"
+$remoteScript = @'
 #!/bin/bash
 set -e
 NODE=/www/server/nodejs/v24.14.1/bin
-export PATH=\$NODE:/usr/bin:/bin
-CONTEST=/www/wwwroot/$DomainContest
-ADMIN=/www/wwwroot/$DomainAdmin
-SHARED_DB=\$CONTEST/data/mini-oj.db
+export PATH=$NODE:/usr/bin:/bin
+CONTEST=/www/wwwroot/__DOMAIN_CONTEST__
+ADMIN=/www/wwwroot/__DOMAIN_ADMIN__
+SHARED_DB=$CONTEST/data/mini-oj.db
 
 echo '==> install deps'
-cd \$CONTEST && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -2
-cd \$ADMIN && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -2
+cd $CONTEST && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -2
+cd $ADMIN && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -2
 
 echo '==> pm2 start'
-cd \$CONTEST && pm2 delete mini-oj-contest 2>/dev/null || true
-APP_ENTRY=contest PORT=3001 DB_FILE=\$SHARED_DB DOMAIN_CONTEST=$DomainContest DOMAIN_ADMIN=$DomainAdmin pm2 start src/app.js --name mini-oj-contest
-cd \$ADMIN && pm2 delete mini-oj-admin 2>/dev/null || true
-APP_ENTRY=admin PORT=3002 DB_FILE=\$SHARED_DB DOMAIN_CONTEST=$DomainContest DOMAIN_ADMIN=$DomainAdmin pm2 start src/app.js --name mini-oj-admin
+cd $CONTEST && pm2 delete mini-oj-contest 2>/dev/null || true
+APP_ENTRY=contest PORT=3001 DB_FILE=$SHARED_DB DOMAIN_CONTEST=__DOMAIN_CONTEST__ DOMAIN_ADMIN=__DOMAIN_ADMIN__ pm2 start src/app.js --name mini-oj-contest
+cd $ADMIN && pm2 delete mini-oj-admin 2>/dev/null || true
+APP_ENTRY=admin PORT=3002 DB_FILE=$SHARED_DB DOMAIN_CONTEST=__DOMAIN_CONTEST__ DOMAIN_ADMIN=__DOMAIN_ADMIN__ pm2 start src/app.js --name mini-oj-admin
 pm2 save
 
 echo '==> nginx conf'
 mkdir -p /www/server/panel/vhost/nginx
-for D in $DomainContest $DomainAdmin; do :; done
 echo '==> run nginx+certbot steps (见 deploy/deploy-remote.sh 或 docs 部署说明)'
 echo 'REMOTE_SCRIPT_READY'
-"@
+'@
+# 用占位符注入真实域名（单引号 here-string 不插值，避免解析错误）
+$remoteScript = $remoteScript.Replace('__DOMAIN_CONTEST__', $DomainContest).Replace('__DOMAIN_ADMIN__', $DomainAdmin)
 # 保存到本地再上传，避免内联转义问题
 $localSh = Join-Path $env:TEMP "deploy-remote.sh"
 Set-Content -Path $localSh -Value $remoteScript -Encoding utf8

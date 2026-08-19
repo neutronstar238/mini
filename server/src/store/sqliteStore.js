@@ -114,6 +114,7 @@ function createCollections(dataDir) {
 
   const db = {
     driver,
+    contests: new Collection(driver, 'contests'),
     users: new Collection(driver, 'users'),
     problems: new Collection(driver, 'problems'),
     submissions: new Collection(driver, 'submissions'),

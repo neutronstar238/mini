@@ -18,7 +18,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
     var d = await api('/api/contest/auth/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
     localStorage.setItem('token', d.token);
     toast('欢迎回来，' + d.user.username);
-    location.href = '/contest/problems';
+    location.href = '/contest/contests';
   } catch (err) { setErr('login-err', err.message); }
 });
 
@@ -32,6 +32,6 @@ document.getElementById('register-form').addEventListener('submit', async functi
     var d = await api('/api/contest/auth/register', { method: 'POST', body: JSON.stringify({ username: u, password: p, nickname: n }) });
     localStorage.setItem('token', d.token);
     toast('注册成功，已自动登录');
-    setTimeout(function () { location.href = '/contest/problems'; }, 600);
+    setTimeout(function () { location.href = '/contest/contests'; }, 600);
   } catch (err) { setErr('reg-err', err.message); }
 });

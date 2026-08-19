@@ -1,43 +1,30 @@
-<%- include('../partials/contest-head', { title: '题目', nav: 'problems' }) %>
+<%
+  var cid = (typeof contestId !== 'undefined') ? contestId : '';
+%>
+<%- include('../partials/contest-head', { title: '题目', nav: 'problems', contestId: cid }) %>
 <% var pageScript = '/js/contest/problems.js' %>
 
 <div class="flex-between mb-16">
-  <h2 class="page-title">题目</h2>
+  <h2 class="page-title">题目 <span class="mono text-muted" id="contest-title" style="font-size:14px"></span></h2>
   <div class="mono text-muted">排队 <b id="stat-pending">0</b> · 可信 Worker <b id="stat-workers">0</b></div>
-</div>
-
-<div class="toolbar-oj">
-  <div class="form-group">
-    <label>搜索</label>
-    <input class="form-control" id="search" placeholder="题目名称…" style="display:inline-block;width:220px">
-  </div>
-  <div class="form-group">
-    <label>难度</label>
-    <select class="form-control" id="difficulty" style="display:inline-block;width:130px">
-      <option value="all">全部</option>
-      <option value="简单">简单</option>
-      <option value="中等">中等</option>
-      <option value="困难">困难</option>
-    </select>
-  </div>
 </div>
 
 <div class="panel-oj">
   <table class="table-oj table-striped table-hover" style="margin-bottom:0">
     <thead>
       <tr>
-        <th style="width:50px;text-align:center">ID</th>
-        <th>Title</th>
-        <th style="width:90px;text-align:center">Difficulty</th>
-        <th style="width:120px">Tags</th>
-        <th style="width:90px;text-align:right">AC</th>
-        <th style="width:90px;text-align:right">Submit</th>
+        <th style="width:80px;text-align:center">题号<br>ID</th>
+        <th>标题<br>Title</th>
+        <th style="width:90px;text-align:right">通过<br>AC</th>
+        <th style="width:90px;text-align:right">提交<br>Submit</th>
       </tr>
     </thead>
     <tbody id="problem-tbody">
-      <tr><td colspan="6" class="empty">加载中…</td></tr>
+      <tr><td colspan="4" class="empty">加载中…</td></tr>
     </tbody>
   </table>
 </div>
 
-<%- include('../partials/contest-foot') %>
+<script>window.__CONTEST_ID__ = '<%= cid %>';</script>
+
+<%- include('../partials/contest-foot', { pageScript: pageScript }) %>

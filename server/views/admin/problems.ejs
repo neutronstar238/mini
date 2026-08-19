@@ -2,11 +2,17 @@
 <% var pageScript = '/js/admin/problems.js' %>
 
 <h2 class="page-title">题目管理</h2>
-<div class="flex-between mb-16"><span class="text-muted">管理隐藏测试点、限制与版本</span><button class="btn btn-primary btn-sm" id="new-problem-btn">+ 新建题目</button></div>
+<div class="flex-between mb-16">
+  <div class="form-group" style="margin:0">
+    <label>所属比赛</label>
+    <select class="form-control" id="f-contest" style="display:inline-block;width:260px"></select>
+  </div>
+  <button class="btn btn-primary btn-sm" id="new-problem-btn">+ 新建题目</button>
+</div>
 
 <div class="panel-oj">
   <table class="table-oj table-striped table-hover" style="margin-bottom:0">
-    <thead><tr><th style="width:60px">ID</th><th>标题</th><th style="width:80px">难度</th><th style="width:110px">限制</th><th style="width:70px">测试点</th><th style="width:60px">版本</th><th style="width:140px">操作</th></tr></thead>
+    <thead><tr><th style="width:60px">ID</th><th>标题</th><th style="width:80px">编号</th><th style="width:110px">限制</th><th style="width:70px">测试点</th><th style="width:60px">版本</th><th style="width:140px">操作</th></tr></thead>
     <tbody id="problem-tbody"><tr><td colspan="7" class="empty">加载中…</td></tr></tbody>
   </table>
 </div>
@@ -16,16 +22,36 @@
   <div class="panel-body">
     <div class="grid-2">
       <div class="form-group"><label>标题</label><input class="form-control" id="e-title"></div>
-      <div class="form-group"><label>难度</label><select class="form-control" id="e-diff"><option>简单</option><option>中等</option><option>困难</option></select></div>
+      <div class="form-group"><label>所属比赛</label><select class="form-control" id="e-contest"></select></div>
       <div class="form-group"><label>时间限制 (ms)</label><input class="form-control" id="e-time" type="number" value="1000"></div>
       <div class="form-group"><label>内存限制 (MB)</label><input class="form-control" id="e-mem" type="number" value="256"></div>
     </div>
-    <div class="form-group"><label>题面</label><textarea class="form-control" id="e-desc" rows="6" style="height:auto"></textarea></div>
-    <div class="form-group"><label>标签（逗号分隔）</label><input class="form-control" id="e-tags" placeholder="入门,数学"></div>
-    <div class="form-group"><label>隐藏测试数据（每行：输入 | 答案，=== 分隔组）</label>
-      <textarea class="form-control mono" id="e-cases" rows="7" style="height:auto" placeholder="1 2 | 3&#10;===&#10;100 200 | 300"></textarea></div>
-    <div class="flex-between"><span class="text-muted" style="font-size:12px">隐藏测试点仅授权可信 Worker 拉取</span><button class="btn btn-primary" id="e-save">保存</button></div>
+    <div class="form-group"><label>题面（Markdown 格式）</label><textarea class="form-control" id="e-desc" rows="8" style="height:auto;font-family:monospace"></textarea></div>
+
+    <div class="panel-oj" style="margin-top:12px;background:#fafcff">
+      <div class="panel-heading">测试数据：gen.cpp + solution.cpp 自动生成（推荐）</div>
+      <div class="panel-body">
+        <div class="form-group"><label>gen.cpp（数据生成器，运行后生成 test01.in…testNN.in）</label>
+          <textarea class="form-control mono" id="e-gen" rows="8" style="height:auto" placeholder="// 参考：编译后运行，用 freopen 生成 test01.in …&#10;#include &lt;cstdio&gt;&#10;int main(){ ... }"></textarea></div>
+        <div class="form-group"><label>solution.cpp（标准答案，读 stdin 写 stdout）</label>
+          <textarea class="form-control mono" id="e-sol" rows="8" style="height:auto" placeholder="// C++ 标程，对每个 .in 得到 .out&#10;#include &lt;cstdio&gt;&#10;int main(){ ... }"></textarea></div>
+        <div class="flex-between">
+          <span class="text-muted" style="font-size:12px">勾选下方选项后保存时由服务器 g++ 编译运行生成测试点（需服务器具备 g++）</span>
+          <label class="form-check"><input type="checkbox" id="e-autogen" checked> 保存时用 gen/solution 自动生成测试数据</label>
+        </div>
+        <div class="mt-8 text-muted" id="compiler-tip" style="font-size:12px"></div>
+      </div>
+    </div>
+
+    <div class="panel-oj" style="margin-top:12px;background:#fafcff">
+      <div class="panel-heading">手动测试数据（每行：输入 | 答案，=== 分隔组；未勾选自动生成时生效）</div>
+      <div class="panel-body">
+        <textarea class="form-control mono" id="e-cases" rows="6" style="height:auto" placeholder="1 2 | 3&#10;===&#10;100 200 | 300"></textarea>
+      </div>
+    </div>
+
+    <div class="flex-between mt-16"><span class="text-muted" style="font-size:12px">隐藏测试点仅授权可信 Worker 拉取</span><button class="btn btn-primary" id="e-save">保存</button></div>
   </div>
 </div>
 
-<%- include('../partials/admin-foot') %>
+<%- include('../partials/admin-foot', { pageScript: pageScript }) %>

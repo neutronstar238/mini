@@ -15,8 +15,8 @@ NODE=/www/server/nodejs/v24.14.1/bin
 export PATH=$NODE:/usr/bin:/bin
 
 # ====== 部署参数（部署时替换为真实域名） ======
-DOMAIN_CONTEST=contest.example.com
-DOMAIN_ADMIN=admin.example.com
+DOMAIN_CONTEST=contest.mini.nstarzx.cn
+DOMAIN_ADMIN=admin.mini.nstarzx.cn
 # ==============================================
 
 CONTEST=/www/wwwroot/$DOMAIN_CONTEST

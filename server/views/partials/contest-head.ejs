@@ -19,10 +19,19 @@
   <header class="cpc-header">
     <ul id="sidebar_div" class="sidebar">
       <li class="user_panel">
-        <% if (user) { %>
+        <% if (user && user.role === 'admin') { %>
+          <div style="padding: 4px 0 8px;">
+            <span class="text-danger" style="font-weight:bold">管理员账号</span>
+            <span style="font-size:12px;color:#d9534f;display:block;margin-top:4px">请前往管理端，选手端仅面向参赛选手</span>
+          </div>
+          <div style="padding-bottom:6px;">
+            <a class="btn btn-primary btn-sm" style="width:100%" href="/admin">前往管理端</a>
+            <button class="btn btn-default btn-sm" id="logout-btn" style="width:100%;margin-top:6px">退出</button>
+          </div>
+        <% } else if (user) { %>
           <div style="padding: 4px 0 8px;">
             <span class="text-primary" style="font-weight:bold"><%= user.nickname || user.username %></span>
-            <span class="label <%= user.role === 'admin' ? 'label-danger' : 'label-success' %>" style="padding:1px 8px;border-radius:6px;font-size:12px"><%= user.role === 'admin' ? '管理员' : '选手' %></span>
+            <span class="label label-success" style="padding:1px 8px;border-radius:6px;font-size:12px">选手</span>
           </div>
           <div style="padding-bottom:6px;">
             <button class="btn btn-default btn-sm" id="logout-btn" style="width:100%">退出登录</button>
@@ -32,15 +41,21 @@
         <% } %>
       </li>
       <hr>
-      <li <%= (typeof nav === 'undefined' || nav === 'problems') ? 'class="active"' : '' %>>
-        <a href="/contest/problems">题目</a>
+      <li <%= (typeof nav !== 'undefined' && nav === 'contests') ? 'class="active"' : '' %>>
+        <a href="/contest/contests">比赛</a>
       </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'class="active"' : '' %>>
-        <a href="/contest/submissions">我的提交</a>
-      </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'rank') ? 'class="active"' : '' %>>
-        <a href="/contest/rank">榜单</a>
-      </li>
+      <% if (typeof contestId !== 'undefined' && contestId) { %>
+        <li class="sidebar-section"><span class="text-muted">比赛内</span></li>
+        <li <%= (typeof nav !== 'undefined' && nav === 'problems') ? 'class="active"' : '' %>>
+          <a href="/contest/contests/<%= contestId %>/problems">题目</a>
+        </li>
+        <li <%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'class="active"' : '' %>>
+          <a href="/contest/contests/<%= contestId %>/submissions">我的提交</a>
+        </li>
+        <li <%= (typeof nav !== 'undefined' && nav === 'rank') ? 'class="active"' : '' %>>
+          <a href="/contest/contests/<%= contestId %>/rank">榜单</a>
+        </li>
+      <% } %>
       <hr>
     </ul>
   </header>

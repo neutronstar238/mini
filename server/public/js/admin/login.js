@@ -7,7 +7,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
   errEl.textContent = '';
   if (!u || !p) { errEl.textContent = '请输入用户名与密码'; return; }
   try {
-    var d = await api('/api/contest/auth/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
+    var d = await api('/api/admin/auth/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
     if (d.user.role !== 'admin') { errEl.textContent = '仅管理员可登录管理端'; return; }
     localStorage.setItem('token', d.token);
     toast('欢迎，管理员');

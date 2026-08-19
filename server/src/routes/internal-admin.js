@@ -7,15 +7,32 @@
  */
 const express = require('express');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const db = require('../store/db');
 const hub = require('../sse/hub');
 const scheduler = require('../services/scheduler');
 const audit = require('../services/audit');
 const workerRegistry = require('../services/worker-registry');
+const config = require('../config');
 const { internalAuth } = require('../middleware/internalAuth');
 const { generateRegisterCode } = require('../security/trust');
 
 const router = express.Router();
+
+/* 管理端登录（独立认证逻辑，与选手端隔离）：仅供 :3002 Admin 代理调用，只允许管理员 */
+router.post('/login', (req, res) => {
+  const { username, password } = req.body || {};
+  const u = db.users.findOne((x) => x.username === username);
+  if (!u || !bcrypt.compareSync(password || '', u.passwordHash)) return res.status(401).json({ error: '用户名或密码错误' });
+  if (u.banned) return res.status(403).json({ error: '账号已被封禁' });
+  if (u.role !== 'admin') return res.status(403).json({ error: '仅管理员可登录管理端' });
+  const token = jwt.sign({ id: u.id, username: u.username, role: u.role }, config.jwtSecret, { expiresIn: config.jwtExpires });
+  audit.log('admin_login', { user: u.id, username: u.username });
+  res.cookie('token', token, { httpOnly: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+  res.json({ token, user: { id: u.id, username: u.username, nickname: u.nickname, role: u.role } });
+});
+
 router.use(internalAuth);
 
 /* ================= 总览 ================= */
@@ -93,44 +110,156 @@ router.get('/queue', (_req, res) => {
 /* ================= 审计 / 日志 ================= */
 router.get('/audit', (_req, res) => res.json({ events: audit.recent(200) }));
 
-/* ================= 题目管理 ================= */
-router.get('/problems', (_req, res) => res.json({ problems: db.problems.all().sort((a, b) => (a.order || 0) - (b.order || 0)) }));
+/* ================= 比赛管理 ================= */
+router.get('/contests', (_req, res) => {
+  const list = db.contests.all().sort((a, b) => (a.startTimeMs || 0) - (b.startTimeMs || 0));
+  res.json({ contests: list });
+});
+router.get('/contests/:id', (req, res) => {
+  const c = db.contests.byId(req.params.id);
+  if (!c) return res.status(404).json({ error: '比赛不存在' });
+  res.json({ contest: c });
+});
+router.post('/contests', (req, res) => {
+  const { title, description, startTimeMs } = req.body || {};
+  if (!title) return res.status(400).json({ error: '标题必填' });
+  const startMs = Number(startTimeMs) || Date.now();
+  const c = db.contests.insert({
+    title, description: description || '',
+    startTimeMs: startMs,
+    status: startMs > Date.now() ? 'upcoming' : 'ongoing',
+    problemIds: [], createdAt: new Date().toISOString()
+  });
+  audit.log('create_contest', { contest: c.id, title: c.title });
+  res.json({ contest: c });
+});
+router.put('/contests/:id', (req, res) => {
+  const c = db.contests.byId(req.params.id);
+  if (!c) return res.status(404).json({ error: '比赛不存在' });
+  const patch = {};
+  if (req.body.title !== undefined) patch.title = req.body.title;
+  if (req.body.description !== undefined) patch.description = req.body.description;
+  if (req.body.startTimeMs !== undefined) {
+    patch.startTimeMs = Number(req.body.startTimeMs) || c.startTimeMs;
+    patch.status = patch.startTimeMs > Date.now() ? 'upcoming' : 'ongoing';
+  }
+  if (req.body.problemIds !== undefined) patch.problemIds = req.body.problemIds;
+  const updated = db.contests.update(c.id, patch);
+  audit.log('update_contest', { contest: c.id });
+  res.json({ contest: updated });
+});
+router.delete('/contests/:id', (req, res) => {
+  const c = db.contests.byId(req.params.id);
+  if (!c) return res.status(404).json({ error: '比赛不存在' });
+  // 级联删除该比赛下的题目与提交
+  db.problems.find((p) => p.contestId === c.id).forEach((p) => db.problems.remove(p.id));
+  db.submissions.find((s) => s.contestId === c.id).forEach((s) => db.submissions.remove(s.id));
+  db.contests.remove(c.id);
+  audit.log('delete_contest', { contest: c.id });
+  res.json({ ok: true });
+});
+
+/* ================= 题目管理（比赛制：contestId + md 题面 + gen/solution 代码） ================= */
+const testdata = require('../services/testdata');
+
+// 编译探活（供管理端判断能否用 gen/solution 自动生成）
+router.get('/compiler', async (_req, res) => {
+  const ok = await testdata.probeCompiler();
+  res.json({ gxx: ok });
+});
+
+router.get('/problems', (_req, res) => {
+  const list = db.problems.all().sort((a, b) => (a.order || 0) - (b.order || 0));
+  res.json({ problems: list });
+});
 router.get('/problems/:id', (req, res) => {
   const p = db.problems.byId(req.params.id);
   if (!p) return res.status(404).json({ error: '题目不存在' });
   res.json({ problem: p });
 });
-router.post('/problems', (req, res) => {
-  const { title, description, difficulty, timeLimitMs, memoryLimitMb, samples, testcases, tags } = req.body || {};
+router.post('/problems', async (req, res) => {
+  const { title, description, contestId, timeLimitMs, memoryLimitMb, samples, testcases, genCode, solutionCode, autoGen } = req.body || {};
   if (!title) return res.status(400).json({ error: '标题必填' });
-  const maxOrder = Math.max(0, ...db.problems.all().map((p) => p.order || 0));
-  const p = db.problems.insert({
-    title, description: description || '', difficulty: difficulty || '简单',
-    timeLimitMs: Number(timeLimitMs) || 1000, memoryLimitMb: Number(memoryLimitMb) || 256,
-    samples: samples || [{ input: '', output: '' }],
-    testcases: (testcases || []).map((t, i) => ({ id: i + 1, input: t.input || '', answer: t.answer || '' })),
-    tags: tags || [], order: maxOrder + 1, version: 1, testdataHash: hashTestdata(testcases || [])
-  });
-  audit.log('create_problem', { problem: p.id, title: p.title });
-  res.json({ problem: p });
+  if (!contestId) return res.status(400).json({ error: '请选择所属比赛' });
+  const contest = db.contests.byId(contestId);
+  if (!contest) return res.status(400).json({ error: '所属比赛不存在' });
+  try {
+    // 若启用自动生成且提供了 gen/solution，则用 g++ 生成测试数据；否则用手动 testcases fallback
+    let finalTestcases = (testcases || []).map((t, i) => ({ id: i + 1, input: t.input || '', answer: t.answer || '' }));
+    let genWarnings = [];
+    if (autoGen && genCode && solutionCode) {
+      const resData = await testdata.generateTestcases(genCode, solutionCode);
+      finalTestcases = resData.testcases;
+      genWarnings = resData.warnings || [];
+    }
+    const maxOrder = Math.max(0, ...db.problems.all().filter((p) => p.contestId === contestId).map((p) => p.order || 0));
+    const p = db.problems.insert({
+      contestId, title, description: description || '',
+      timeLimitMs: Number(timeLimitMs) || 1000, memoryLimitMb: Number(memoryLimitMb) || 256,
+      samples: samples || [{ input: '', output: '' }],
+      testcases: finalTestcases, genCode: genCode || '', solutionCode: solutionCode || '',
+      order: maxOrder + 1, version: 1, testdataHash: hashTestdata(finalTestcases)
+    });
+    // 更新比赛的 problemIds
+    db.contests.update(contestId, { problemIds: [...(contest.problemIds || []), p.id] });
+    audit.log('create_problem', { problem: p.id, title: p.title, contest: contestId });
+    res.json({ problem: p, warnings: genWarnings });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
-router.put('/problems/:id', (req, res) => {
+router.put('/problems/:id', async (req, res) => {
   const p = db.problems.byId(req.params.id);
   if (!p) return res.status(404).json({ error: '题目不存在' });
   const patch = {};
-  for (const k of ['title', 'description', 'difficulty', 'samples', 'tags']) if (req.body[k] !== undefined) patch[k] = req.body[k];
-  if (req.body.timeLimitMs !== undefined) patch.timeLimitMs = Number(req.body.timeLimitMs) || p.timeLimitMs;
-  if (req.body.memoryLimitMb !== undefined) patch.memoryLimitMb = Number(req.body.memoryLimitMb) || p.memoryLimitMb;
-  if (req.body.testcases !== undefined) {
-    patch.testcases = (req.body.testcases || []).map((t, i) => ({ id: i + 1, input: t.input || '', answer: t.answer || '' }));
-    patch.testdataHash = hashTestdata(req.body.testcases || []);
+  try {
+    if (req.body.title !== undefined) patch.title = req.body.title;
+    if (req.body.contestId !== undefined) patch.contestId = req.body.contestId;
+    if (req.body.description !== undefined) patch.description = req.body.description;
+    if (req.body.samples !== undefined) patch.samples = req.body.samples;
+    if (req.body.timeLimitMs !== undefined) patch.timeLimitMs = Number(req.body.timeLimitMs) || p.timeLimitMs;
+    if (req.body.memoryLimitMb !== undefined) patch.memoryLimitMb = Number(req.body.memoryLimitMb) || p.memoryLimitMb;
+    if (req.body.genCode !== undefined) patch.genCode = req.body.genCode;
+    if (req.body.solutionCode !== undefined) patch.solutionCode = req.body.solutionCode;
+
+    // 测试数据来源：优先 autoGen（gen/solution 自动生成），否则手动 testcases
+    let genWarnings = [];
+    if (req.body.autoGen && (patch.genCode ?? p.genCode) && (patch.solutionCode ?? p.solutionCode)) {
+      const resData = await testdata.generateTestcases(
+        patch.genCode ?? p.genCode,
+        patch.solutionCode ?? p.solutionCode
+      );
+      patch.testcases = resData.testcases;
+      genWarnings = resData.warnings || [];
+    } else if (req.body.testcases !== undefined) {
+      patch.testcases = (req.body.testcases || []).map((t, i) => ({ id: i + 1, input: t.input || '', answer: t.answer || '' }));
+    }
+    if (patch.testcases !== undefined) patch.testdataHash = hashTestdata(patch.testcases);
+
+    patch.version = (p.version || 1) + 1;
+    const updated = db.problems.update(p.id, patch);
+    // 若变更了所属比赛，同步更新两个比赛的 problemIds
+    if (patch.contestId && patch.contestId !== p.contestId) {
+      const oldC = db.contests.byId(p.contestId);
+      if (oldC) db.contests.update(oldC.id, { problemIds: (oldC.problemIds || []).filter((x) => x !== p.id) });
+      const newC = db.contests.byId(patch.contestId);
+      if (newC && !(newC.problemIds || []).includes(p.id)) {
+        db.contests.update(newC.id, { problemIds: [...(newC.problemIds || []), p.id] });
+      }
+    }
+    audit.log('update_problem', { problem: p.id, version: patch.version });
+    res.json({ problem: updated, warnings: genWarnings });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
-  patch.version = (p.version || 1) + 1;
-  audit.log('update_problem', { problem: p.id, version: patch.version });
-  res.json({ problem: db.problems.update(p.id, patch) });
 });
 router.delete('/problems/:id', (req, res) => {
-  if (!db.problems.remove(req.params.id)) return res.status(404).json({ error: '题目不存在' });
+  const p = db.problems.byId(req.params.id);
+  if (!p) return res.status(404).json({ error: '题目不存在' });
+  // 从所属比赛的 problemIds 移除
+  const c = db.contests.byId(p.contestId);
+  if (c) db.contests.update(c.id, { problemIds: (c.problemIds || []).filter((x) => x !== p.id) });
+  db.problems.remove(req.params.id);
   audit.log('delete_problem', { problem: req.params.id });
   res.json({ ok: true });
 });

@@ -1,0 +1,31 @@
+<%- include('../partials/contest-head', { title: '比赛', nav: 'contests' }) %>
+<% var pageScript = '/js/contest/contests.js' %>
+
+<div class="flex-between mb-16">
+  <h2 class="page-title">比赛</h2>
+  <div class="mono text-muted">选择一场已发布的比赛</div>
+</div>
+
+<div class="contest-grid" id="contest-grid">
+  <div class="text-muted" style="text-align:center;padding:40px 0">加载中…</div>
+</div>
+
+<style>
+  .contest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .contest-card {
+    background: #fff; border: 1px solid var(--oj-border); border-radius: 12px;
+    padding: 18px 20px; box-shadow: var(--oj-shadow); transition: all .18s ease;
+    display: flex; flex-direction: column; gap: 10px; cursor: pointer;
+  }
+  .contest-card:hover { transform: translateY(-3px); box-shadow: var(--oj-shadow-lg); border-color: var(--oj-primary); }
+  .contest-card.disabled { cursor: not-allowed; opacity: .72; }
+  .contest-card .cc-title { font-size: 17px; font-weight: 600; color: var(--oj-text); display: flex; justify-content: space-between; align-items: center; }
+  .contest-card .cc-desc { font-size: 13px; color: var(--oj-text-muted); line-height: 1.7; flex: 1; }
+  .contest-card .cc-meta { font-size: 12px; color: var(--oj-text-muted); display: flex; justify-content: space-between; }
+  .cc-badge { padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .cc-badge.ongoing { background: var(--oj-success-soft); color: var(--oj-success); }
+  .cc-badge.upcoming { background: var(--oj-warning-soft); color: #b45309; }
+  .cc-badge.ended { background: #f3f4f6; color: var(--oj-text-muted); }
+</style>
+
+<%- include('../partials/contest-foot', { pageScript: pageScript }) %>

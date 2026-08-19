@@ -1,4 +1,6 @@
 'use strict';
+var cid = window.__CONTEST_ID__ || (new URLSearchParams(location.search).get('contest')) || '';
+if (!cid) location.href = '/contest/contests';
 var state = { page: 1, status: 'all' };
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -9,13 +11,13 @@ async function load() {
   var params = new URLSearchParams({ page: state.page, pageSize: 20, status: state.status });
   var tbody = document.querySelector('#sub-tbody');
   try {
-    var d = await api('/api/contest/submissions?' + params.toString());
+    var d = await api('/api/contest/contests/' + cid + '/submissions?' + params.toString());
     document.getElementById('page-info').textContent = '第 ' + d.page + ' / ' + Math.max(1, Math.ceil(d.total / 20)) + ' 页 · 共 ' + d.total + ' 条';
     if (!d.submissions.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty">暂无记录</td></tr>'; return; }
     tbody.innerHTML = d.submissions.map(function (s) {
       var lv = s.localVerification ? '<span class="text-success">通过</span>' : '<span class="text-muted">跳过</span>';
       return '<tr data-id="' + s.id + '"><td class="mono text-muted">' + s.id.slice(0, 8) + '</td>' +
-        '<td><a href="/contest/problems/' + s.problemId + '">' + escapeHtml(s.problemTitle) + '</a></td>' +
+        '<td><a href="/contest/contests/' + cid + '/problems/' + s.problemId + '">' + escapeHtml(s.problemTitle) + '</a></td>' +
         '<td class="mono">' + (s.language === 'cpp' ? 'C++' : 'Python') + '</td>' +
         '<td>' + statusBadge(s.status) + '</td>' +
         '<td class="mono" style="text-align:right">' + fmtMs(s.timeMs) + '</td>' +
@@ -46,6 +48,7 @@ document.getElementById('prev-page').addEventListener('click', function () { if 
 document.getElementById('next-page').addEventListener('click', function () { state.page++; load(); });
 sseConnect('/api/contest/events/stream', {
   submission_update: function (d) {
+    if (d.contestId && d.contestId !== cid) return;
     var row = document.querySelector('tr[data-id="' + d.id + '"]');
     if (row) { var c = row.children[3]; if (c) c.innerHTML = statusBadge(d.status); }
   },

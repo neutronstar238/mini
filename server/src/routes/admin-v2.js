@@ -11,6 +11,16 @@ const config = require('../config');
 const { requireLogin, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
+
+/** 管理端登录：代理到 :3001 内部独立登录接口（仅管理员，与选手端登录隔离）。放在 requireLogin 之前。 */
+router.post('/auth/login', wrap(async (req, res) => {
+  const r = await callCore('POST', '/internal/admin/login', req.body || {});
+  if (r.data && r.data.token) {
+    res.cookie('token', r.data.token, { httpOnly: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+  }
+  res.status(r.status).json(r.data);
+}));
+
 router.use(requireLogin, requireRole('admin'));
 
 /** 调用 :3001 internal API（HMAC 内部鉴权） */
@@ -78,6 +88,33 @@ router.get('/queue', wrap(async (_req, res) => {
 }));
 router.get('/audit', wrap(async (_req, res) => {
   const r = await callCore('GET', '/internal/admin/audit');
+  res.status(r.status).json(r.data);
+}));
+
+router.get('/compiler', wrap(async (_req, res) => {
+  const r = await callCore('GET', '/internal/admin/compiler');
+  res.status(r.status).json(r.data);
+}));
+
+/* ================= 比赛管理（教练端） ================= */
+router.get('/contests', wrap(async (_req, res) => {
+  const r = await callCore('GET', '/internal/admin/contests');
+  res.status(r.status).json(r.data);
+}));
+router.get('/contests/:id', wrap(async (req, res) => {
+  const r = await callCore('GET', `/internal/admin/contests/${req.params.id}`);
+  res.status(r.status).json(r.data);
+}));
+router.post('/contests', wrap(async (req, res) => {
+  const r = await callCore('POST', '/internal/admin/contests', req.body);
+  res.status(r.status).json(r.data);
+}));
+router.put('/contests/:id', wrap(async (req, res) => {
+  const r = await callCore('PUT', `/internal/admin/contests/${req.params.id}`, req.body);
+  res.status(r.status).json(r.data);
+}));
+router.delete('/contests/:id', wrap(async (req, res) => {
+  const r = await callCore('DELETE', `/internal/admin/contests/${req.params.id}`);
   res.status(r.status).json(r.data);
 }));
 

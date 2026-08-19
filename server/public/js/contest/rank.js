@@ -1,79 +1,87 @@
 'use strict';
-/* 榜单页：bootstrap 全量快照 + SSE scoreboard_delta 增量更新 + fallback polling */
-var mode = 'practice';
-var cached = null;   // 内存缓存（MVP 简化；生产用 CacheRepository→IndexedDB）
+/* ICPC 榜单页：双层表头（Rank/Team/Solved/Penalty + 每题列头字母与 ac·submit），SSE 增量更新 */
+var cid = window.__CONTEST_ID__ || (new URLSearchParams(location.search).get('contest')) || '';
+if (!cid) location.href = '/contest/contests';
+
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function letter(i) { return String.fromCharCode(65 + i); }
+
+var cached = null; // { version, problems:[], rows:[], colStats:{} }
 var nextSyncAt = 0;
 
-function escapeHtml(s) {
-  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-  });
-}
-window.setMode = function (m) {
-  mode = m;
-  document.getElementById('mode-practice').classList[m === 'practice' ? 'add' : 'remove']('btn-primary');
-  document.getElementById('mode-practice').classList[m === 'practice' ? 'remove' : 'add']('btn-default');
-  document.getElementById('mode-formal').classList[m === 'formal' ? 'add' : 'remove']('btn-primary');
-  document.getElementById('mode-formal').classList[m === 'formal' ? 'remove' : 'add']('btn-default');
-  load();
-};
-
-function render(rows) {
+/* 渲染双层表头 + 数据行 */
+function render(snap) {
+  cached = snap;
+  var head = document.getElementById('rank-head');
   var tbody = document.getElementById('rank-tbody');
-  if (!rows || !rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">暂无排名</td></tr>'; return; }
-  tbody.innerHTML = rows.map(function (r, i) {
-    return '<tr><td style="text-align:center" class="mono">' + (i + 1) + '</td>' +
+  var problems = snap.problems || [];
+  var colStats = snap.colStats || {};
+
+  // 表头第一层：Rank/Team/Solved/Penalty + 每题字母
+  var h1 = '<tr>' +
+    '<th style="width:60px;text-align:center">Rank</th>' +
+    '<th>Team</th>' +
+    '<th style="width:70px;text-align:center">Solved</th>' +
+    '<th style="width:90px;text-align:center">Penalty</th>';
+  var h2 = '<tr>' +
+    '<th></th><th></th><th></th><th></th>';
+  problems.forEach(function (p, i) {
+    var st = colStats[p.id] || {};
+    h1 += '<th style="text-align:center;min-width:70px" data-letter="' + p.letter + '">' + p.letter + '</th>';
+    h2 += '<th style="text-align:center;font-weight:500;color:#6b7280" title="通过人数 / 提交人数">' +
+      '<span class="text-success">' + (st.acPeople || 0) + '</span> / ' + (st.submitPeople || 0) + '</th>';
+  });
+  h1 += '</tr>'; h2 += '</tr>';
+  head.innerHTML = h1 + h2;
+
+  var titleEl = document.getElementById('contest-title');
+  if (titleEl && snap.contest) titleEl.textContent = '· ' + snap.contest.title;
+
+  var rows = snap.rows || [];
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="' + (4 + problems.length) + '" class="empty">暂无排名</td></tr>'; return; }
+  tbody.innerHTML = rows.map(function (r, idx) {
+    var cellHtml = problems.map(function (p) {
+      var c = r.cells[p.id];
+      if (!c || c.status === 'none') return '<td style="text-align:center;color:#d1d5db">.</td>';
+      if (c.status === 'AC') {
+        return '<td style="text-align:center"><span class="res-badge res-success" style="font-weight:600">' + (c.minutes >= 0 ? c.minutes : 0) + '</span></td>';
+      }
+      // 未通过：显示 -错误次数
+      return '<td style="text-align:center"><span style="color:#ef4444">-' + (c.attempts || 0) + '</span></td>';
+    }).join('');
+    return '<tr><td style="text-align:center" class="mono">' + r.rank + '</td>' +
       '<td>' + escapeHtml(r.username) + (r.nickname && r.nickname !== r.username ? ' <span class="text-muted">(' + escapeHtml(r.nickname) + ')</span>' : '') + '</td>' +
-      '<td style="text-align:right" class="text-success">' + r.solvedCount + '</td>' +
-      '<td style="text-align:right" class="mono text-muted">' + r.penaltyMs + '</td></tr>';
+      '<td style="text-align:center" class="text-success">' + r.solved + '</td>' +
+      '<td style="text-align:center" class="mono text-muted">' + r.penalty + '</td>' +
+      cellHtml + '</tr>';
   }).join('');
 }
 
-/* 首次加载：bootstrap 全量快照（含 cache lease） */
 async function load() {
   try {
-    var d = await api('/api/contest/sync/bootstrap');
-    nextSyncAt = d.nextSyncAt;
-    cached = d.scoreboardSnapshot;
-    render(cached.rows);
-  } catch (err) {
-    toast(err.message, 'err');
-  }
+    var d = await api('/api/contest/contests/' + cid + '/rank');
+    render(d.snapshot);
+    nextSyncAt = (d.snapshot && d.snapshot.version) ? Date.now() : Date.now();
+  } catch (err) { toast(err.message, 'err'); }
 }
 
-/* SSE：scoreboard_delta 增量合并 + 重新排序 */
+/* SSE：scoreboard_delta 增量合并（数据带 contestId 匹配本比赛才处理） */
 sseConnect('/api/contest/events', {
   scoreboard_delta: function (d) {
-    if (!d.changes) return; // 首次推送可能是 full snapshot
-    // 更新本地缓存中的变化用户
-    d.changes.forEach(function (ch) {
-      var found = cached.rows.find(function (r) { return r.userId === ch.userId; });
-      if (found) { found.solvedCount = ch.solvedCount; found.penaltyMs = ch.penaltyMs; }
-      else if (ch.userId) cached.rows.push(ch);
+    if (!cached || !d.changes) return;
+    var mine = d.changes.filter(function (ch) { return ch.contestId === cid; });
+    if (!mine.length) return;
+    mine.forEach(function (ch) {
+      var row = ch.row;
+      var found = cached.rows.find(function (r) { return r.userId === row.userId; });
+      if (found) Object.assign(found, row);
+      else cached.rows.push(row);
+      // 同步更新列统计（拉取最新全局统计）
     });
-    // 本地重排序（避免每次请求服务器）
-    cached.rows.sort(function (a, b) { return b.solvedCount - a.solvedCount || a.penaltyMs - b.penaltyMs; });
-    render(cached.rows);
+    cached.rows.sort(function (a, b) { return b.solved - a.solved || a.penalty - b.penalty; });
+    cached.rows.forEach(function (r, i) { r.rank = i + 1; });
+    render(cached);
   }
 });
-
-/* Cache Lease：nextSyncAt 之前禁止重新请求；到期后 fallback polling */
-async function syncIfDue() {
-  if (Date.now() < nextSyncAt) return; // 缓存租约内：仅重渲染
-  try {
-    var d = await api('/api/contest/sync?scoreboardVersion=' + (cached ? cached.version : 0));
-    nextSyncAt = d.nextSyncAt || (Date.now() + 10000);
-    if (d.full && d.scoreboardSnapshot) {
-      cached = d.scoreboardSnapshot;
-      render(cached.rows);
-    } else if (d.submissionDelta && cached) {
-      cached.version = d.scoreboardVersion;
-      render(cached.rows);
-    }
-  } catch (err) {
-    if (err.status === 429) nextSyncAt = Date.now() + 5000; // 被限流则稍后重试
-  }
-}
-setInterval(syncIfDue, 5000);
 
 load();
