@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "runtimeId": "py312-cpython-compat-v1",
+  "status": "P0 FROZEN",
+  "frozenAt": "2026-08-20",
+  "previousVersion": null,
+  "purpose": "为标准单线程 ACM/OJ Python 3 代码提供稳定、零安装、浏览器本地运行与样例调试能力；基于 CPython WebAssembly（Pyodide），Persistent Python Worker，Local Run / Sample Run / Debug 专用，正式 Judge 由服务器完成",
+
+  "browser": {
+    "runtime": "Pyodide",
+    "pyodideVersion": "0.26.4",
+    "pythonImplementation": "CPython",
+    "pythonVersion": "3.12.1",
+    "pythonVersionDetail": "3.12.1 (main, Nov 15 2024, 14:17:00) [Clang 19.0.0git (https:/github.com/llvm/llvm-project 0a8cd1ed1f4f35905df318015b]",
+    "pythonVersionInfo": "sys.version_info(major=3, minor=12, micro=1, releaselevel='final', serial=0)",
+    "stdlib": "python_stdlib.zip (Pyodide 0.26.4 bundled, CPython 3.12 stdlib)",
+    "wasmBuild": "emscripten_3_1_58, abi 2024_0, wasm32",
+    "packages": "P0 仅 CPython Core + Standard Library；numpy/scipy/pandas/matplotlib/sklearn 等按需 wheel 不加载（P1）",
+    "interrupt": "Environment Check（SharedArrayBuffer + crossOriginIsolated + Atomics）：READY → setInterruptBuffer(SAB) → KeyboardInterrupt，Worker 复用；FALLBACK（SAB 不可用）→ Local Timeout → terminate Worker → 下次 Run 重建，绝不卡死页面",
+    "systemExitSemantics": "SystemExit(0) → Local PASS, exitCode 0；SystemExit(non-zero) → Local RE / NON_ZERO_EXIT，保留真实 exitCode（与 Server 正式 Judge 的 abnormal exit 语义一致），不强行包装 Traceback",
+    "codeCacheLifecycle": "sourceHash→code object PyProxy，LRU cap=4；淘汰与 dispose/reset/clear-cache 均显式 .destroy() 释放 PyProxy（经 Memory Stress 1000 源码验证无线性泄漏）",
+    "isolation": "P0 Reset Strategy：fresh globals + stdin/out/err 重建 + sys.argv/path/recursionlimit/cwd 恢复 + sys.modules 清理 + builtins 恢复 + random 重播种",
+    "persistent": { "worker": true, "lazyLoad": true, "codeObjectCacheMax": 4 },
+    "artifactCacheKey": "language | runtimeId | pythonVersion | sourceHash",
+    "executionTimeDefinition": "code object 已准备完成后，从真正开始 exec(user_code) 并提供 stdin，到程序结束并完成 stdout flush 的时间。禁止把 Python WASM 首次加载/初始化、compile() 计入。",
+    "submitModel": "Browser 本地运行不上传源码；仅正式 Submit 才上传服务器。"
+  },
+
+  "officialReference": {
+    "implementation": "CPython",
+    "pythonVersion": "3.12.3",
+    "pythonVersionDetail": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+    "distro": "Ubuntu 24.04 LTS (yqzl-server, SSH host alias 'yqzl-server')",
+    "runCommand": "python3 <src>.py < <in>",
+    "invokeHint": "ssh yqzl-server \"cd /tmp && python3 <src>.py < <in>\"",
+    "env": "PYTHONHASHSEED 未固定（两端默认随机），非确定性输出单独分类；不加 Browser 没有的自定义 monkey patch",
+    "comparePolicy": "match Server CPython run 结果；Traceback 文字无需逐字一致，Syntax vs Runtime Error 大类必须一致"
+  },
+
+  "assets": {
+    "indexUrl": "/runtime/pyodide/0.26.4/",
+    "files": [
+      { "name": "pyodide-lock.json", "bytes": 106288, "sha256": "cd50b49de944c579045e122fe8628b31f9ce446379f032f36c05e273d38766e0" },
+      { "name": "pyodide.js", "bytes": 14746, "sha256": "c0069107621d5b942a659e737a12e774cc0451feaa2256f475d72e071d844ec7" },
+      { "name": "pyodide.mjs", "bytes": 13824, "sha256": "7f24c6655a79eacf0061d3d4e6a60dc0b1938812d15c52d7ff8b37d9e0689e51" },
+      { "name": "pyodide.asm.js", "bytes": 1229107, "sha256": "919560652ed3dad3707cb3a394785da1e046fb13dc0defa162058ff230cb7eed" },
+      { "name": "pyodide.asm.wasm", "bytes": 10088038, "sha256": "b7e66a19427a55010ac3367c1b6c64b893f9826f783412945fdf0c3337f3bc94" },
+      { "name": "python_stdlib.zip", "bytes": 2341888, "sha256": "72894522b791858b9d613ac786b951d8b5094035dcf376313ea24a466810f336" }
+    ],
+    "totalBytes": 13819891,
+    "wasmRuntimeHash": "b7e66a19427a55010ac3367c1b6c64b893f9826f783412945fdf0c3337f3bc94",
+    "stdlibHash": "72894522b791858b9d613ac786b951d8b5094035dcf376313ea24a466810f336",
+    "runtimeAssetHash": "17E09D0EF8C89EF403F8DB7F34AACFE323A271D624F6CF1C4C9D1CB43B38922B",
+    "cachePolicy": "版本化 URL /runtime/pyodide/0.26.4/ + HTTP immutable + 浏览器 HTTP cache"
+  },
+
+  "verified": {
+    "browserServerMinorVersionMatch": true,
+    "positiveCompileMatch": "100%（74/74 = features 34 + acm-corpus 40）",
+    "errorClassMatch": "100%（13/13：CE 3 + RE 9 + SystemExit 1，traceback 异常类型双端一致）",
+    "compatibilityRuntimeOutputMatch": "100%（Browser==Server CPython，74/74）",
+    "correctnessDeterministicOutputMatch": "100%（Browser==Server==Expected，74/74）",
+    "runIsolation": "14/14 PASS（A~I 隔离 9 + cacheHit + SAB 能力检测 M/N + 无限循环中断 + 中断后复用）",
+    "timeoutProtection": "READY（SAB）：无限循环 6019ms → KeyboardInterrupt（ABORTED），Worker 复用，不 terminate 不卡页面；FALLBACK（SAB 不可用）：7262ms → Local Timeout → terminate + 重建 Worker，仍不卡页面",
+    "systemExitClassification": "4/4 PASS（sys.exit(0)→PASS/exit0；sys.exit(1)/sys.exit(2)/raise SystemExit(3)→RE/NON_ZERO_EXIT + 真实 exitCode；Browser 与 Server Reference 一致）",
+    "pyProxyStress": "Memory Stress Test n=1000 不同源码：1000 compile、0 cacheHit（唯一源码）、0 failures；LRU 稳定段 JS heap 0 增长 / WASM memory 恒 20MB / codeCache 恒 4 → 无线性泄漏",
+    "sabCapabilityDetection": "READY（SAB+crossOriginIsolated+Atomics）正常检测；FALLBACK 路径经 __PY_FORCE_INTERRUPT_CAPABILITY__ 验证 terminate+重建不卡页面",
+    "mismatches": 0
+  },
+
+  "ioLimits": {
+    "stdoutStderr": "各 1 MiB，由 Worker 内 CappedBytesIO 限制，超限显式标记 outputTruncated"
+  },
+
+  "performanceBaseline": "bench-python.js n=10：cold runtime load（pyodide init）~1300ms 仅首次；warm 九类 A~I compile median 0.4-1.2ms / exec median 0.8-3.1ms / total median 3-8ms（90/90 PASS）",
+  "coldStartLayered": {
+    "runtimeAssetsSizeBytes": 13819891,
+    "coldNetworkStartMs": 1291,
+    "cachedColdStartMs": 1274,
+    "warmRunCompileMedianMs": 0.8,
+    "warmRunExecMedianMs": 1.2,
+    "environment": "Chromium headless @ localhost:3001（局域网近零延迟；真实外网 Cold Network Start 因 13.2MB 下载会显著更高）"
+  },
+
+  "versionUpgradeRule": "runtimeId 内任一组件改变（Python minor version / Pyodide version / stdlib / runtime flags / isolation strategy / interrupt strategy）都必须生成新 Runtime Version，禁止静默覆盖当前冻结版本。",
+  "regressionGate": "Python 路径任何改动前/后必须跑 C11 与 C++11 Frozen Regression；任一 <100% 或 C/C++ warm compile 显著回退，立即停止重构。"
+}

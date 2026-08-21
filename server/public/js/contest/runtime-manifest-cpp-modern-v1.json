@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "runtimeId": "cpp-modern-v1",
+  "status": "RETIRED",
+  "downloadable": false,
+  "replacementRuntimeId": "cpp-modern-engine-v1",
+  "replacementManifest": "/runtime/cpp-modern-engine-v1/runtime-manifest.json",
+  "runtimeAssetHash": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c",
+  "reproducibleBuild": "PASS",
+  "reason": "Historical Phase 6 placeholder. It is not a browser compiler and is never used as a fallback.",
+  "profiles": {
+    "c17-gcc14-compat-v1": "EXPERIMENTAL / LOCAL_PREVIEW",
+    "cpp17-gcc14-compat-v1": "EXPERIMENTAL / LOCAL_PREVIEW",
+    "cpp20-gcc14-compat-v1": "PENDING",
+    "cpp23-gcc14-compat-v1": "PENDING"
+  },
+  "assets": []
+}

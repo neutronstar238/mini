@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "runtimeId": "c11-gcc11-compat-v3",
+  "status": "P0 FINAL FROZEN",
+  "frozenAt": "2026-08-20",
+  "previousVersion": "c11-gcc11-compat-v2（v3 变更见 versionUpgradeNote）",
+  "purpose": "为标准单线程 ACM/OJ C11 代码提供稳定、零安装、浏览器本地编译运行与样例调试能力；与 C++11 Runtime 复用基础设施，不复制第二套 Worker",
+  "notAGCC11Replacement": true,
+
+  "versionUpgradeNote": "v1→v2：1) GCC11 Server Reference 编译命令冻结为 gcc-11 -std=c11 <src> -lm -o <out>；2) Browser math 走 WASI libc 内建；3) 修复 ACM corpus expectedStdout；4) 新增 features/math-runtime；5) compare 增加三方 Correctness 指标。v2→v3：Target Triple 拼写校正 wasm32-unkown-wasi → wasm32-unknown-wasi（生产代码 ide-wasi-worker.js C 分支与 runno-runtime.js 内建 clang 同步修正，语义中性，vendor 组件归一化不影响 codegen）；修正测试统计口径（math-runtime 计入 positive）；统计由脚本机器生成",
+
+  "browser": {
+    "compiler": "Clang 8.0.1 (Runno self-host, WASI target)",
+    "compilerVersion": "Clang 8.0.1",
+    "languageStandard": "-std=c11",
+    "compilerFlagsC": "-std=c11 -O0 -fno-common -isysroot /sys -fcolor-diagnostics -ftime-report",
+    "compilerFlagsCpp": "-std=c++11 -O0 -Werror -isysroot /sys -fcolor-diagnostics -ftime-report",
+    "stdlib": "WASI libc (musl-based, sys/include)",
+    "shim": "（C 无 shim；不修改 libc，不补声明；不复制 C++ Header Ownership Table）",
+    "clangFixesForC": [
+      "-fno-common: 规避 clang 8.0.1 wasm32 对 C 暂定定义非 static 全局数组的 codegen 崩溃；C++ 不需要",
+      "C 分支不加 -Werror（§8）：以 gcc-11 -std=c11 实际 exit code 为兼容基准"
+    ],
+    "stackSizeC": "8MB（-z stack-size=8388608，容纳 C 局部大数组）",
+    "stackSizeCpp": "1MB（-z stack-size=1048576，已冻结 C++ Runtime 不变）",
+    "pchPolicy": "none（不引入 C PCH，实测 warm compile 已足够快）",
+    "headerStrictCheck": { "enabled": false, "scope": "C 不复制 C++ GCC11 Header Strict Check", "rationale": "C 与 C++ 语义差异大，Ownership Table 不可移植" },
+    "mathLibraryPolicy": {
+      "serverReference": "gcc-11 -std=c11 <src> -lm -o <out>（-lm 正式冻结；runtime math 输入依赖真实 libm symbol）",
+      "browser": "WASI libc 内建 math symbol（musl 将 sqrt/pow/sin/cos/hypot/fabs/floor/ceil 放入 libc.a），无独立 libm.a；wasm-ld 链 -lc 即提供 math，不添加无意义 -lm",
+      "verified": "runtime math（运行时输入 sqrt/pow/sin/cos/floor/ceil/fabs/hypot）双端输出与 expected 100% 一致"
+    },
+    "longDouble": {
+      "enabled": true,
+      "reason": "§6 A/B 评测：C long double %Lf 完整支持（printf/scanf），无 iostream 问题；普通程序无回退；artifact +25-52KB",
+      "linkFlag": "-lc-printscan-long-double（置于 -lc 之前）"
+    },
+    "languageProfiles": {
+      "c11": { "extension": ".c", "standard": "c11", "pchPolicy": "none", "compatGuard": "none-unless-proven-needed", "werror": false, "defaultLongDouble": true, "mathLibrary": "libc-builtin" },
+      "cpp11": { "extension": ".cpp", "standard": "c++11", "pchPolicy": "explicit-bits-only", "compatGuard": "gcc11-cpp-header-check", "werror": true, "defaultLongDouble": false, "frozen": "cpp11-gcc11-compat-v4" }
+    },
+    "persistent": { "compilerWorker": true, "vfsSysroot": true, "runtimePreload": true, "artifactCacheMax": 8 },
+    "artifactCacheKey": "RUNNO_VERSION | lang | optLevel | pchLevel | longDouble | codeHash（含 lang=c11 与 cpp11 区分）",
+    "executionTimeDefinition": "程序完成 Compile/Link/Wasm instantiate 后，从正式执行用户程序并提供 stdin 开始，到 main/_start 退出并完成 stdout flush 的时间。禁止把 compiler startup/compile/link/wasm compile/wasm instantiate 计入。",
+    "submitModel": "Browser 本地运行不上传源码；仅正式 Submit 才上传服务器。"
+  },
+
+  "officialReference": {
+    "compiler": "GCC 11 (gcc-11)",
+    "compilerVersion": "Ubuntu 11.5.0-1ubuntu1~24.04.1",
+    "languageStandard": "-std=c11",
+    "distro": "Ubuntu 24.04.4 LTS (yqzl-server, SSH host alias 'yqzl-server')",
+    "compileCommand": "gcc-11 -std=c11 <src> -lm -o <out>",
+    "invokeHint": "ssh yqzl-server \"gcc-11 -std=c11 <src> -lm -o <out> && <out> < <in>\"",
+    "comparePolicy": "match Server Compile Result（GCC11 实际 exit code）；不臆断 CE；implicit declaration / incompatible pointer 无 -Werror 下为 warning+PASS"
+  },
+
+  "sysroot": {
+    "tar": "server/public/js/runno/langs/clang-fs.tar.gz",
+    "sha256": "B2E4B0F28A2C56B80CA43B61DC1CA2B62B8263B582735504E6C376FED4B1F363"
+  },
+
+  "verified": {
+    "positiveCompileMatch": "100%（67/67 = features 23 + math-runtime 7 + acm-corpus 37，含 37 个真实 ACM corpus）",
+    "negativeCeMatch": "100% (10/10, 按 GCC11 实际 exit code 判定)",
+    "warningNoCeMatch": "100% (5/5, GCC11 warning+PASS → Browser PASS, -Werror 不误杀)",
+    "compatibilityRuntimeOutputMatch": "100%（Browser==Server，70/70）",
+    "correctnessDeterministicOutputMatch": "100%（Browser==Server==expectedStdout，48/48）",
+    "runtimeMathMatch": "100%（features/math-runtime 7 例计入 positive，运行时输入，双端与 expected 一致）",
+    "runtimeUnsupported": 0,
+    "mismatches": 0
+  },
+
+  "ioLimits": {
+    "stdin": "最大 4 MiB，按 UTF-8 字节动态分配，不静默截断",
+    "stdoutStderr": "各 1 MiB，超限显式标记 outputTruncated"
+  },
+
+  "expectedStdoutFix": {
+    "totalFixed": 20,
+    "wrongValueFixed": ["12_kruskal(14→13)", "13_prim(14→13)", "37_topo(图修正)", "22_fenwick(18/12)", "23_segment_tree(15→13)", "24_fast_pow(243→43)", "15_trie(expected 补全)", "06_combo(sin+cos 值)"],
+    "truncatedToFull": ["03_binary_search", "04_prefix_sum", "09_floyd", "11_union_find", "14_kmp", "15_trie", "22_fenwick", "23_segment_tree", "24_fast_pow", "27_gcd_lcm", "28_modular_inverse", "29_string_hash", "30_geometry_double", "32_malloc_2d", "33_function_ptr_qsort", "34_large_array"],
+    "protocol": "extractStdinBlock 升级支持 // expected: 多行块，向后兼容单行 =>；逐行去尾部空白规范化比较"
+  },
+
+  "performanceBaseline": {
+    "warmCompileC": { "A_int_main": "median ~7ms", "B_stdio_AB": "median ~12ms", "C_stdio_stdlib_string": "median ~13ms", "D_qsort": "median ~12ms", "E_bfs": "median ~13ms", "math_runtime": "见 bench-c11.js" },
+    "comparedToCpp": "C warm compile ~12ms 明显轻于 C++ <bits/stdc++.h> A+B 的 ~150-206ms（~15x）"
+  },
+
+  "versionUpgradeRule": "runtimeId 内任一组件改变都必须生成新 Runtime Version，禁止静默覆盖当前冻结版本。",
+  "regressionGate": "任何 C 路径改动前/后必须跑 C++ Frozen Regression；Positive/Negative/Output 任一 <100% 或 C++ warm compile 显著回退，立即停止重构。"
+}

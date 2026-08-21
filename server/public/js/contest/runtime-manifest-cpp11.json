@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "runtimeId": "cpp11-gcc11-compat-v4",
+  "status": "P0 FROZEN",
+  "frozenAt": "2026-08-20",
+  "previousVersion": "cpp11-gcc11-compat-v3",
+  "versionUpgradeNote": "v4 修复浏览器 Clang -cc1 与 PCH 生成未显式传入 -std=c++11 的问题，阻止 C++14 语法被本地预检误放行；Runtime 资产改用内容版本化 URL。",
+  "purpose": "为标准单线程 ACM/OJ C++11 代码提供稳定、零安装、浏览器本地编译运行与样例调试能力；作为 C11 / Python / Web IDE 集成的稳定基线",
+  "notAGCC11Replacement": true,
+
+  "browser": {
+    "compiler": "Clang 8.0.1 (Runno self-host, WASI target)",
+    "compilerFlags": "-std=c++11 -O0 -Werror -isysroot /sys -fcolor-diagnostics -ftime-report",
+    "stdlib": "WASI libc++ (sys/include/c++/v1)",
+    "shim": "sys/include/bits/stdc++.h (cpp11-gcc11-compat-v3 compatibility shim)",
+    "shimVersion": "cpp11-gcc11-compat-v3",
+    "pch": {
+      "enabled": true,
+      "level": "bits",
+      "strictGate": "仅显式 #include <bits/stdc++.h> 才加载 bits.pch；否则一律 NO C++ PCH。禁止 common/iostream 自动注入、禁止按 vector/sort 猜测、禁止自动加用户未 include 的 Header。",
+      "semanticsRule": "PCH 只能优化编译方式（Header Parse/Frontend Cost），不得改变声明可见性、编译成功与否或运行时输出。"
+    },
+    "headerStrictCheck": {
+      "enabled": true,
+      "module": "server/public/js/contest/gcc11-header-check.js",
+      "gccCompatVersion": "v1",
+      "scope": "仅非 bits/stdc++.h 的显式头模式；bits 显式包含直接豁免",
+      "nature": "GCC11 Compatibility Guard（Ownership Table + 显式 include 集合），非完整 GCC11 Compiler Frontend",
+      "cacheKey": "lang|gccCompatVersion|sourceHash",
+      "latencyMs": 1,
+      "cacheHitMs": 0
+    },
+    "persistent": {
+      "compilerWorker": true,
+      "vfsSysroot": true,
+      "runtimePreload": true,
+      "artifactCacheMax": 8
+    },
+    "executionTimeDefinition": "程序完成 Compile/Link/Wasm instantiate 后，从正式执行用户程序并提供 stdin 开始，到 main/_start 退出并完成 stdout flush 的时间。禁止把 compiler startup/compile/link/wasm compile/wasm instantiate 计入。",
+    "submitModel": "Browser 本地运行不上传源码；仅正式 Submit 才上传服务器。"
+  },
+
+  "officialReference": {
+    "compiler": "GCC/G++ 11.5.x",
+    "version": "11.5.0-1ubuntu1~24.04.1",
+    "distro": "Ubuntu 24.04.4 LTS (yqzl-server, SSH host alias 'yqzl-server')",
+    "std": "-std=c++11",
+    "invokeHint": "ssh yqzl-server \"g++-11 -std=c++11 <src> -o <out> && <out> < <in>\""
+  },
+
+  "sysroot": {
+    "tar": "server/public/js/runno/langs/clang-fs.tar.gz",
+    "sha256": "B2E4B0F28A2C56B80CA43B61DC1CA2B62B8263B582735504E6C376FED4B1F363"
+  },
+
+  "verified": {
+    "positiveCompileMatch": "100% (75/75)",
+    "negativeCeMatch": "100% (13/13)",
+    "deterministicRuntimeOutputMatch": "100% (72/72)",
+    "rawRuntimeOutputMatchInclClassified": "97.3% (73/74, 含重新分类)",
+    "strictCxx11Syntax": "C++14 泛型 lambda 在 Browser 与 g++-11 -std=c++11 均 CE",
+    "stdinTransport": "10000/10000 UTF-8 字节完整读取；上限 4 MiB，超限显式报错",
+    "outputLimit": "stdout/stderr 各 1 MiB，超限显式标记 outputTruncated"
+  },
+
+  "versionUpgradeRule": "runtimeId 内任一组件（compiler / runtime / shim / PCH / gccCompatVersion / sysroot hash / compiler flags）发生改变，都必须生成新的 Runtime Version，禁止静默覆盖当前冻结版本。"
+}

@@ -14,7 +14,20 @@
  *     用户 main() 执行 → 程序退出），stdout/stderr 在 Worker 内缓冲、随结果一次性回传，
  *     计时区间内零 IPC —— executionMs 即纯用户程序运行时间
  * ============================================================ */
-import { WASI } from '/js/runno/runno-wasi.js';
+import { WASI } from '/runtime/runno/0.10.0-ojc4/runno-wasi.js';
+
+const MAX_OUTPUT_CHARS = 1024 * 1024;
+
+function appendCapped(buffer, chunk) {
+  const text = String(chunk == null ? '' : chunk);
+  const remaining = MAX_OUTPUT_CHARS - buffer.text.length;
+  if (remaining <= 0) {
+    buffer.truncated = true;
+    return;
+  }
+  buffer.text += text.slice(0, remaining);
+  if (text.length > remaining) buffer.truncated = true;
+}
 
 /* ---------------- stdin：与 Runno 内嵌 Worker 完全一致的 SAB 协议 ---------------- */
 function makeStdinReader(stdinBuffer) {
@@ -40,16 +53,20 @@ function post(msg, transfer) {
 function cc1Args(lang, optLevel, pchLevel) {
   // wasm32 target features：matomics 使 Clang 后端能 codegen 原子指令（std::atomic/shared_ptr 引用计数/regex 内部原子依赖）。
   // mutable-globals/sign-ext 为 wasm 常用配套。注意：开启原子后链接需 --shared-memory，见 lldArgs 注释。
-  const common = ['-Werror', '-isysroot', '/sys',
+  const base = ['-isysroot', '/sys',
     '-ferror-limit', '4', '-fmessage-length', '80', '-fcolor-diagnostics', '-ftime-report'];
   if (lang === 'c') {
-    return ['clang', '-cc1'].concat(common, [
-      '-triple', 'wasm32-unkown-wasi',
+    // C11 profile：不默认加 -Werror（§8）。以 gcc-11 -std=c11 实际 exit code 为兼容基准，
+    // warning 可展示但不得升级为 CE（避免 Server warning+PASS / Browser CE 反向误杀）。
+    // 显式 -std=c11 对齐 GCC11 C reference 语言标准。
+    return ['clang', '-cc1'].concat(base, ['-std=c11', '-disable-free', '-fno-common',
+      '-triple', 'wasm32-unknown-wasi',
       '-internal-isystem', '/sys/include',
       '-internal-isystem', '/sys/lib/clang/8.0.1/include',
       optLevel, '-emit-obj', '-o', '/program.o', '/program']);
   }
-  const args = ['clang', '-cc1'].concat(common, [
+  // C++11 profile（冻结）：保留 -Werror。
+  const args = ['clang', '-cc1'].concat(base, ['-std=c++11', '-Werror',
     '-emit-obj', '-disable-free',
     '-internal-isystem', '/sys/include/c++/v1',
     '-internal-isystem', '/sys/include',
@@ -69,11 +86,12 @@ function pchTarget(level) {
     ? { pchPath: '/iostream.pch', header: '/sys/include/c++/v1/iostream', out: '/iostream.pch' }
     : { pchPath: '/bits.pch', header: '/sys/include/bits/stdc++.h', out: '/bits.pch' };
 }
+
 function pchGenArgs(optLevel, level) {
   const t = pchTarget(level);
   // 生成 PCH 时不加 -Werror：iostream 等系统头内 #pragma GCC system_header
   // 在作为 PCH 主文件时会告警，若升级为错误将导致生成失败。
-  return ['clang', '-cc1', '-emit-pch', '-disable-free',
+  return ['clang', '-cc1', '-std=c++11', '-emit-pch', '-disable-free',
     '-isysroot', '/sys',
     '-internal-isystem', '/sys/include/c++/v1',
     '-internal-isystem', '/sys/include',
@@ -82,15 +100,23 @@ function pchGenArgs(optLevel, level) {
     optLevel, '-o', t.out, '-x', 'c++-header', t.header];
 }
 
-function lldArgs(lang) {
-  const args = ['wasm-ld', '--no-threads', '--export-dynamic', '-z', 'stack-size=1048576',
+function lldArgs(lang, longDouble) {
+  // 栈大小：C11 用 8MB（对齐 GCC11 Linux 默认栈，容纳局部大数组，如 long long a[100005]）；
+  // C++11 保持冻结的 1MB（不修改已冻结 C++ Runtime 语义路径）。
+  const stackSize = (lang === 'c') ? 'stack-size=8388608' : 'stack-size=1048576';
+  const args = ['wasm-ld', '--no-threads', '--export-dynamic', '-z', stackSize,
     '-L/sys/lib/wasm32-wasi', '/sys/lib/wasm32-wasi/crt1.o', '/program.o', '-lc',
     // compiler-rt builtins：提供 __lttf2/__eqtf2/__addtf3 等 fp128 soft-float 与原子/软浮点辅助。
     // 不链接此库会导致 std::sort 报 undefined __lttf2。
     '-L/sys/lib/clang/8.0.1/lib/wasi', '-lclang_rt.builtins-wasm32'];
-  if (lang !== 'c') args.push('-lc++', '-lc++abi');
-  args.push('-o', '/program.wasm');
-  return args;
+  // long double 格式化输出（cout/printf/%Lf/cin/scanf）需额外链接 printscan 库。
+  // 必须在 -lc 之前链接，确保 __fput_long_double 等符号解析为 printscan 实现
+  // （而非 libc.a 中输出 "disabled" 的桩实现）。默认不启用（PoC 验证后决定）。
+  if (longDouble) {
+    // 重排：printscan 库置于 -lc 之前
+    const idx = args.indexOf('-lc');
+    args.splice(idx, 0, '-lc-printscan-long-double');
+  }
   if (lang !== 'c') args.push('-lc++', '-lc++abi');
   args.push('-o', '/program.wasm');
   return args;
@@ -183,8 +209,9 @@ async function doCompile(msg) {
     timestamps: { access: new Date(), modification: new Date(), change: new Date() }
   };
 
-  // PCH：会话级生成一次（产物留在常驻 VFS）。pchLevel: none|iostream|bits
-  const pchLevel = (msg.pchLevel && msg.pchLevel !== 'none') ? msg.pchLevel : (lang === 'cpp' && msg.usePch ? 'bits' : 'none');
+  // PCH：会话级生成一次（产物留在常驻 VFS）。严格 Gate：仅 bits 允许，其余一律 none。
+  // 禁止 iostream/common 自动注入；无显式 bits/stdc++.h 绝不加载 PCH。
+  const pchLevel = (msg.pchLevel === 'bits' && lang === 'cpp') ? 'bits' : 'none';
   const pchKey = msg.optLevel + '|' + pchLevel;
   if (lang === 'cpp' && pchLevel !== 'none' && !compiler.pchReady[pchKey]) {
     const tTarget = pchTarget(pchLevel);
@@ -220,7 +247,7 @@ async function doCompile(msg) {
   }
 
   // 链接（wasm-ld，同一 VFS，/program.o 不出 Worker）
-  const l = await runCommand(compiler.lldModule, lldArgs(lang), compiler.vfs);
+  const l = await runCommand(compiler.lldModule, lldArgs(lang, !!msg.longDouble), compiler.vfs);
   compiler.vfs = l.fs;
   timing.linkMs = Math.round(l.runMs);
   const out = compiler.vfs['/program.wasm'];
@@ -235,8 +262,8 @@ async function doCompile(msg) {
 /* ---------------- Exec：干净实例运行已编译 artifact ---------------- */
 async function doRun(msg) {
   const timing = { wasmCompileMs: 0, instantiateMs: 0, executionMs: 0 };
-  let stdout = '';
-  let stderr = '';
+  const stdout = { text: '', truncated: false };
+  const stderr = { text: '', truncated: false };
   try {
     let module = msg.module || null;
     if (!module) {
@@ -247,8 +274,8 @@ async function doRun(msg) {
     const wasi = new WASI({
       fs: msg.fs || {}, args: msg.args || [], env: msg.env || {},
       stdin: makeStdinReader(msg.stdinBuffer),
-      stdout: function (s) { stdout += s; },
-      stderr: function (s) { stderr += s; }
+      stdout: function (s) { appendCapped(stdout, s); },
+      stderr: function (s) { appendCapped(stderr, s); }
     });
     const tI0 = performance.now();
     const instance = await WebAssembly.instantiate(module, wasi.getImportObject());
@@ -259,10 +286,17 @@ async function doRun(msg) {
     const result = wasi.start({ instance: instance, module: module });
     timing.executionMs = Math.round((performance.now() - tE0) * 100) / 100;
 
-    post({ type: 'run-result', ok: true, exitCode: result.exitCode, stdout: stdout, stderr: stderr, timing: timing });
+    const outputTruncated = stdout.truncated || stderr.truncated;
+    const notice = outputTruncated ? '\n[本地输出超过 1 MiB，已截断]' : '';
+    post({
+      type: 'run-result', ok: true, exitCode: result.exitCode,
+      stdout: stdout.text, stderr: stderr.text + notice,
+      outputTruncated: outputTruncated, timing: timing
+    });
   } catch (e) {
     post({
-      type: 'run-result', ok: false, exitCode: -1, stdout: stdout, stderr: stderr,
+      type: 'run-result', ok: false, exitCode: -1, stdout: stdout.text, stderr: stderr.text,
+      outputTruncated: stdout.truncated || stderr.truncated,
       error: { message: String(e && e.message || e), name: String(e && e.constructor && e.constructor.name || 'Error') },
       timing: timing
     });
