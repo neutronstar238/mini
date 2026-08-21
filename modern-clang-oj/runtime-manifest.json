@@ -1,0 +1,33 @@
+{
+  "runtimeId": "cpp-modern-engine-v1",
+  "status": "BUILD_PENDING",
+  "engine": "cpp-modern-engine-v1",
+  "profileStandards": {
+    "c17-gcc14-compat-v1": "-std=c17",
+    "cpp17-gcc14-compat-v1": "-std=c++17"
+  },
+  "target": "wasm32-unknown-wasi",
+  "llvm": {
+    "tag": "llvmorg-19.1.7",
+    "commit": "f34bba6980332ba9447397fc8bd8a0951b224747"
+  },
+  "emscripten": {
+    "version": "5.0.2",
+    "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+    "image": "emscripten/emsdk:5.0.2",
+    "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d"
+  },
+  "wasiLibc": {
+    "commit": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+  },
+  "compilerStrategy": "native-host-tablegen + Emscripten cross-build; integrated cc1; dedicated Worker modules with shared PROXYFS/VFS",
+  "memory": {
+    "initialBytes": 268435456,
+    "maximumBytes": 1073741824,
+    "stackBytes": 33554432,
+    "growth": true,
+    "threads": false
+  },
+  "reproducibleBuild": "PENDING",
+  "assets": []
+}

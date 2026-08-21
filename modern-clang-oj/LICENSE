@@ -1,0 +1,7 @@
+Modern Clang Browser Engine build metadata and integration scripts are
+Copyright 2026 Mini-OJ contributors.
+
+The generated compiler/runtime artifacts are derived from the third-party
+projects listed in THIRD_PARTY_NOTICES.md and remain subject to those
+projects' licenses. This file does not grant additional rights to LLVM,
+Clang, LLD, libc++, libc++abi, compiler-rt, wasi-libc, or Emscripten.
