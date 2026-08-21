@@ -1,125 +1,161 @@
-# Mini-OJ —— Chrome 本地预检与可信边缘评测分布式方案
+# Mini-OJ —— Chrome 浏览器多语言编译运行与在线评测
 
-> 依据《在线评测系统（OJ）——Chrome 浏览器本地预检与可信边缘评测分布式方案项目立项申请书》立项。
-> 核心创新：**评测拆分「浏览器本地预检 + 可信边缘评测」两条解耦路径，服务器正常路径不运行参赛代码**。
-> UI 风格复用开源仓库 [CCPCOJ](https://github.com/CSGrandeur/CCPCOJ)（Bootstrap 3 扁平化）。
+Mini-OJ 是一个面向课程与程序设计竞赛的零安装 OJ。选手可直接在桌面 Chrome 的 Web IDE 中编译、运行 C11/C++11，或运行 Python 3；正式提交则由服务器 `JudgeAdapter` 使用隐藏测试生成唯一有效的 Official Verdict。
 
-研究计划详见 [plan.md](./plan.md)，接口文档详见 [docs/api.md](./docs/api.md)。
+项目主线：**Browser Local Run + Server Authoritative Judge**。浏览器结果只用于调试，不上传 Local PASS，不接触隐藏测试，也不参与正式排名。
 
-## 三域架构
+研究计划见 [plan.md](./plan.md)，接口见 [docs/api.md](./docs/api.md)，正式立项书见 [paper/项目申请书.pdf](./paper/项目申请书.pdf)。
 
+## 架构
+
+```text
+Contestant Chrome
+  ├─ 自定义输入 / 公开样例 ──> Browser Runtime（Web Worker，本地）
+  ├─ 登录设备心跳 ──────────> OJ Core（设备状态 / Admin SSE）
+  └─ 正式提交源码 ──────────> OJ Core :3001
+                                  ├─ SQLite（唯一 Owner）
+                                  ├─ JudgeAdapter（权威判题）
+                                  ├─ SSE / Scoreboard
+                                  └─ Internal Admin API
+
+Admin Web :3002 ─────────────> OJ Core Internal API
 ```
-不可信域：选手 Chrome 内 WASM 本地预检（公开样例，不接触隐藏数据）
-中心控制域：OJ Core :3001（唯一 DB Owner + 唯一 Scheduler + 唯一 Worker Registry）
-           Admin   :3002（独立管理 Web，无 DB 直连，经 :3001 internal API）
-可信执行域：Trusted Windows Judge Worker APP（Electron + WSL2 + Isolate 沙箱）
-```
 
-**核心原则**：单 Scheduler、单 DB Owner、数据一致性、正式判题公平性。
-详见 [docs/architecture.md](./docs/architecture.md)。
+| 入口 | 默认端口 | 职责 |
+|---|---:|---|
+| Contestant / OJ Core | 3001 | 题目、Web IDE、提交、JudgeAdapter、SSE、榜单、SQLite |
+| Admin | 3002 | 比赛/题目/提交/重判管理；不直连 SQLite |
 
-## 双 Web 入口（两个独立域名）
+客户端设备管理以登录后的 Chrome 浏览器为对象：浏览器本地保存匿名设备 ID，定时向 OJ Core 上报心跳与运行环境；OJ Core 持久化首次/最后在线时间并判定在线、离线，通过 `client_device_update` SSE 事件实时更新 `/admin/devices`。设备信息仅用于运维诊断，不参与正式 Judge，也不改变浏览器不可信的安全边界。
 
-| 入口 | 域名示例 | 服务端口 | 定位 |
+## Browser Runtime
+
+| 语言 | 浏览器 Runtime | 冻结 ID | 正式 Judge 参考 |
 |---|---|---|---|
-| 选手端 | `contest.example.com` | :3001 | 题面/编辑器+本地预检/提交/状态/榜单 |
-| 管理端 | `admin.example.com` | :3002 | 总览/节点/证书/队列/审计/重判/日志 |
+| C++11 | Clang 8.0.1 + wasm-ld + WASI libc++ | `cpp11-gcc11-compat-v4` | `g++-11 -std=c++11` |
+| C11 | Clang 8.0.1 + wasm-ld + WASI libc | `c11-gcc11-compat-v3` | `gcc-11 -std=c11 -lm` |
+| Python 3 | Pyodide 0.26.4 / CPython 3.12.1 | `py312-cpython-compat-v1` | CPython 3.12 |
 
-两个入口为**两个独立 Node 服务**（`APP_ENTRY=contest|admin` 启动），部署时经 Nginx 分别反代。
-:3002 所有管理操作经 `:3001/internal/admin/*`（HMAC 内部鉴权）完成，**不直连数据库**。
+关键边界：
 
-## 快速启动
+- C++ 编译显式使用 `-std=c++11`，C++14 语法不得被本地预检误放行；
+- C/C++ stdin 按 UTF-8 字节动态分配，最大 4 MiB，不再受旧 8 KiB 缓冲截断；
+- C/C++ 与 Python 的 stdout/stderr 各限制为 1 MiB，超限会明确提示；
+- 两条运行链都在 Web Worker 中执行，超时后中断或终止 Worker，不冻结页面；
+- Runtime 使用 self-host、内容版本化 URL、SHA-256 manifest 和 HTTP `immutable` 缓存；
+- COOP/COEP 保证比赛页面 `crossOriginIsolated === true`。
 
-### 1. 服务端（中心控制域）— 两个独立服务
+C++ 兼容性基线：75/75 正向编译、13/13 负向 CE、72/72 确定性输出匹配。C11 共 82 例、Python 共 87 例回归通过。完整结果见 [docs/compatibility.md](./docs/compatibility.md)、[docs/runtime-c11-final-freeze-report.md](./docs/runtime-c11-final-freeze-report.md) 和 [docs/runtime-python-final-freeze-report.md](./docs/runtime-python-final-freeze-report.md)。
 
-```bash
+## 本地启动
+
+要求：Node.js 16+；正式提交 C/C++ 还需要服务器本机可用的 `gcc`/`g++`（生产部署固定为 `gcc-11`/`g++-11`）。
+
+```powershell
 cd server
-npm install --registry=https://registry.npmmirror.com
-
-# OJ Core（选手端 :3001，唯一 DB Owner + Scheduler）
-# Windows PowerShell:
-$env:APP_ENTRY="contest"; $env:PORT="3001"; $env:DB_FILE="e:\mini\server\data\mini-oj.db"; $env:INTERNAL_API_SECRET="dev-secret"; node src/app.js
-# Linux:
-# APP_ENTRY=contest PORT=3001 DB_FILE=... INTERNAL_API_SECRET=dev-secret node src/app.js
-
-# Admin（管理端 :3002，代理到 :3001）
-$env:APP_ENTRY="admin"; $env:PORT="3002"; $env:DB_FILE="e:\mini\server\data\mini-oj.db"; $env:INTERNAL_API_SECRET="dev-secret"; $env:CORE_BASE_URL="http://127.0.0.1:3001"; node src/app.js
-# Linux:
-# APP_ENTRY=admin PORT=3002 DB_FILE=... INTERNAL_API_SECRET=dev-secret CORE_BASE_URL=http://127.0.0.1:3001 node src/app.js
+npm install
 ```
 
-访问：选手端 `http://localhost:3001`，管理端 `http://localhost:3002`。
-种子数据：管理员 `admin/admin123`，选手 `user1/user123`，Worker 演示注册码 `OJ-DEMO-WORKER-2024`。
+若运行时资产尚不存在，在仓库根目录恢复并校验：
 
-### 2. 可信 Worker（可信执行域）
+```powershell
+.\deploy\fetch-runno-runtime.ps1 -Source "D:\已有的Runno运行时\langs"
+.\deploy\fetch-pyodide-runtime.ps1
 
-```bash
-cd worker
-# 方式一：Electron APP（需 WSL2 + Ubuntu-22.04 + g++/python3）
-npm install && npm start
-# 方式二：headless（联调演示，本机无 WSL 时回退本地编译器）
-node judge/headless.js --register OJ-DEMO-WORKER-2024 --server http://localhost:3001
-node judge/headless.js --server http://localhost:3001
+.\deploy\fetch-runno-runtime.ps1 -VerifyOnly
+.\deploy\fetch-pyodide-runtime.ps1 -VerifyOnly
 ```
 
-> Worker 连接的是 **OJ Core :3001**（唯一控制面），不连接 :3002。
+启动 OJ Core：
 
-> 本机演示如 WSL 发行版非 22.04，可 `$env:MINIOJ_WSL_DISTRO="Ubuntu-24.04"`。
+```powershell
+cd server
+$env:APP_ENTRY="contest"
+$env:PORT="3001"
+$env:C_COMPILER="gcc"
+$env:CPP_COMPILER="g++"
+node src/app.js
+```
 
-### 3. 演示流程
+另开终端启动 Admin：
 
-1. 管理端登录 `admin/admin123` → 节点管理：审批并认证 Worker 为「可信」；
-2. 选手端登录 `user1/user123` → 打开题目 → 编辑器内「本地预检（公开样例）」→ 提交；
-3. 提交经完整状态机（SUBMITTED→PENDING→LEASED→RUNNING→AC/WA/TLE）由可信 Worker 评测；
-4. 榜单与审计实时更新。
+```powershell
+cd server
+$env:APP_ENTRY="admin"
+$env:PORT="3002"
+$env:CORE_BASE_URL="http://127.0.0.1:3001"
+$env:INTERNAL_API_SECRET="dev-secret"
+node src/app.js
+```
 
-## 核心特性（对照申请书）
+访问 `http://localhost:3001` 与 `http://localhost:3002`。开发种子账号：选手 `user1/user123`，管理员 `admin/admin123`。
 
-- [x] 浏览器本地预检：公开样例在 WASM/Pyodide 内试跑（不装软件、不接触隐藏测试点）
-- [x] 三域解耦：服务器正常路径不运行参赛代码，正式评测仅经可信 Worker
-- [x] 可信 Worker：Electron + WSL2 + Isolate 沙箱，仅授权拉取隐藏测试点
-- [x] 双 Web 独立入口（选手端 / 管理端，两个域名）
-- [x] 完整状态机 + 租约 lease + attempt 重试
-- [x] 信任链：证书身份、trust_status 审批、runtime_manifest_hash、HMAC 验签/幂等、跨节点抽查
-- [x] 全链路审计、管理端总览/节点/证书/队列/重判/日志
-- [x] SQLite（better-sqlite3）+ Repository 接口 + PostgreSQL 配置项
-- [x] Docker 容器化部署（见 deploy/）
-- [x] 服务端 Nginx + pm2 双域名生产部署（见下方「服务端部署」）
+## 核心流程
 
-## 服务端部署（Nginx + pm2）
+1. 选手打开题目，选择 C11、C++11 或 Python 3；
+2. “运行代码”使用自定义 stdin，纯浏览器本地执行；
+3. “运行样例”本地逐项对比公开输入输出；
+4. “正式提交”只上传源码、语言和幂等键；
+5. OJ Core 写入权威 `server_received_at`，由 `JudgeAdapter` 执行隐藏测试；
+6. 状态经 SSE 推送，断线时使用轮询兜底；正式结果进入提交记录和榜单。
 
-两个独立 Node 服务经 Nginx 反代，共享同一 SQLite 库；正式评测下沉到可信 Worker，服务端不运行参赛代码。
+## 测试
 
-| 入口 | 服务端口 | 启动参数 | 职责 |
-|---|---|---|---|
-| 选手端 | :3001 | `APP_ENTRY=contest` | 题面/编辑器+本地预检/提交/状态/榜单 |
-| 管理端 | :3002 | `APP_ENTRY=admin` | 总览/节点/证书/队列/审计/重判/日志 |
+服务器运行后执行：
 
-一键脚本（参考部署服务器上既有站点 blog 的模式）：
+```powershell
+cd server
 
-```bash
-# 1) 在 deploy/ 下把占位域名改为你的真实域名（以下文件均需替换）
-#    deploy/deploy-remote.sh      → DOMAIN_CONTEST / DOMAIN_ADMIN
-#    deploy/nginx/*.conf.example  → server_name / root / 证书路径 / 日志路径
-#    server/src/config.js         → DOMAIN_CONTEST / DOMAIN_ADMIN 默认值
+# 正式提交主链路：含 C/C++/Python 的 AC、WA、CE、RE、TLE 等
+npm run test:e2e -- http://localhost:3001
 
-# 2) 本地打包上传 + 服务器端执行（npm/pm2/证书/nginx）
-#    Windows PowerShell:
+# 真实 Chrome Browser Runtime 边界：C++11、长 stdin、大输出、缓存头
+npm run test:web-runtime -- http://localhost:3001
+
+# Scoreboard / SSE / Cache Lease / Rejudge
+node ..\scripts\e2e\phase5-scoreboard-sse.js http://localhost:3001
+```
+
+能力矩阵脚本与冻结数据位于 `compat-tests/`；压力测试位于 `scripts/stress/`。
+
+## 生产部署
+
+部署采用 PM2 双进程 + Nginx 双域名。脚本会把 Contestant 指向 3001、Admin 指向 3002，并为 Runtime 大文件启用 gzip 与版本化长缓存。
+
+```powershell
 powershell -ExecutionPolicy Bypass -File deploy/deploy-server.ps1
-#    或在服务器上直接执行（脚本已上传至 /tmp/deploy-remote.sh）：
-ssh <server> 'export PATH=/www/server/nodejs/v24.14.1/bin:/usr/bin:/bin; bash /tmp/deploy-remote.sh'
 ```
 
-`deploy/deploy-remote.sh` 会依次完成：npm install → pm2 启动双服务 → 写 nginx 80/443 配置 → 签发 Let's Encrypt 证书 → reload nginx。仓库内不保留真实域名与备案号，请勿将个人信息提交到公共仓库。
+生产 Contestant 进程应配置：
 
-## 目录结构
-
-```
-├── plan.md            三域架构与实现总纲
-├── docs/api.md        接口与信任链协议
-├── server/            中心控制域（双入口 Web + 调度 + 租约 + 信任链）
-├── worker/            可信 Windows Judge Worker（Electron + WSL/Isolate）
-└── deploy/            部署（deploy-remote.sh 一键脚本 + nginx 模板 + docker-compose）
+```text
+APP_ENTRY=contest
+PORT=3001
+C_COMPILER=gcc-11
+CPP_COMPILER=g++-11
 ```
 
-> 早期 `local/` 实现已按正式申请书迁移至 `worker/`（见 `local/README.md`）。
+Runtime 资产、版本升级与 COOP/COEP 要求详见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)。
+
+## 信任边界
+
+| 内容 | 权威性 |
+|---|---|
+| Local stdout、Local Sample Passed、浏览器耗时 | 仅调试，不可信 |
+| 浏览器 Runtime ID / hash | 仅诊断，不可信 |
+| `server_received_at`、隐藏测试、JudgeAdapter verdict | 正式权威 |
+
+当前 `JudgeAdapter` 足以完成课程项目和核心功能验收。如果进入公网对抗环境，应保持接口不变，将其执行层替换为容器/cgroup/nsjail 等服务器沙箱；这不是本期 Web 编译运行主线的前置条件。
+
+## 目录
+
+```text
+├─ server/                 OJ Core、Admin、Web IDE、JudgeAdapter、SQLite
+├─ compat-tests/           Browser/GCC/CPython 兼容矩阵与基线
+├─ scripts/e2e/            正式提交、SSE、榜单 E2E
+├─ scripts/stress/         负载测试
+├─ deploy/                 PM2、Nginx、运行时资产恢复脚本
+├─ docs/                   架构、接口与 Runtime 冻结报告
+├─ paper/                  项目立项书与实践报告
+└─ worker/                 早期实验实现；不属于本期主链路
+```

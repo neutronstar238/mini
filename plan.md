@@ -1,231 +1,158 @@
-# 在线评测系统（OJ）—— Chrome 浏览器本地预检与可信边缘评测分布式方案
+# 在线评测系统（OJ）——Chrome 浏览器多语言编译运行与服务器权威判题
+
 ## 项目研究计划 / 实现总纲
 
-> 依据《在线评测系统（OJ）——Chrome 浏览器本地预检与可信边缘评测分布式方案项目立项申请书》正式立项。
-> 项目为**单人项目**，8 天逐日推进，以 Git 提交管理并每日自验收。
-> 参考 UI 风格：开源仓库 [CCPCOJ](https://github.com/CSGrandeur/CCPCOJ)（Bootstrap 3 扁平化、深色导航条、左侧边栏）。
+> 项目周期：8 天，单人项目。项目主线为 **Browser Local Run + Server JudgeAdapter**。
+> Windows Judge Worker、WSL2 Worker、客户端可信判题不属于本期验收范围，仅保留为后续实验方向。
 
----
+## 1. 立项问题
 
-## 1. 背景与问题
+传统 OJ 即使只运行公开样例或测试自定义输入，也要把源码发送到服务器编译执行，带来排队等待、服务端计算开销和本地环境不一致三个问题。本项目把高频调试下沉到浏览器：选手只需桌面 Chrome，即可在 Web IDE 内完成 C11、C++11、Python 3 的编译或解释执行。
 
-传统 OJ 的痛点：
-- **服务器集中评测压力大**：每次提交都在服务器编译运行，高峰拥堵、排队延迟高、扩容成本高；
-- **评测公平性难保证**：选手本机预检（自装编译器）易被操纵/隐藏，无法采信，与正式结果割裂；
-- **单点信任**：评测机一旦被篡改即影响全局结果，缺少可审计、可抽检的信任体系。
+浏览器完全不可信，因此本地结果只用于调试。正式提交仍将源码发往 OJ Core，由服务器 `JudgeAdapter` 在隐藏测试上生成唯一有效的 AC、WA、TLE、MLE、RE 或 CE。
 
-## 2. 核心创新（申请书立项要点）
+## 2. 本期目标
 
-**本方案把评测拆成"浏览器本地预检 + 可信边缘评测"两条解耦路径，服务器正常路径不运行参赛代码：**
+完成以下可演示闭环：
 
-1. **本地预检（浏览器 WebAssembly，不可信域）**：选手在 Chrome 内通过 WASM 编译器
-   （C/C++ 走 Clang/LLD-to-Wasm，Python 走 Pyodide）对**公开样例**做本地编译与试跑，
-   不安装任何 Local Agent，**不接触隐藏测试点**。预检通过即上传，减轻服务器负担。
-2. **可信边缘评测（WSL 沙箱，可信执行域）**：正式评测只在**可信 Windows Judge Worker
-   的 WSL 2 + Ubuntu 22.04 + Isolate 沙箱**中运行，隐藏测试点仅授权可信 Worker 拉取。
-3. **三域解耦 + 中心仲裁**：服务器只负责调度/租约/验签/仲裁/榜单，**不运行参赛代码**。
-
-## 3. 总体架构（三域）
-
-```
-┌──────────────────── 不可信域 (Untrusted) ────────────────────┐
-│  Contestant Chrome 选手端 Web (student 域名)                   │
-│   ├─ 题面/编辑器/提交/状态/榜单 (Web)                          │
-│   └─ 本地预检 Web Worker: WASM Clang(C/C++) + Pyodide(Python) │
-│       对公开样例试跑 → LocalVerification(本地预检)             │
-└──────────────┬────────────────────────────────────────────────┘
-               │ HTTPS/SSE
-┌──────────────▼──────────────── 中心控制域 (Central) ─────────┐
-│  OJ Server (管理端 admin 域名 + 选手端 contest 域名)            │
-│   ├─ 用户/权限 · 题目(隐藏测试点加密) · 提交状态机 · 榜单        │
-│   ├─ Scheduler: 租约(lease)/attempt 分配 · 跨节点抽查调度       │
-│   ├─ Trust: 证书身份 · trust_status 审批 · 验签/幂等/仲裁        │
-│   ├─ Audit: 全链路审计 · 异常自动重判                           │
-│   └─ 存储: SQLite(better-sqlite3) + Repository + PG 配置项     │
-└──────────────┬────────────────────────────────────────────────┘
-               │ mTLS + 任务签名(lease/nonce) + 租约心跳
-┌──────────────▼──────────────── 可信执行域 (Trusted) ──────────┐
-│  Trusted Windows Judge Worker APP (Electron)                   │
-│   ├─ WSL 2 + Ubuntu 22.04 + Isolate 隔离沙箱                    │
-│   ├─ 仅授权 Worker 拉取隐藏测试点                              │
-│   ├─ 运行时自检(runtime_manifest_hash) · 证书身份 · 心跳        │
-│   └─ 结果签名回传 · 接受跨节点抽查重判                          │
-└────────────────────────────────────────────────────────────────┘
+```text
+登录 → 进入比赛 → 打开题目 → Web IDE 编写代码
+  ├─ 运行代码：自定义 stdin，浏览器本地执行
+  ├─ 运行样例：公开样例，浏览器本地逐项比较
+  └─ 正式提交：源码发送服务器 → JudgeAdapter → Official Verdict
+                                      └─ SSE / 轮询 → 提交记录与榜单
 ```
 
-**两条路径**：
-- 选手本地预检通过 → 提交 → 服务器入队 → 调度到可信 Worker → 正式评测 → 结果广播榜单。
-- 服务器**正常路径不运行参赛代码**，只在可信 Worker 的 Isolate 沙箱内执行。
+本期优先级：
 
-## 4. 双 Web 入口（两个独立域名）
+1. Web 端 C11、C++11、Python 3 编译运行正确、快速且不冻结 UI；
+2. Local 与 Official 的信任边界明确，隐藏测试永不进入浏览器；
+3. 选手端、管理端、提交、判题、榜单构成可部署的完整 MVP；
+4. 运行时版本可冻结、可校验、可在新机器复现。
 
-| 入口 | 域名示例 | 定位 | 页面 |
+## 3. 明确不做
+
+- 不把选手电脑或浏览器作为正式 Judge；
+- 不下发隐藏测试，不上传或采信 Local PASS；
+- 不开发 Windows Judge Worker、WSL2 bootstrap 或 Local Agent；
+- 不把 Docker、nsjail、分布式 Worker 集群列为本期验收条件；
+- 不实现 PostgreSQL、Redis、消息队列或 Kubernetes；
+- 不承诺 Browser Runtime 与服务器 GCC/CPython 在所有系统 API 上完全一致。
+
+## 4. 总体架构
+
+### 4.1 Contestant Web（Chrome）
+
+- 题面、代码编辑器、语言选择、自定义输入、公开样例；
+- C/C++ 与 Python 均运行在独立 Web Worker；
+- 本地草稿按用户、比赛、题目隔离；
+- 本地运行不发源码请求，正式提交才上传源码；
+- 本地耗时仅作参考，不用于正式 TLE。
+
+### 4.2 OJ Core（`:3001`）
+
+- 唯一 SQLite Owner；
+- 用户、比赛、题目、Submission 与权威 `server_received_at`；
+- `JudgeAdapter` 正式判题，状态机为 `QUEUED → JUDGING → FINISHED`；
+- SSE 提交更新、榜单内存快照、10 秒批量更新和轮询兜底；
+- Internal Admin API、限流和审计。
+
+### 4.3 Admin（`:3002`）
+
+- 管理比赛、题目、提交与重判；
+- 通过 OJ Core 的 Internal API 改变正式状态；
+- 不直接打开 SQLite，不创建第二个 Scheduler。
+
+## 5. Browser Runtime 冻结方案
+
+| 语言 | 浏览器实现 | 冻结版本 | 正式参考 |
 |---|---|---|---|
-| 选手端 | `contest.example.com` | 面向参赛者 | 登录/题目/编辑器+本地预检/提交/状态/榜单 |
-| 管理端 | `admin.example.com` | 面向管理员 | 总览/节点管理/证书/任务队列/审计/重判/日志 |
+| C++11 | 自托管 Clang 8.0.1 + wasm-ld + WASI libc++ | `cpp11-gcc11-compat-v4`，显式 `-std=c++11` | `g++-11 -std=c++11` |
+| C11 | 自托管 Clang 8.0.1 + wasm-ld + WASI libc | `c11-gcc11-compat-v3`，显式 `-std=c11` | `gcc-11 -std=c11 -lm` |
+| Python 3 | Pyodide 0.26.4 / CPython 3.12.1 | `py312-cpython-compat-v1` | CPython 3.12 |
 
-两者**逻辑隔离、独立入口**。管理端默认不开放注册，仅管理员可登录；选手端不暴露评测机
-内部接口。同源服务端通过**路由前缀 + 独立中间件**实现双域名区分，部署时可经
-Nginx 按 `ServerName` 分发到同一应用（`contest`/`admin` 两个入口上下文）。
+核心实现：
 
-## 5. 提交状态机（正式定义）
+- C/C++ 使用常驻 Compiler Worker、常驻 VFS/sysroot、Compile Once Run Many；
+- 仅显式包含 `bits/stdc++.h` 时使用 PCH，避免 PCH 改变声明可见性；
+- C++ 增加 GCC11 Header Strict Check，减少浏览器误放行漏头代码；
+- Python 使用常驻 Pyodide Worker、源码编译缓存和每次运行状态重置；
+- 运行时资源 self-host，通过版本化 URL 和 HTTP `immutable` 缓存；
+- 页面启用 COOP/COEP，保证 SharedArrayBuffer 超时中断能力；
+- C/C++ stdin 按 UTF-8 动态分配，最大 4 MiB；C/C++ 与 Python 的 stdout/stderr 各限制 1 MiB，并明确提示截断；
+- C/C++ 和 Python 超时均终止执行 Worker，不能冻结主 UI。
 
-```
-SUBMITTED(已提交/本地预检标记)
-  └→ PENDING(排队中)
-       └→ LEASED(已租约给 Worker)
-            ├→ COMPILING(编译中)
-            ├→ RUNNING(评测中)
-            └→ (租约超时/Worker 异常 → 回到 PENDING，attempt+1)
-                 └→ VERIFYING(跨节点抽查/复核)
-                      └→ AC | WA | TLE | MLE | RE | CE | SE(系统错误)
-```
+## 6. 信任与数据边界
 
-- `attempt`：同一次提交的重试次数（lease 过期、验签失败、抽查不符时递增，达上限判定 SE/拒判）；
-- `lease`：Worker 领取任务的一次性租约（含 nonce + 有效期），防止任务重复领取与重放。
+| 数据或结果 | 是否可信 | 用途 |
+|---|---:|---|
+| Browser Local stdout / elapsed time / Sample Passed | 否 | 仅选手调试 |
+| Browser Runtime ID / artifact hash | 否 | 诊断和复现 |
+| 服务器 `server_received_at` | 是 | 截止时间、罚时、排序 |
+| 服务器隐藏测试 | 是 | 仅正式判题 |
+| `JudgeAdapter` Official Verdict | 是 | 提交记录与榜单 |
 
-## 6. 任务 JSON 与信任链协议
+正式提交以 `(user_id, client_request_id)` 唯一约束保证网络重试幂等。源码最大 256 KiB，同一用户正式提交限速 1 次/秒。Local Run 不请求服务器，因此不占用正式判题队列。
 
-### 6.1 任务下发（server → worker）
+## 7. 功能范围
 
-```jsonc
-{
-  "task_id": "uuid", "submission_id": "uuid", "attempt": 1,
-  "language": "cpp" | "python",
-  "code": "选手代码",
-  "problem": {
-    "time_limit_ms": 1000, "memory_limit_mb": 256,
-    "testcases": [ { "id":1, "input":"…", "answer":"…" } ]   // 隐藏测试点，仅授权可信 Worker
-  },
-  "worker_id": "可信WorkerID", "tier": "trusted",
-  "lease": { "lease_id": "uuid", "nonce": "随机", "expires_at": 1755563947012 },
-  "runtime_manifest_hash": "sha256",   // 期望的运行时清单哈希（防止 Worker 篡改运行环境）
-  "trust_status": "approved",
-  "sig": "HMAC-SHA256(worker_secret, 规范化串)"
-}
-```
+### 7.1 选手端
 
-### 6.2 结果回传（worker → server）
+- 登录与比赛列表；
+- 题目浏览与用户隔离的本地草稿；
+- C11、C++11、Python 3 本地运行和公开样例；
+- 正式提交、提交记录、状态更新；
+- ICPC 榜单、Solved/Penalty 和逐题统计。
 
-```jsonc
-{
-  "task_id": "…", "submission_id": "…", "attempt": 1,
-  "status": "AC", "cases": [ {id,status,time_ms,memory_kb} ],
-  "runtime_manifest_hash": "sha256",    // Worker 报告的实际运行时哈希
-  "worker_id": "…", "lease_id": "…", "nonce": "…",
-  "env": { "wsl_version":"…","ubuntu":"22.04","isolate":"…","self_hash":"…" },
-  "sig": "HMAC-SHA256"
-}
-```
+### 7.2 管理端
 
-### 6.3 信任与安全闭环
+- 管理员登录、比赛与题目维护；
+- 隐藏测试仅服务器保存；
+- 提交查看、重判与审计；
+- 系统与队列状态展示。
 
-| 机制 | 说明 |
+## 8. 8 天实施计划
+
+| 日期 | 工作 | 验收 |
+|---|---|---|
+| D1 | 范围与信任边界冻结，Runno/Pyodide 技术验证 | Chrome 中三语言 Hello World 与 stdin/stdout 成功 |
+| D2 | C++11 Compiler Worker、WASI、PCH、缓存 | 自定义输入、公开样例、超时终止可用 |
+| D3 | GCC11 兼容矩阵与严格头文件检查 | 正向、负向、确定性输出回归通过 |
+| D4 | C11 独立语言配置与数学库验证 | C11 能力矩阵全通过，不破坏 C++ |
+| D5 | Pyodide Worker、状态重置、缓存和中断 | Python 正向、异常、隔离和内存压力通过 |
+| D6 | Web IDE 与三语言统一接口 | 运行代码、运行样例、正式提交明确分离 |
+| D7 | OJ Core、JudgeAdapter、SSE、榜单、Admin | 选手和管理员主链路贯通 |
+| D8 | 部署、E2E、边界回归与文档 | 空白 Chrome 完成三语言运行和正式 AC |
+
+## 9. 验收标准
+
+| 验收项 | 标准 |
 |---|---|
-| 证书身份 | Worker 注册后由管理员签发**证书/密钥对**（mTLS 可选，HTTP+HMAC 亦可），凭 `worker_id` 访问 |
-| trust_status | Worker 需 `approved`（管理员审批）后才可领取隐藏测试点；`suspended/revoked` 自动下线 |
-| 租约 lease | 任务一次性租约（lease_id+nonce+expires_at），服务端缓存防重放；过期自动回 PENDING |
-| runtime_manifest_hash | 服务器下发期望运行时哈希，Worker 上报实际哈希，不一致→异常告警并触发重判 |
-| 跨节点抽查 | 服务器可对同一 submission 下发至第二个可信 Worker 重判，比对结果一致性 |
-| 验签/幂等 | 结果全字段 HMAC 验签；重复回传（同 lease_id）幂等拒绝 |
-| 审计 | 全链路事件落库（下发/心跳/回传/抽查/重判/异常），管理端可追溯 |
+| 零安装 | 客户端仅需支持版本的桌面 Chrome |
+| 三语言 | C11、C++11、Python 3 可直接在 Web IDE 编译/运行 |
+| 标准约束 | C++14 泛型 lambda 在 C++11 模式必须 CE |
+| 输入边界 | 10,000 字节回归完整，最大支持 4 MiB，不静默截断 |
+| 输出边界 | 每个输出通道超过 1 MiB 时截断并提示，页面不失去响应 |
+| 兼容性 | C++ 75/75 正向、13/13 负向、72/72 确定性输出；C11 82 例；Python 87 例全部通过 |
+| 超时 | 无限循环可中断或终止 Worker，主页面继续可用 |
+| 正式判题 | C、C++、Python 提交均由服务器 JudgeAdapter 正常返回 Official Verdict |
+| 隐藏测试 | 浏览器 Network、Cache 和 Bundle 中均不存在隐藏测试 |
+| 幂等与时间 | `clientRequestId` 防重复提交，`server_received_at` 为权威时间 |
+| 实时状态 | SSE 正常更新，断线时轮询兜底 |
+| 部署复现 | Runno/Pyodide 资产可校验；版本化资源使用 immutable 缓存 |
 
-## 7. 浏览器本地预检（不可信域，不接触隐藏数据）
+## 10. 已知限制与后续优化
 
-- **C/C++**：`contest/public/js/wasm/` 内置 Clang-WASM 编译器（原型选用可分发 WASM 工具链），
-  选手代码 + 公开样例输入在 Web Worker 内编译为 WASM 并执行比对；
-- **Python**：`Pyodide` Web Worker 运行 Python 并比对公开样例；
-- 预检只读公开 `samples`，**不请求**隐藏 `testcases`；结果作为 `localVerification` 标记随提交上报；
-- 环境检测页展示是否支持 WASM/Pyodide，不满足则提示但仍可提交（正式评测仍走可信 Worker）。
+- 浏览器 Clang/WASI 与服务器 GCC/Linux 的 ABI、系统调用和极端浮点行为可能不同；正式结果始终以服务器为准；
+- 首次加载 C/C++ 工具链约 50 MiB、Python Runtime 约 13.2 MiB，需依赖 gzip、版本化缓存与赛前预热；
+- 当前 `JudgeAdapter` 适合课程项目与功能验收，若进入公网对抗环境，应在保持接口不变的前提下替换为容器/cgroup/nsjail 沙箱；
+- Windows Judge Worker、分布式 Scheduler、PostgreSQL/Redis 和更多语言均为 P2，不影响本期核心验收。
 
-> 实现说明：WASM C 编译器体积较大，本实现以「C/C++ 通过 WASM 原型 + Python 经 Pyodide」双 Worker
-> 提供本地预检；若无法完整内嵌 Clang-WASM，则退化为「本地样例自检脚本提示」并在文档如实声明边界。
+## 11. 交付物
 
-## 8. 可信 Windows Judge Worker（Electron APP）
-
-- **Electron 外壳**：系统托盘 + 注册证书 + 启动自检 + 心跳 + 收任务/回传；
-- **评测沙箱**：调用 `wsl -d Ubuntu-22.04 -- bash -c "isolate ..."`，Isolate 提供 CPU 时间/
-  内存/墙钟/输出限制与进程隔离（Linux 原生，比 Windows taskkill 更可信）；
-- **运行时自检**：开机与每任务前计算 `runtime_manifest_hash`（对 `wsl.conf`/Isolate 配置/
-  评测脚本的 SHA-256），上报服务器比对；
-- **证书身份**：注册换取 `worker_id + secret`（或证书），心跳携带环境指纹与信任状态。
-- **Electron 界面**：最小化到托盘，主窗口显示连接状态/最近任务/日志/自检结果。
-
-> 边界声明：Electron Worker 提供可信评测的执行载体；正式评测隔离依赖 WSL+Isolate 沙箱，
-> Windows 侧仅做资源管理与通信，不运行参赛代码。
-
-## 9. 服务端（中心控制域）数据与接口
-
-- **存储**：SQLite（better-sqlite3 事务化，WAL）+ Repository 统一接口 + PostgreSQL 配置切换；
-- **认证**：选手/管理员双角色；管理端独立中间件与路由前缀；
-- **接口分组**：
-  - 选手端：`/contest/**`（登录/题目/提交/状态/榜单）
-  - 管理端：`/admin/**`（总览/节点/证书/队列/审计/重判/日志）
-  - 评测协议：`/worker/**`（注册/证书/task 下发/心跳/回传/抽查）
-- **状态广播**：SSE 实时推送提交状态与榜单变化。
-
-## 10. 里程碑（8 天单人，逐日自验收）
-
-| 日程 | 内容 |
-|---|---|
-| D1 | 立项冻结：三域架构、双入口、任务JSON/状态机/信任链契约；重建 plan.md |
-| D2 | server 双入口：选手端(contest)+管理端(admin) 独立路由与页面、用户/权限/题目/提交 |
-| D3 | 中心控制面：状态机(S→P→L→C→R→V→verdict)、租约 lease/attempt、Scheduler 调度 |
-| D4 | 信任链：Worker 注册/证书、trust_status 审批、runtime_manifest_hash、验签/幂等、跨节点抽查 |
-| D5 | 选手端预检：WASM C/C++ + Pyodide Python Web Worker、本地预检标记、环境检测 |
-| D6 | 可信 Worker APP：Electron 外壳 + WSL/Isolate 调用 + 运行时自检 + 报告签名 |
-| D7 | 管理端完整后台：总览/节点/证书/队列/审计/重判/日志 |
-| D8 | 文档、部署、双节点一致性/安全注入验收 |
-
-## 11. 目录结构
-
-```
-e:/mini/
-├── plan.md                 # 本文档
-├── README.md               # 快速启动（双入口 + Worker）
-├── docs/api.md             # 三域接口与信任链协议
-├── server/                 # 中心控制域（Node.js + Express + SQLite）
-│   ├── src/
-│   │   ├── app.js          # 双入口路由装载（contest/admin/worker）
-│   │   ├── config.js
-│   │   ├── middleware/     # auth(选手) + authAdmin + requireRole
-│   │   ├── routes/
-│   │   │   ├── contest/    # 选手端：auth/problems/submissions/rank
-│   │   │   ├── admin/      # 管理端：overview/nodes/certs/queue/audit/rejudge
-│   │   │   └── worker/     # 评测协议：register/lease/report/heartbeat/spotcheck
-│   │   ├── services/       # state-machine / scheduler / trust / rejudge
-│   │   ├── store/          # Repository: sqlite + pg 配置
-│   │   ├── security/       # HMAC / cert / nonce / lease
-│   │   ├── sse/            # hub
-│   │   └── seed.js
-│   ├── views/
-│   │   ├── contest/        # 选手端页面
-│   │   └── admin/          # 管理端页面
-│   ├── public/
-│   │   ├── css/            # ccpcoj.css / login.css
-│   │   └── js/
-│   │       ├── contest/    # 选手端 js
-│   │       ├── admin/      # 管理端 js
-│   │       └── wasm/       # 本地预检 WASM/Pyodide 资源
-│   └── Dockerfile
-├── deploy/                 # docker-compose + nginx（双域名 ServerName 分发）
-├── scripts/demo.ps1
-└── worker/                 # 可信 Windows Judge Worker（Electron）
-    ├── package.json
-    ├── main.js             # Electron 主进程
-    ├── preload.js
-    ├── judge/              # WSL + Isolate 沙箱调用
-    ├── security/           # 证书/自检/签名
-    └── ui/                 # 托盘/主窗口
-```
-
-## 12. 验收标准
-
-1. 双域名：`contest.*` 选手端与 `admin.*` 管理端各自独立可访问、逻辑隔离；
-2. 选手本地预检：公开样例在浏览器 WASM/Pyodide 试跑通过后提交；
-3. 正式评测仅经可信 Worker（WSL+Isolate）；服务器正常路径不运行参赛代码；
-4. 状态机完整流转，租约超时自动重排，attempt 正确累加；
-5. 信任链：worker 未审批无法拉隐藏测试点；runtime_manifest_hash 不一致触发告警与重判；
-6. 跨节点抽查：双 Worker 结果一致性校验，不一致进入审计重判；
-7. 管理端后台可查节点/证书/队列/审计/重判/日志；
-8. 文档齐备，双节点一致性与安全注入（签名伪造/重放/篡改/证书吊销）验收通过。
+- 可部署的 Contestant Web、Admin Web 与 OJ Core；
+- C11、C++11、Python 3 Browser Runtime 与冻结 manifest；
+- 服务器 `JudgeAdapter` 正式判题链路；
+- Runtime 能力矩阵、边界 E2E、提交判题 E2E、SSE/榜单回归；
+- Nginx/PM2 部署脚本、运行时资产恢复与校验脚本；
+- README、架构/接口/Runtime 报告与项目立项申请书。

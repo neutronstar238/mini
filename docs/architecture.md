@@ -1,159 +1,118 @@
-# Mini-OJ 架构说明（三域 + 单 Scheduler + 单 DB Owner）
+# Mini-OJ 当前架构
 
-依据《Chrome 浏览器本地预检与可信边缘评测分布式方案项目立项申请书》与指导文档实现。
+当前主线为 **Browser Local Run + Server JudgeAdapter**。浏览器承担高频调试，服务器承担正式判题；早期 Trusted Worker 协议仍保留在仓库中，但不属于本期核心流程。
 
----
+## 1. 两条执行路径
 
-## 1. 架构
+```text
+Contestant Chrome
+  │
+  ├─ 运行代码 / 运行样例
+  │      └─ Browser Web Worker
+  │           ├─ C/C++: Clang + wasm-ld + WASI
+  │           └─ Python: Pyodide / CPython Wasm
+  │
+  └─ 正式提交 source + language + clientRequestId
+         └─ OJ Core :3001
+              ├─ SQLite 权威记录
+              ├─ JudgeService
+              ├─ JudgeAdapter（gcc-11 / g++-11 / python3）
+              └─ Official Verdict → SSE → 提交记录 / 榜单
 
-```
-┌──────────── 不可信域（Contestant Chrome）────────────┐
-│  WASM 本地预检（C/C++/Python 公开样例）· 不接触隐藏数据 │
-└───────────────────┬──────────────────────────────────┘
-                    │ HTTPS / SSE
-┌───────────────────▼────────────── :3001 OJ Core ────┐
-│  · 唯一 SQLite DB Owner（WAL + busy_timeout + 短事务）│
-│  · 唯一 Scheduler（事件驱动 + watchdog）              │
-│  · 唯一 Judge State Machine / Lease Manager          │
-│  · 唯一 Worker Registry（内存心跳，不写 DB）           │
-│  · 选手 SSE（batch+delta）+ 内存榜单 + cache lease     │
-│  · /internal/admin/* 内部管理 API（HMAC 鉴权）        │
-└───────────┬───────────────────────────┬──────────────┘
-            │ internal API（:3002 无 DB 直连）│ mTLS/HMAC + SSE/WS
-┌───────────▼────────── :3002 Admin ───┐ ┌────────────▼──── 可信执行域 ─┐
-│  · 独立管理 Web                       │ │  Windows Judge Worker APP     │
-│  · 无 SQLite 直连 / 无 Scheduler      │ │  · WSL2 + Ubuntu 22.04        │
-│  · 全部经 :3001 internal API          │ │  · Isolate 沙箱               │
-│  · SSE 桥接 :3001 事件流              │ │  · 心跳内存化                 │
-└──────────────────────────────────────┘ └───────────────────────────────┘
+Admin :3002 ── authenticated internal API ──> OJ Core :3001
 ```
 
-**核心原则**（指导文档 §1/§2）：
-- **数据一致性**：唯一 DB Owner（:3001），所有写入统一经 :3001。
-- **正式判题公平性**：`server_received_at` 权威时间；隐藏测试点仅授权可信 Worker；正式排名仅采信可信结果。
-- **单 Scheduler**：只有 :3001 有调度器实例与定时器；:3002 重判/抽查经 internal API 由 :3001 创建新 attempt。
-- **单 DB Owner**：:3002 / Worker / Contestant 均禁止直连 SQLite。
+Browser Local 的 stdout、耗时、Sample Passed 全部不可信，仅供选手调试。隐藏测试、正式时间和 Official Verdict 只存在于服务器。
 
----
+## 2. 组件职责
 
-## 2. 修改文件清单
+### Contestant Web
 
-| 文件 | 改动 |
-|---|---|
-| `server/src/config.js` | 定时参数全部集中（§19）；双入口端口；internalApiSecret/coreBaseUrl |
-| `server/src/app.js` | 双入口独立挂载；`/internal/admin` 仅 :3001 暴露 |
-| `server/src/middleware/internalAuth.js` | :3002→:3001 internal API HMAC 鉴权（新） |
-| `server/src/routes/internal-admin.js` | :3001 内部管理 API（overview/nodes/certs/queue/audit/problems/rejudge/spotcheck/events）（新） |
-| `server/src/routes/admin-v2.js` | 改为 HTTP 代理到 :3001；SSE 桥接（无 DB/Scheduler 直连） |
-| `server/src/routes/worker.js` | 心跳内存化（worker-registry）；环境信息仅首次/变化写 DB |
-| `server/src/routes/contest.js` | server_received_at + clientRequestId 幂等；sync/bootstrap + cache lease + rate limit；SSE batch+delta |
-| `server/src/services/scheduler.js` | 事件驱动 + watchdog(10s/5s)；定向调度；rejudge/spotcheck；judge_attempts 历史 |
-| `server/src/services/worker-registry.js` | 内存 Worker Registry（ONLINE/SUSPECT/OFFLINE，心跳不写 DB）（新） |
-| `server/src/services/scoreboard.js` | 内存榜单 + dirty + 10s batch + delta（新） |
-| `server/src/store/sqliteStore.js` | 增加 `judge_attempts` 表 |
-| `scripts/stress/fake-worker.js` | Fake Worker 压测模拟器（新） |
-| `scripts/stress/fake-contestant.js` | Fake Contestant 压测模拟器（新） |
-| `scripts/stress/metrics.js` | 性能指标采样（新） |
+- 题面、编辑器、语言选择、自定义 stdin 和公开样例；
+- C/C++ 与 Python 分别在独立 Worker 中运行；
+- 代码草稿按 user + contest + problem 隔离；
+- 本地运行不发送源码，正式提交才发往服务器；
+- 本地执行时间只显示为 Local Runtime。
 
----
+### OJ Core（`:3001`）
 
-## 3. 数据库
+- 唯一关系型 SQLite Owner；
+- 用户、比赛、题目、Submission、隐藏测试；
+- `server_received_at` 权威时间与 `clientRequestId` 幂等；
+- `JudgeService` 与 `JudgeAdapter` 正式判题；
+- SSE、内存榜单、10 秒 Batch/Delta、轮询兜底；
+- Internal Admin API、限流、审计和恢复。
 
-### PRAGMA
+### Admin（`:3002`）
+
+- 独立管理页面与管理员认证；
+- 比赛/题目/提交/重判操作通过 `:3001/internal/admin/*`；
+- 不直接打开关系型 SQLite，不创建第二个 JudgeService/Scheduler。
+
+## 3. Browser Runtime
+
+| 语言 | Runtime ID | 浏览器实现 |
+|---|---|---|
+| C++11 | `cpp11-gcc11-compat-v4` | Clang 8.0.1 + wasm-ld + WASI libc++，显式 `-std=c++11` |
+| C11 | `c11-gcc11-compat-v3` | Clang 8.0.1 + wasm-ld + WASI libc，显式 `-std=c11` |
+| Python 3 | `py312-cpython-compat-v1` | Pyodide 0.26.4 / CPython 3.12.1 |
+
+实现约束：
+
+- Runtime 大文件 self-host；
+- 稳定版本 URL 使用一年 `immutable`，旧兼容 URL 强制重新验证；
+- COOP/COEP 使比赛页面 cross-origin isolated；
+- C/C++ stdin 最大 4 MiB，按 UTF-8 字节动态分配；
+- stdout/stderr 各最大 1 MiB，超限明确标记；
+- 执行超时中断或 terminate Worker，主线程不运行用户代码；
+- Runtime manifest 记录版本、参数和 SHA-256，版本不可静默覆盖。
+
+## 4. 正式提交状态机
+
+```text
+QUEUED → JUDGING → FINISHED
+                      ├─ AC
+                      ├─ WA
+                      ├─ TLE / MLE
+                      ├─ RE / CE
+                      └─ SYSTEM_ERROR
+```
+
+提交服务依次校验：登录用户、比赛状态、题目归属、语言 allowlist、源码 UTF-8 大小、每用户限速与幂等键。数据库短事务提交后才开始编译运行，Judge 调用不进入数据库事务。
+
+当前 `JudgeAdapter` 直接调用服务器本机编译器/解释器，足以完成课程项目和核心功能验收。若用于公网对抗环境，应保持 Adapter 接口不变，将执行层替换为容器/cgroup/nsjail；这不会改变 Browser Runtime 或 Submission API。
+
+## 5. 数据与恢复
+
+关系型主链路数据库使用 SQLite WAL：
+
 ```sql
 PRAGMA journal_mode=WAL;
-PRAGMA synchronous=NORMAL;
-PRAGMA busy_timeout=5000;
 PRAGMA foreign_keys=ON;
-```
-> 所有事务为短事务（BEGIN → 快速变更 → COMMIT），禁止事务内网络调用/等待 Worker。
-
-### 表（JSON 文档存储，Collection 抽象）
-- `users` / `problems`（含 `version` + `testdataHash`）/ `submissions`（含 `serverReceivedAt`、`currentAttemptId`、`clientRequestId`）
-- `judge_attempts`（**保留每次 attempt 历史**：attempt、problemVersion、testdataHash、workerId、lease、status[LEASED/RUNNING/FINISHED/EXPIRE]、result、cases）
-- `workers`（静态字段：credential_hash 相关、环境版本；**不存心跳**）
-- `register_codes` / `audit` / `meta`
-
-### 迁移说明
-新增 `judge_attempts` 集合自动建表（Collection 初始化即建表）。历史 JSON 数据不再需要迁移（正式版从零起）。
-
----
-
-## 4. API 变化
-
-### 选手端（:3001 /api/contest）
-| 端点 | 说明 |
-|---|---|
-| POST /submissions | 新增 `clientRequestId`（幂等）；服务端记 `serverReceivedAt` |
-| GET /sync/bootstrap | 首次加载：serverTime + scoreboardSnapshot + mySubmissions + **nextSyncAt(cache lease)** |
-| GET /sync | 增量同步 `?scoreboardVersion=&submissionCursor=`；**rate limit 10s→429** |
-| GET /events | SSE batch+delta（`?token=` 支持非浏览器客户端） |
-
-### Worker（:3001 /api/worker）
-| 端点 | 变化 |
-|---|---|
-| POST /heartbeat | **只更新内存 Registry**（cpu/memory/slots 内存态）；环境变化才写 DB |
-| POST /report | 验签/幂等/attempt 历史/榜单 delta 触发 |
-
-### 管理端（:3002 /api/admin → 代理 :3001 /internal/admin）
-| 端点 | 说明 |
-|---|---|
-| POST /rejudge | 代理到 `POST :3001/internal/admin/rejudge/:id`（:3001 创建新 attempt 并调度） |
-| POST /spotcheck | 代理到 `:3001/internal/admin/spotcheck/:id` |
-| GET /events/stream | :3002 桥接 :3001 internal SSE |
-
----
-
-## 5. 配置项（config.js）
-
-| 键 | 默认 | 说明 |
-|---|---|---|
-| WORKER_HEARTBEAT_INTERVAL | 15000 | 心跳间隔 |
-| WORKER_HEARTBEAT_JITTER | 3000 | 心跳 jitter（防同频） |
-| WORKER_SUSPECT_AFTER | 30000 | ≤30s ONLINE |
-| WORKER_OFFLINE_AFTER | 45000 | >45s OFFLINE |
-| SCHEDULER_FALLBACK_SCAN | 10000 | pending fallback scan |
-| LEASE_SWEEP_INTERVAL | 5000 | lease expiry sweep |
-| CONTESTANT_BATCH_INTERVAL | 10000 | SSE batch window |
-| CONTESTANT_FALLBACK_POLL_MIN/JITTER | 10000/3000 | SSE 断线 fallback polling |
-| SSE_KEEPALIVE | 25000 | SSE 心跳 |
-| PROGRESS_MIN_INTERVAL / MIN_PERCENT_DELTA | 5000/10 | Worker progress 节流 |
-| leaseTtlMs / maxAttempt | 120000 / 3 | 租约与重试 |
-| SYNC_MIN_INTERVAL | 10000 | 选手同步 rate limit |
-| MAX_SSE_PER_USER | 5 | SSE 连接上限（P1） |
-
----
-
-## 6. 关键状态机
-
-```
-提交：SUBMITTED → PENDING（server_received_at 定稿）
-调度：PENDING → (选 Worker) → LEASED（attempt+1, lease_id/nonce/expires_at）
-评测：LEASED → COMPILING → RUNNING → VERIFYING
-终态：AC|WA|TLE|MLE|RE|CE|SE
-租约过期：LEASED → PENDING(attempt+1) | SE(达 maxAttempt)
-重判：任一终态 → PENDING（新 attempt，旧结果保留于 judge_attempts）
-抽查：终态 → PENDING（spotCheckMeta 记录原结果，复测比对）
+PRAGMA busy_timeout=5000;
 ```
 
----
+核心表包括 users、contests、problems、oj_submissions。`(user_id, client_request_id)` 唯一约束避免网络重试重复建单。OJ Core 启动后恢复 QUEUED/JUDGING 项，并从关系库重建榜单快照。
 
-## 7. 压测方式
+仓库仍保留早期文档模式数据库和 Worker 表，供旧页面/实验协议兼容；它们不是正式 Submission 的权威来源。新功能不得继续把两套存储混为一条主链路。
 
-见 `scripts/stress/README.md`。核心：
-- `fake-worker.js --workers 100 --codes "..."`：模拟 100~1000 Worker（SSE/心跳/收任务/回传）
-- `fake-contestant.js --users 500`：模拟选手（登录/SSE/提交/榜单 delta）
-- `metrics.js`：采样 judge throughput / queue / online / sqlite 错误
+## 6. SSE 与榜单
 
-**本机实测**：8 Fake Worker + 10 Fake Contestant，15 提交全部评测完成（11 AC + 4 TLE），judge_attempts 完整记录。
+- 单条 Submission SSE 立即推送当前状态，完成时广播 `submission_update`；
+- 比赛榜单由内存快照提供，完成事件标记 dirty participant；
+- 10 秒窗口合并变化并生成版本号；
+- 客户端以 IndexedDB/localStorage 保存 snapshot 与 lease 元数据；
+- SSE 断线时以 10～13 秒 jitter polling 兜底；版本缺口要求 full sync；
+- OJ Core 重启后从 SQLite 重建，内存缓存不作为权威存储。
 
----
+## 7. 部署
 
-## 8. 尚未完成 / P1
+- PM2 运行 Contestant/OJ Core `:3001` 与 Admin `:3002`；
+- Nginx 双域名反代并关闭 SSE buffering；
+- Contestant 进程配置 `C_COMPILER=gcc-11`、`CPP_COMPILER=g++-11`；
+- Nginx 对 Runtime 资产启用 gzip；
+- Runtime 二进制通过 `deploy/fetch-runno-runtime.ps1` 与 `deploy/fetch-pyodide-runtime.ps1` 恢复/校验。
 
-- [ ] Worker 控制面从 SSE 升级为 WebSocket（控制面消息：HEARTBEAT/TASK_ASSIGNED/TASK_ACK/...）
-- [ ] 选手端多 Tab 单主 SSE（BroadcastChannel leader election）
-- [ ] 客户端缓存从 localStorage 升级为 CacheRepository（IndexedDB）
-- [ ] scoreboard 快照从内存扩展为可持久化恢复
-- [ ] 正式/练习榜单分流（当前 practice 全量、formal 采信 trusted）
-- [ ] 提交源码/testdata 大文件经 HTTPS 下载/上传（当前内嵌任务 JSON）
+## 8. 非主线遗留模块
+
+`server/src/routes/worker.js`、`worker/` 与相应 lease/HMAC 协议是早期 Trusted Worker 实验。它们可以保留用于研究，但 README、立项书、UI 与核心验收不得再宣称正式判题依赖这些模块。
