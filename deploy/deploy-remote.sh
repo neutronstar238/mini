@@ -30,7 +30,7 @@ cd $ADMIN   && npm install --registry=https://registry.npmmirror.com --omit=dev 
 
 echo '==> 2/6 pm2 启动'
 cd $CONTEST && pm2 delete mini-oj-contest 2>/dev/null || true
-APP_ENTRY=contest PORT=3001 DB_FILE=$SHARED_DB \
+APP_ENTRY=contest PORT=3001 DB_FILE=$SHARED_DB C_COMPILER=gcc-11 CPP_COMPILER=g++-11 \
   DOMAIN_CONTEST=$DOMAIN_CONTEST DOMAIN_ADMIN=$DOMAIN_ADMIN \
   pm2 start src/app.js --name mini-oj-contest
 cd $ADMIN && pm2 delete mini-oj-admin 2>/dev/null || true
@@ -89,6 +89,11 @@ server {
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_comp_level 5;
+    gzip_types application/javascript application/wasm application/json text/css text/plain;
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection upgrade;

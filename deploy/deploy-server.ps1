@@ -1,91 +1,138 @@
-# ============================================================
-# Mini-OJ 服务器部署脚本（PowerShell 7+）
-# 部署流程：
-#   1) 本地打包 server（排除 node_modules/data/日志）
-#   2) 上传到服务器 contest 与 admin 目录
-#   3) 上传远程部署脚本 deploy-remote.sh 并执行
-#      （远程脚本负责：npm install / pm2 启动 / 证书签发 / nginx 配置 / reload）
-#
-# 注意：仓库内不保留真实域名与备案号。
-#       真实域名通过本脚本顶部变量传入，部署时请改为你自己的域名，
-#       并同时把 deploy/nginx/*.conf 与 deploy/deploy-remote.sh 中的
-#       占位域名 contest.example.com / admin.example.com 替换为真实域名。
-# ============================================================
+# Mini-OJ yqzl deployment (PowerShell 7+)
+# Exact release archive -> remote staging -> backup -> rsync -> PM2 restart -> health checks.
 param(
-  [string]$ServerHost = "yqzl-server",              # SSH 服务器别名/主机（部署时改为实际值）
-  [string]$LocalDir   = "e:\mini\server",
-  # 真实部署域名（务必替换为实际域名后再运行）
+  [string]$ServerHost = "yqzl-server",
+  [string]$LocalDir = "E:\mini\server",
   [string]$DomainContest = "contest.mini.nstarzx.cn",
-  [string]$DomainAdmin   = "admin.mini.nstarzx.cn"
+  [string]$DomainAdmin = "admin.mini.nstarzx.cn"
 )
 
 $ErrorActionPreference = "Stop"
 
-function Step($m) { Write-Host "`n==> $m" -ForegroundColor Cyan }
-function Ssh([string]$cmd) { ssh.exe $ServerHost $cmd }
-# Scp：源 + 目标远程路径，自动拼接 $ServerHost:；额外参数（如 -r）可选
-function Scp {
-  param([string]$Src, [string]$Dst, [string[]]$Extra = @())
-  scp.exe @Extra $Src "$ServerHost`:$Dst"
+function Step([string]$Message) {
+  Write-Host "`n==> $Message" -ForegroundColor Cyan
 }
 
-# ---------- 1. 本地打包 ----------
-Step "1/4 本地打包 server（排除 node_modules/data）"
-$tmp = Join-Path $env:TEMP "mini-oj-deploy"
-if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
-New-Item -ItemType Directory -Path $tmp -Force | Out-Null
-Copy-Item -Path (Join-Path $LocalDir "src")   -Destination $tmp -Recurse
-Copy-Item -Path (Join-Path $LocalDir "views") -Destination $tmp -Recurse
-Copy-Item -Path (Join-Path $LocalDir "public")-Destination $tmp -Recurse
-Copy-Item -Path (Join-Path $LocalDir "package.json")     -Destination $tmp
-Copy-Item -Path (Join-Path $LocalDir "package-lock.json")-Destination $tmp -ErrorAction SilentlyContinue
-# 清理日志
-Get-ChildItem $tmp -Recurse -Filter "*.log" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-Write-Host "打包完成: $tmp"
+$localRoot = [System.IO.Path]::GetFullPath($LocalDir)
+if (-not (Test-Path -LiteralPath (Join-Path $localRoot "src\app.js"))) {
+  throw "Local server directory is invalid: $localRoot"
+}
 
-# ---------- 2. 上传代码到两个站点目录 ----------
-Step "2/4 上传代码到服务器（contest / admin 目录）"
-Scp -Src "$tmp\*" -Dst "/www/wwwroot/$DomainContest/" -Extra @('-r')
-Scp -Src "$tmp\*" -Dst "/www/wwwroot/$DomainAdmin/" -Extra @('-r')
-Write-Host "代码上传完成"
+$releaseId = (Get-Date -Format "yyyyMMdd-HHmmss") + "-" + [Guid]::NewGuid().ToString("N").Substring(0, 8)
+$localArchive = Join-Path ([System.IO.Path]::GetTempPath()) "mini-oj-$releaseId.tar.gz"
+$remoteArchive = "/tmp/mini-oj-$releaseId.tar.gz"
 
-# ---------- 3. 生成并上传远程部署脚本 ----------
-Step "3/4 生成远程部署脚本 deploy-remote.sh"
-$remoteScript = @'
-#!/bin/bash
-set -e
-NODE=/www/server/nodejs/v24.14.1/bin
-export PATH=$NODE:/usr/bin:/bin
-CONTEST=/www/wwwroot/__DOMAIN_CONTEST__
-ADMIN=/www/wwwroot/__DOMAIN_ADMIN__
-SHARED_DB=$CONTEST/data/mini-oj.db
+try {
+  Step "1/4 Build an exact release archive"
+  Push-Location $localRoot
+  try {
+    & tar.exe -czf $localArchive -- src views public package.json package-lock.json
+    if ($LASTEXITCODE -ne 0) { throw "tar failed with exit code $LASTEXITCODE" }
+  } finally {
+    Pop-Location
+  }
+  $archiveInfo = Get-Item -LiteralPath $localArchive
+  Write-Host ("Archive: {0} ({1:N1} MB)" -f $archiveInfo.FullName, ($archiveInfo.Length / 1MB))
 
-echo '==> install deps'
-cd $CONTEST && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -2
-cd $ADMIN && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -2
+  Step "2/4 Upload release archive"
+  & scp.exe $localArchive "$ServerHost`:$remoteArchive"
+  if ($LASTEXITCODE -ne 0) { throw "scp failed with exit code $LASTEXITCODE" }
 
-echo '==> pm2 start'
-cd $CONTEST && pm2 delete mini-oj-contest 2>/dev/null || true
-APP_ENTRY=contest PORT=3001 DB_FILE=$SHARED_DB DOMAIN_CONTEST=__DOMAIN_CONTEST__ DOMAIN_ADMIN=__DOMAIN_ADMIN__ pm2 start src/app.js --name mini-oj-contest
-cd $ADMIN && pm2 delete mini-oj-admin 2>/dev/null || true
-APP_ENTRY=admin PORT=3002 DB_FILE=$SHARED_DB DOMAIN_CONTEST=__DOMAIN_CONTEST__ DOMAIN_ADMIN=__DOMAIN_ADMIN__ pm2 start src/app.js --name mini-oj-admin
-pm2 save
+  Step "3/4 Stage, back up, and atomically synchronize application files"
+  $remoteScript = @'
+set -euo pipefail
+export PATH=/www/server/nodejs/v24.14.1/bin:/usr/bin:/bin
 
-echo '==> nginx conf'
-mkdir -p /www/server/panel/vhost/nginx
-echo '==> run nginx+certbot steps (见 deploy/deploy-remote.sh 或 docs 部署说明)'
-echo 'REMOTE_SCRIPT_READY'
+RELEASE_ID="__RELEASE_ID__"
+ARCHIVE="__REMOTE_ARCHIVE__"
+STAGE="/tmp/mini-oj-release-$RELEASE_ID"
+BACKUP="/www/backups/mini-oj/$RELEASE_ID"
+CONTEST="/www/wwwroot/__DOMAIN_CONTEST__"
+ADMIN="/www/wwwroot/__DOMAIN_ADMIN__"
+SHARED_DB="$CONTEST/data/mini-oj.db"
+
+case "$CONTEST:$ADMIN:$STAGE" in
+  /www/wwwroot/*:/www/wwwroot/*:/tmp/mini-oj-release-*) ;;
+  *) echo "unsafe deployment target" >&2; exit 2 ;;
+esac
+
+test -f "$ARCHIVE"
+mkdir -p "$STAGE" "$BACKUP" "$CONTEST/data" "$ADMIN/data"
+tar -xzf "$ARCHIVE" -C "$STAGE"
+test -f "$STAGE/src/app.js"
+test -f "$STAGE/public/js/runno/langs/clang.wasm"
+test -f "$STAGE/public/js/pyodide/pyodide.mjs"
+
+if test -f "$CONTEST/src/app.js"; then
+  tar --exclude=./data --exclude=./node_modules --exclude=./C: \
+    -czf "$BACKUP/contest-code.tar.gz" -C "$CONTEST" .
+fi
+if test -f "$ADMIN/src/app.js"; then
+  tar --exclude=./data --exclude=./node_modules \
+    -czf "$BACKUP/admin-code.tar.gz" -C "$ADMIN" .
+fi
+
+rsync -a --delete --exclude=/data/ --exclude=/node_modules/ "$STAGE/" "$CONTEST/"
+rsync -a --delete --exclude=/data/ --exclude=/node_modules/ "$STAGE/" "$ADMIN/"
+
+cd "$CONTEST"
+npm install --omit=dev --no-audit --no-fund
+cd "$ADMIN"
+npm install --omit=dev --no-audit --no-fund
+
+if pm2 describe mini-oj-contest >/dev/null 2>&1; then
+  C_COMPILER=/usr/bin/gcc-11 CPP_COMPILER=/usr/bin/g++-11 \
+    pm2 restart mini-oj-contest --update-env >/dev/null
+else
+  : "${INTERNAL_API_SECRET:?Set INTERNAL_API_SECRET before the first deployment}"
+  cd "$CONTEST"
+  APP_ENTRY=contest PORT=3001 DB_FILE="$SHARED_DB" \
+    C_COMPILER=/usr/bin/gcc-11 CPP_COMPILER=/usr/bin/g++-11 \
+    DOMAIN_CONTEST="__DOMAIN_CONTEST__" DOMAIN_ADMIN="__DOMAIN_ADMIN__" \
+    INTERNAL_API_SECRET="$INTERNAL_API_SECRET" \
+    pm2 start src/app.js --name mini-oj-contest >/dev/null
+fi
+
+if pm2 describe mini-oj-admin >/dev/null 2>&1; then
+  pm2 restart mini-oj-admin --update-env >/dev/null
+else
+  cd "$ADMIN"
+  APP_ENTRY=admin PORT=3002 DB_FILE="$SHARED_DB" CORE_BASE_URL=http://127.0.0.1:3001 \
+    DOMAIN_CONTEST="__DOMAIN_CONTEST__" DOMAIN_ADMIN="__DOMAIN_ADMIN__" \
+    INTERNAL_API_SECRET="$INTERNAL_API_SECRET" \
+    pm2 start src/app.js --name mini-oj-admin >/dev/null
+fi
+
+health_check() {
+  local port="$1" host="$2" path="$3"
+  for _ in $(seq 1 15); do
+    if curl -fs -H "Host: $host" "http://127.0.0.1:$port$path" >/dev/null; then return 0; fi
+    sleep 1
+  done
+  return 1
+}
+
+health_check 3001 "__DOMAIN_CONTEST__" /contest/login
+health_check 3002 "__DOMAIN_ADMIN__" /admin/login
+pm2 save >/dev/null
+
+rm -rf -- "$STAGE"
+rm -f -- "$ARCHIVE"
+echo "DEPLOY_OK release=$RELEASE_ID backup=$BACKUP"
 '@
-# 用占位符注入真实域名（单引号 here-string 不插值，避免解析错误）
-$remoteScript = $remoteScript.Replace('__DOMAIN_CONTEST__', $DomainContest).Replace('__DOMAIN_ADMIN__', $DomainAdmin)
-# 保存到本地再上传，避免内联转义问题
-$localSh = Join-Path $env:TEMP "deploy-remote.sh"
-Set-Content -Path $localSh -Value $remoteScript -Encoding utf8
-Scp $localSh "/tmp/deploy-remote.sh"
-Write-Host "远程脚本已上传"
+  $remoteScript = $remoteScript.Replace('__RELEASE_ID__', $releaseId).
+    Replace('__REMOTE_ARCHIVE__', $remoteArchive).
+    Replace('__DOMAIN_CONTEST__', $DomainContest).
+    Replace('__DOMAIN_ADMIN__', $DomainAdmin)
 
-# ---------- 4. 远程执行（npm install / pm2 / 证书 / nginx） ----------
-Step "4/4 远程执行部署（npm/pm2/证书/nginx）"
-Write-Host "请确认 deploy/deploy-remote.sh 已按真实域名改写，然后在服务器执行："
-Write-Host "  ssh $ServerHost 'export PATH=/www/server/nodejs/v24.14.1/bin:/usr/bin:/bin; bash /tmp/deploy-remote.sh'"
-Write-Host "部署完成"
+  $remoteScript | & ssh.exe $ServerHost "bash -s"
+  if ($LASTEXITCODE -ne 0) { throw "remote deployment failed with exit code $LASTEXITCODE" }
+
+  Step "4/4 Deployment completed"
+  Write-Host "Contest: https://$DomainContest/contest" -ForegroundColor Green
+  Write-Host "Admin:   https://$DomainAdmin/admin" -ForegroundColor Green
+} finally {
+  if (Test-Path -LiteralPath $localArchive) {
+    Remove-Item -LiteralPath $localArchive -Force
+  }
+}
