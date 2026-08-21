@@ -1,0 +1,5 @@
+{
+  "category": "Interval Merge",
+  "stdLibUsed": ["java.util.Arrays", "java.util.Comparator"],
+  "expectedVerdict": "AC"
+}

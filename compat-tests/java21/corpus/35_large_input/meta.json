@@ -1,0 +1,6 @@
+{
+  "category": "Large Input",
+  "stdLibUsed": ["java.io.BufferedInputStream"],
+  "expectedVerdict": "AC",
+  "inputSize": 1000
+}

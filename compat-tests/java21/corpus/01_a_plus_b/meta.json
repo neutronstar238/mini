@@ -1,0 +1,5 @@
+{
+  "category": "Fast IO",
+  "stdLibUsed": ["java.util.Scanner"],
+  "expectedVerdict": "AC"
+}

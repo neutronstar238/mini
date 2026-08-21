@@ -1,0 +1,5 @@
+{
+  "category": "SCC",
+  "stdLibUsed": ["java.util.ArrayList", "java.util.Arrays"],
+  "expectedVerdict": "AC"
+}

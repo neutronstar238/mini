@@ -1,0 +1,5 @@
+{
+  "category": "Trie",
+  "stdLibUsed": ["java.io.BufferedReader", "java.util.HashMap"],
+  "expectedVerdict": "AC"
+}

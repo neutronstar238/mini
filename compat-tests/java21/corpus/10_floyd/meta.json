@@ -1,0 +1,5 @@
+{
+  "category": "Floyd",
+  "stdLibUsed": ["java.util.Arrays"],
+  "expectedVerdict": "AC"
+}

@@ -1,0 +1,6 @@
+{
+  "category": "Type mismatch CE",
+  "expectedVerdict": "CE",
+  "expectedException": null,
+  "diagnosticPattern": "incompatible types"
+}

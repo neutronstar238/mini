@@ -1,0 +1,5 @@
+{
+  "category": "LIS",
+  "stdLibUsed": ["java.util.Arrays"],
+  "expectedVerdict": "AC"
+}

@@ -1,0 +1,5 @@
+{
+  "category": "Matrix Pow",
+  "stdLibUsed": ["java.util.Scanner"],
+  "expectedVerdict": "AC"
+}

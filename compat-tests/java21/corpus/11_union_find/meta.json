@@ -1,0 +1,5 @@
+{
+  "category": "Union Find",
+  "stdLibUsed": ["java.io.BufferedReader", "java.util.StringTokenizer"],
+  "expectedVerdict": "AC"
+}

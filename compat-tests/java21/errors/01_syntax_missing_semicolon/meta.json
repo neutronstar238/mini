@@ -1,0 +1,6 @@
+{
+  "category": "Syntax CE",
+  "expectedVerdict": "CE",
+  "expectedException": null,
+  "diagnosticPattern": "';' expected"
+}

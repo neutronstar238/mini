@@ -1,0 +1,5 @@
+{
+  "category": "GCD/LCM",
+  "stdLibUsed": ["java.util.Scanner", "java.lang.Math"],
+  "expectedVerdict": "AC"
+}

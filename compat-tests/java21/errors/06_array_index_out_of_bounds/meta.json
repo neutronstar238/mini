@@ -1,0 +1,6 @@
+{
+  "category": "Runtime Error",
+  "expectedVerdict": "RE",
+  "expectedException": "java.lang.ArrayIndexOutOfBoundsException",
+  "diagnosticPattern": "ArrayIndexOutOfBoundsException"
+}

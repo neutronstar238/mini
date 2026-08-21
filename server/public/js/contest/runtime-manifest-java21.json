@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.1",
+  "runtimeId": "java21-browserjdk-compat-v2",
+  "displayName": "Java 21 (BrowserJDK)",
+  "description": "Phase 8 BETA FROZEN: self-built OpenJDK 21.0.10+7 BrowserJDK with immutable bytecode LRU and a fresh MemoryClassLoader for every run.",
+  "status": "BETA_FROZEN",
+  "runtimeStatus": "BETA_FROZEN",
+  "technicalValidated": true,
+  "engineeringRedistributionReady": true,
+  "legalReviewRequired": true,
+  "redistributable": false,
+  "runtimeAssetHash": "eee8298d267c2ba781cc6db4d587e6a8a2a39ff8aac5692f1c3a3d01daee5878",
+  "sourcePins": {
+    "openjdk": {
+      "version": "OpenJDK 21.0.10+7",
+      "upstreamCommit": "97a3d2372d457c5a72413df14bf08cf99545c695",
+      "portCommit": "e339656cdd1c9e09aaf1c4ca9a87c399e3df56a7",
+      "patchSha256": "4917b25fbe3b1c35bea4cbc8ebe08a2e9d782754ee425978cfae0dac44c58e75"
+    },
+    "emscripten": {
+      "version": "5.0.2",
+      "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+      "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d"
+    },
+    "libffi": {
+      "version": "3.4.6",
+      "upstreamCommit": "3d0ce1e6fcf19f853894862abcbac0ae78a7be60",
+      "portCommit": "0b72a27b7cd647eb31f15144dcfeacde864de9f1",
+      "patchSha256": "85468a7db6d5199ae30c4a002e2da03d3181f84b19f9e163bbf6adec8ba9a3e3",
+      "autoconfCompatibilityPatchSha256": "98f4f00752b6bdd5d8cd1ab58d6031b7f4be768407765ae6f7f029c3597d8354"
+    },
+    "buildJdk": {
+      "version": "Temurin 21.0.10+7",
+      "sha256": "ea3b9bd464d6dd253e9a7accf59f7ccd2a36e4aa69640b7251e3370caef896a4"
+    }
+  },
+  "statusExplanation": {
+    "technicallyValidated": true,
+    "engineeringRedistributionReady": true,
+    "legalReviewRequired": true,
+    "redistributable": false,
+    "evidence": "docs/runtime-freeze-java21-v2.md",
+    "freezeRule": "Any change to the OpenJDK, Emscripten, libffi, WASM ABI, BJOJ/1 or stdin ring contract, cache/isolation/timeout policy, worker lifecycle, or runtime assets requires java21-browserjdk-compat-v3 or higher."
+  },
+  "javaVersion": "OpenJDK 21.0.10+7 (Zero interpreter via Emscripten 5.0.2)",
+  "compiler": "OpenJDK javac 21.0.10+7 (in-JVM JSR-199)",
+  "compileCache": "runtimeId + SHA-256(source), eight-entry bytecode-only LRU",
+  "isolationStrategy": "fresh MemoryClassLoader and stdin/stdout/stderr per run; restore System properties, Locale and TimeZone",
+  "unsupportedP1": [
+    "Thread", "ExecutorService", "ForkJoinPool", "Socket", "ServerSocket",
+    "ProcessBuilder", "Runtime.exec", "GUI", "Swing", "JavaFX", "AWT",
+    "JNI", "third-party-jar"
+  ],
+  "minBrowser": {
+    "chrome": ">=92",
+    "firefox": ">=79",
+    "safari": ">=15.2",
+    "edge": ">=92",
+    "requiredHeaders": [
+      "Cross-Origin-Opener-Policy: same-origin",
+      "Cross-Origin-Embedder-Policy: require-corp"
+    ]
+  },
+  "assets": {
+    "manifest": "/runtime/java21-browserjdk-compat-v2/runtime-manifest.json",
+    "managedByCryptographicManifest": true,
+    "files": [
+      {
+        "file": "browserjdk.wasm",
+        "bytes": 3226551,
+        "sha256": "7f2acfac69689859fe6a752c38378b8f472343d2425a7209f1b485023c2dfc4c"
+      },
+      {
+        "file": "browserjdk.data",
+        "bytes": 26697106,
+        "sha256": "cbe3b484ece983726a2e7740178f271c29b0a9809d24e0977817eb57073ccc82"
+      },
+      {
+        "file": "browserjdk.mjs",
+        "bytes": 143479,
+        "sha256": "8c445a96e61090d0cb074588a31f1204f8525a5a645996147f1112dc8bd8ad0c"
+      },
+      {
+        "file": "loader.mjs",
+        "bytes": 9272,
+        "sha256": "cd8b4bef6832a23b7b771e6ce35efd4080624aa6ced87d3a36447a91ceac2520"
+      },
+      {
+        "file": "LICENSE",
+        "bytes": 22152,
+        "sha256": "0e45d00edb6894bccb03203de831668fc4f6e27e92cca5fe35c14b77aec52b6b"
+      },
+      {
+        "file": "THIRD_PARTY_NOTICES.md",
+        "bytes": 83673,
+        "sha256": "4873b87095d2c88a05ec04f9c4c4184275f995cce01df2e7509962b338e899b3"
+      },
+      {
+        "file": "LINKED_COMPONENTS.json",
+        "bytes": 617,
+        "sha256": "5a199bfe4377868c1fe4ff3f804a2f240e30673de3cec7fbb882e3e066da542c"
+      }
+    ]
+  },
+  "loaderContract": {
+    "modulePath": "/runtime/java21-browserjdk-compat-v2/loader.mjs",
+    "workerUrl": "/js/contest/ide-java-worker.js",
+    "protocol": "BJOJ/1",
+    "workerMessages": [
+      "init (interruptBuffer) → inited",
+      "run (source, stdin, className) → run-result",
+      "clear-cache → cache-cleared",
+      "stats → stats",
+      "dispose → disposed"
+    ]
+  },
+  "license": {
+    "engineeringStatus": "CLEAR_WITH_OBLIGATIONS",
+    "legalReviewRequired": true,
+    "redistributable": false,
+    "matrixDoc": "browserjdk-oj/THIRD_PARTY_LICENSE_MATRIX.md"
+  }
+}

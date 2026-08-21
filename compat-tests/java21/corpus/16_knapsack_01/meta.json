@@ -1,0 +1,5 @@
+{
+  "category": "01 Knapsack",
+  "stdLibUsed": ["java.util.Scanner"],
+  "expectedVerdict": "AC"
+}

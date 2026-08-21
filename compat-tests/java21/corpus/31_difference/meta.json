@@ -1,0 +1,5 @@
+{
+  "category": "Difference Array",
+  "stdLibUsed": ["java.util.Scanner", "java.lang.StringBuilder"],
+  "expectedVerdict": "AC"
+}

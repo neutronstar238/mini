@@ -1,0 +1,21 @@
+From: Mini-OJ contributors
+Subject: libffi: define removed libtool underscore probe for wasm32
+Upstream-Base: 0b72a27b7cd647eb31f15144dcfeacde864de9f1
+License: same permissive license as libffi configure.ac
+
+Ubuntu 24.04 ships a libtool whose public LT_SYS_SYMBOL_USCORE macro was
+removed. WebAssembly symbols are not underscore-prefixed, so preserve the
+probe's effective target result when the compatibility macro is absent.
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -216,5 +216,9 @@ AC_ARG_ENABLE(pax_emutramp,
+   fi)
+ 
++m4_ifndef([LT_SYS_SYMBOL_USCORE],
++  [AC_DEFUN([LT_SYS_SYMBOL_USCORE],
++    [sys_symbol_underscore=no])])
++
+ LT_SYS_SYMBOL_USCORE
+ if test "x$sys_symbol_underscore" = xyes; then
+     AC_DEFINE(SYMBOL_UNDERSCORE, 1, [Define if symbols are underscored.])

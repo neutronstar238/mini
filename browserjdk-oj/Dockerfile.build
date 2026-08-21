@@ -1,0 +1,19 @@
+FROM emscripten/emsdk:5.0.2@sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    autoconf automake build-essential ca-certificates curl file git libtool \
+    m4 make perl python3 unzip zip && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG TEMURIN_URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_linux_hotspot_21.0.10_7.tar.gz
+ARG TEMURIN_SHA256=ea3b9bd464d6dd253e9a7accf59f7ccd2a36e4aa69640b7251e3370caef896a4
+RUN curl --fail --location --retry 4 "$TEMURIN_URL" -o /tmp/boot-jdk.tar.gz && \
+    echo "$TEMURIN_SHA256  /tmp/boot-jdk.tar.gz" | sha256sum --check --strict && \
+    mkdir -p /opt/temurin-21 && \
+    tar -xzf /tmp/boot-jdk.tar.gz --strip-components=1 -C /opt/temurin-21 && \
+    rm /tmp/boot-jdk.tar.gz
+
+ENV JAVA_HOME=/opt/temurin-21
+ENV PATH=/opt/temurin-21/bin:${PATH}
+WORKDIR /work

@@ -1,0 +1,5 @@
+{
+  "category": "Kruskal",
+  "stdLibUsed": ["java.util.Arrays", "java.util.Comparator"],
+  "expectedVerdict": "AC"
+}

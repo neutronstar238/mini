@@ -1,0 +1,5 @@
+{
+  "category": "Topological Sort",
+  "stdLibUsed": ["java.util.ArrayDeque", "java.util.Collections"],
+  "expectedVerdict": "AC"
+}

@@ -1,0 +1,53 @@
+{
+  "runtimeId": "java21-browserjdk-compat-v2",
+  "status": "CHECKPOINT_2_CANDIDATE",
+  "redistributable": false,
+  "licenseStatus": "CLEAR_WITH_OBLIGATIONS",
+  "statusExplanation": "Checkpoint 2 changes the bytecode-cache/isolation contract and therefore uses a new runtime ID. REDISTRIBUTABLE remains false pending project-owner/legal review.",
+  "protocol": "BJOJ/1",
+  "javaVersion": "OpenJDK 21.0.10+7",
+  "sources": {
+    "openjdkUpstreamCommit": "97a3d2372d457c5a72413df14bf08cf99545c695",
+    "openjdkPortCommit": "e339656cdd1c9e09aaf1c4ca9a87c399e3df56a7",
+    "libffiUpstreamCommit": "3d0ce1e6fcf19f853894862abcbac0ae78a7be60",
+    "libffiPortCommit": "0b72a27b7cd647eb31f15144dcfeacde864de9f1",
+    "emscriptenVersion": "5.0.2",
+    "emscriptenCommit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+    "emscriptenImageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d",
+    "buildJdk": {
+      "version": "Temurin 21.0.10+7",
+      "sha256": "ea3b9bd464d6dd253e9a7accf59f7ccd2a36e4aa69640b7251e3370caef896a4"
+    }
+  },
+  "assets": [
+    { "file": "browserjdk.wasm", "status": "PENDING_BUILD" },
+    { "file": "browserjdk.data", "status": "PENDING_BUILD" },
+    { "file": "browserjdk.mjs", "status": "PENDING_BUILD" },
+    { "file": "loader.mjs", "status": "PENDING_BUILD" },
+    { "file": "runtime-manifest.json", "status": "PENDING_BUILD" },
+    { "file": "LICENSE", "status": "PENDING_BUILD" },
+    { "file": "THIRD_PARTY_NOTICES.md", "status": "PENDING_BUILD" },
+    { "file": "LINKED_COMPONENTS.json", "status": "PENDING_BUILD" }
+  ],
+  "license": {
+    "preliminaryStatus": "CLEAR_WITH_OBLIGATIONS",
+    "scope": "Per-file OpenJDK GPLv2/Classpath Exception headers; BrowserJDK native/Java glue GPLv2 + Classpath Exception; JS adapter MIT; Emscripten MIT/NCSA; libffi permissive.",
+    "sourceBundleRequired": true,
+    "releaseGate": "A14",
+    "javaBoxIncluded": false
+  },
+  "loaderContract": {
+    "modulePath": "/runtime/java21-browserjdk-compat-v2/loader.mjs",
+    "wasmPath": "/runtime/java21-browserjdk-compat-v2/browserjdk.wasm",
+    "dataPath": "/runtime/java21-browserjdk-compat-v2/browserjdk.data",
+    "exposedMethods": [
+      "browserjdk_control_write",
+      "browserjdk_control_response_available",
+      "browserjdk_control_response_read",
+      "browserjdk_program_stdin_reset",
+      "browserjdk_program_stdin_write",
+      "browserjdk_program_stdin_close",
+      "browserjdk_request_interrupt"
+    ]
+  }
+}

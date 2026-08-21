@@ -1,0 +1,5 @@
+{
+  "category": "BigDecimal",
+  "stdLibUsed": ["java.math.BigDecimal", "java.math.RoundingMode"],
+  "expectedVerdict": "AC"
+}

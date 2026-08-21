@@ -1,0 +1,5 @@
+{
+  "category": "Buffered Output",
+  "stdLibUsed": ["java.io.BufferedReader", "java.io.PrintWriter"],
+  "expectedVerdict": "AC"
+}
