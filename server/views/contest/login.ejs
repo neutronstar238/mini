@@ -14,23 +14,23 @@
         <div class="cpc-brand">Mini-OJ</div>
         <div class="sub">CONTEST · 选手端</div>
       </div>
-      <div class="login-tabs">
-        <button class="tab active" data-tab="login">登录</button>
-        <button class="tab" data-tab="register">注册</button>
+      <div class="login-tabs" role="tablist" aria-label="账号操作">
+        <button type="button" class="tab active" id="login-tab" role="tab" aria-selected="true" aria-controls="login-form" data-tab="login">登录</button>
+        <button type="button" class="tab" id="register-tab" role="tab" aria-selected="false" aria-controls="register-form" data-tab="register">注册</button>
       </div>
 
-      <form id="login-form" class="form-panel">
-        <div class="field"><label>用户名</label><input class="form-control" id="login-username" placeholder="user1" autocomplete="username"></div>
-        <div class="field"><label>密码</label><input class="form-control" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-        <p class="form-err" id="login-err"></p>
+      <form id="login-form" class="form-panel" role="tabpanel" aria-labelledby="login-tab">
+        <div class="field"><label for="login-username">用户名</label><input class="form-control" id="login-username" name="username" placeholder="user1" autocomplete="username"></div>
+        <div class="field"><label for="login-password">密码</label><input class="form-control" id="login-password" name="password" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+        <p class="form-err" id="login-err" role="alert" aria-live="polite"></p>
         <button class="btn btn-primary btn-block-oj" type="submit" id="login-btn">进入比赛</button>
       </form>
 
-      <form id="register-form" class="form-panel" style="display:none">
-        <div class="field"><label>用户名（3-20 位）</label><input class="form-control" id="reg-username" placeholder="contestant_01"></div>
-        <div class="field"><label>昵称（可选）</label><input class="form-control" id="reg-nickname" placeholder="不填则同用户名"></div>
-        <div class="field"><label>密码（至少 6 位）</label><input class="form-control" id="reg-password" type="password"></div>
-        <p class="form-err" id="reg-err"></p>
+      <form id="register-form" class="form-panel" role="tabpanel" aria-labelledby="register-tab" hidden>
+        <div class="field"><label for="reg-username">用户名（3-20 位）</label><input class="form-control" id="reg-username" name="username" placeholder="contestant_01" autocomplete="username"></div>
+        <div class="field"><label for="reg-nickname">昵称（可选）</label><input class="form-control" id="reg-nickname" name="nickname" placeholder="不填则同用户名" autocomplete="nickname"></div>
+        <div class="field"><label for="reg-password">密码（至少 6 位）</label><input class="form-control" id="reg-password" name="password" type="password" autocomplete="new-password"></div>
+        <p class="form-err" id="reg-err" role="alert" aria-live="polite"></p>
         <button class="btn btn-success btn-block-oj" type="submit" id="reg-btn">注册选手</button>
       </form>
 

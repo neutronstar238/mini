@@ -23,11 +23,15 @@ router.post('/auth/login', wrap(async (req, res) => {
 
 router.use(requireLogin, requireRole('admin'));
 
-/** 调用 :3001 internal API（HMAC 内部鉴权） */
+/** 调用 :3001 internal API（HMAC 内部鉴权）
+ * 注意：middleware 用 originalUrl.split('?')[0] 计算 HMAC，故 HMAC 须基于去掉 query 的 path，
+ * 而 fetch 使用完整 path（含 query）。
+ */
 async function callCore(method, path, body) {
   const ts = String(Date.now());
+  const hmacPath = path.split('?')[0];
   const token = crypto.createHmac('sha256', config.internalApiSecret)
-    .update(`${ts}:${path}`)
+    .update(`${ts}:${hmacPath}`)
     .digest('hex');
   const res = await fetch(config.coreBaseUrl + path, {
     method,
@@ -53,6 +57,11 @@ function wrap(handler) {
 
 router.get('/overview', wrap(async (_req, res) => {
   const r = await callCore('GET', '/internal/admin/overview');
+  res.status(r.status).json(r.data);
+}));
+
+router.get('/devices', wrap(async (_req, res) => {
+  const r = await callCore('GET', '/internal/admin/devices');
   res.status(r.status).json(r.data);
 }));
 
@@ -147,6 +156,40 @@ router.post('/rejudge', wrap(async (req, res) => {
   res.status(r.status).json(r.data);
 }));
 
+/* ================= Phase 5：关系库 Admin（Submission 查询 / 详情 / 真实榜单 / Rejudge / 用户） ================= */
+router.get('/contests/:id/submissions', wrap(async (req, res) => {
+  const qs = new URLSearchParams();
+  ['page', 'pageSize', 'problemId', 'userId', 'language', 'verdict'].forEach((k) => {
+    if (req.query[k]) qs.set(k, req.query[k]);
+  });
+  const q = qs.toString();
+  const r = await callCore('GET', `/internal/admin/contests/${req.params.id}/submissions${q ? '?' + q : ''}`);
+  res.status(r.status).json(r.data);
+}));
+
+router.get('/submissions/:id', wrap(async (req, res) => {
+  const r = await callCore('GET', `/internal/admin/submissions/${req.params.id}`);
+  res.status(r.status).json(r.data);
+}));
+
+router.post('/submissions/:id/rejudge', wrap(async (req, res) => {
+  const r = await callCore('POST', `/internal/admin/submissions/${req.params.id}/rejudge`);
+  res.status(r.status).json(r.data);
+}));
+
+router.get('/contests/:id/scoreboard', wrap(async (req, res) => {
+  const r = await callCore('GET', `/internal/admin/contests/${req.params.id}/scoreboard`);
+  res.status(r.status).json(r.data);
+}));
+
+router.get('/users', wrap(async (req, res) => {
+  const qs = new URLSearchParams();
+  ['username', 'page', 'pageSize'].forEach((k) => { if (req.query[k]) qs.set(k, req.query[k]); });
+  const q = qs.toString();
+  const r = await callCore('GET', `/internal/admin/users${q ? '?' + q : ''}`);
+  res.status(r.status).json(r.data);
+}));
+
 router.post('/spotcheck', wrap(async (req, res) => {
   const { submissionId } = req.body || {};
   if (!submissionId) return res.status(400).json({ error: '缺少 submissionId' });
@@ -170,7 +213,11 @@ function connectCoreEvents() {
 
   // 简单 SSE 客户端（基于 http）
   const http = require(config.coreBaseUrl.startsWith('https') ? 'https' : 'http');
-  const req = http.get(url, { headers: { Accept: 'text/event-stream' } }, (res) => {
+  const req = http.get(url, { headers: {
+    Accept: 'text/event-stream',
+    'X-Internal-Token': token,
+    'X-Internal-Ts': ts
+  } }, (res) => {
     res.setEncoding('utf8');
     let buf = '', event = 'message';
     res.on('data', (chunk) => {

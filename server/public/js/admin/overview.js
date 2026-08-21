@@ -2,7 +2,7 @@
 async function load() {
   try {
     var o = await api('/api/admin/overview');
-    var vals = [o.users, o.problems, o.submissions, o.pending, o.judging, o.ac, o.onlineWorkers, o.approvedWorkers];
+    var vals = [o.users, o.problems, o.submissions, o.pending, o.judging, o.ac, o.judgeBackend || 'JudgeAdapter'];
     document.querySelectorAll('#overview-cards .num').forEach(function (el, i) { el.textContent = vals[i]; });
   } catch (err) { toast(err.message, 'err'); }
 }

@@ -15,9 +15,9 @@
         <div class="sub">ADMIN · 管理端（仅管理员）</div>
       </div>
       <form id="login-form">
-        <div class="field"><label>管理员用户名</label><input class="form-control" id="login-username" placeholder="admin" autocomplete="username"></div>
-        <div class="field"><label>密码</label><input class="form-control" id="login-password" type="password" autocomplete="current-password"></div>
-        <p class="form-err" id="login-err"></p>
+        <div class="field"><label for="login-username">管理员用户名</label><input class="form-control" id="login-username" name="username" placeholder="admin" autocomplete="username"></div>
+        <div class="field"><label for="login-password">密码</label><input class="form-control" id="login-password" name="password" type="password" autocomplete="current-password"></div>
+        <p class="form-err" id="login-err" role="alert" aria-live="polite"></p>
         <button class="btn btn-primary btn-block-oj" type="submit" id="login-btn">进入管理后台</button>
       </form>
       <div class="demo-tip">演示管理员：<b>admin / admin123</b></div>

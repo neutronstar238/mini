@@ -6,7 +6,7 @@
 
 <div class="flex-between mb-16">
   <h2 class="page-title">我的提交 <span class="mono text-muted" id="contest-title" style="font-size:14px"></span></h2>
-  <div class="mono text-muted">排队 <b id="pending-count">0</b></div>
+  <div class="mono text-muted">本页面读取 <b>OJ Core 关系库</b>（官方正式评测结果）</div>
 </div>
 
 <div class="toolbar-oj">
@@ -14,18 +14,16 @@
     <label>结果</label>
     <select class="form-control" id="f-status" style="display:inline-block;width:150px">
       <option value="all">全部</option>
-      <option value="SUBMITTED">SUBMITTED</option>
-      <option value="PENDING">PENDING</option>
-      <option value="LEASED">LEASED</option>
-      <option value="RUNNING">RUNNING</option>
-      <option value="VERIFYING">VERIFYING</option>
-      <option value="AC">AC</option>
-      <option value="WA">WA</option>
-      <option value="TLE">TLE</option>
-      <option value="MLE">MLE</option>
-      <option value="RE">RE</option>
-      <option value="CE">CE</option>
-      <option value="SE">SE</option>
+      <option value="QUEUED">Queued</option>
+      <option value="JUDGING">Judging</option>
+      <option value="FINISHED">Finished</option>
+      <option value="AC">Accepted (AC)</option>
+      <option value="WA">Wrong Answer</option>
+      <option value="TLE">Time Limit Exceeded</option>
+      <option value="MLE">Memory Limit Exceeded</option>
+      <option value="RE">Runtime Error</option>
+      <option value="CE">Compile Error</option>
+      <option value="SYSTEM_ERROR">System Error</option>
     </select>
   </div>
 </div>
@@ -37,14 +35,13 @@
         <th style="width:80px">RunID</th>
         <th>Problem</th>
         <th style="width:90px">Lang</th>
-        <th style="width:110px">Result</th>
+        <th style="width:130px">Verdict / Status</th>
         <th style="width:90px;text-align:right">Time</th>
         <th style="width:90px;text-align:right">Memory</th>
-        <th style="width:160px">Local Precheck</th>
-        <th style="width:150px">Submit Time</th>
+        <th style="width:150px">Submit Time (server)</th>
       </tr>
     </thead>
-    <tbody id="sub-tbody"><tr><td colspan="8" class="empty">加载中…</td></tr></tbody>
+    <tbody id="sub-tbody"><tr><td colspan="7" class="empty">加载中…</td></tr></tbody>
   </table>
   <div class="flex-between" style="padding:8px 12px;border-top:1px solid #eee">
     <span class="text-muted mono" id="page-info" style="font-size:12px"></span>

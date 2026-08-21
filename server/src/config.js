@@ -33,6 +33,8 @@ const config = {
 
   dataDir: DATA_DIR,
   dbFile: process.env.DB_FILE || path.join(DATA_DIR, 'mini-oj.db'),
+  // Phase 4 关系型主链路 DB（与文档模式 mini-oj.db 并存）
+  ojDbFile: process.env.OJ_DB_FILE || path.join(DATA_DIR, 'oj-main-path.db'),
 
   /* ================= 时间参数（指导文档 §19，全部集中于此） ================= */
   WORKER_HEARTBEAT_INTERVAL: 15000,
@@ -49,6 +51,12 @@ const config = {
 
   SSE_KEEPALIVE: 25000,
 
+  // 选手 Chrome 客户端设备管理：心跳、离线判定与 Admin SSE 更新
+  CLIENT_DEVICE_HEARTBEAT_INTERVAL: 20000,
+  CLIENT_DEVICE_OFFLINE_AFTER: 60000,
+  CLIENT_DEVICE_SWEEP_INTERVAL: 15000,
+  CLIENT_DEVICE_EVENT_MIN_INTERVAL: 30000,
+
   PROGRESS_MIN_INTERVAL: 5000,      // Worker progress 最小间隔
   PROGRESS_MIN_PERCENT_DELTA: 10,   // progress 变化阈值
 
@@ -57,12 +65,29 @@ const config = {
   maxAttempt: 3,
 
   /* ================= 提交 / 同步限流 ================= */
-  languages: ['cpp', 'python'],
-  maxCodeLength: 64 * 1024,
+  // Phase 4 正式语言 allowlist（Runtime Enhancement Phase：由 language-profiles.js 派生；
+  // 覆盖 c11/c17/cpp11/cpp17/cpp20/cpp23/python3/java21；仅含允许正式提交且 official supported 的状态）
+  languages: require('./language-profiles').enabledOfficialLanguages(),
+  languageProfiles: require('./language-profiles').legacyLanguageProfiles(),
+  maxCodeLength: 256 * 1024, // 256KB 正式提交上限
+  sourceMaxUtf8: true,
+  // 正式提交限速：同用户 1 次 / 秒（防双击 / 脚本狂刷；Local Run 不限速，根本不请求 Server）
+  SUBMIT_RATE_LIMIT_PER_SEC: 1,
   // 选手同步 API 最低间隔（server rate limit）
   SYNC_MIN_INTERVAL: 10000,
   // 同一 user 的 SSE 连接数上限（P1 简化）
-  MAX_SSE_PER_USER: 5
+  MAX_SSE_PER_USER: 5,
+
+  /* ================= Phase 5：Scoreboard / Cache Lease / Rate Limit ================= */
+  // Scoreboard Full Snapshot 限流：同 (user, ip) 滑动窗口
+  SCOREBOARD_FULL_LIMIT: 20,      // 窗口内允许次数
+  SCOREBOARD_FULL_WINDOW_MS: 30000, // 30s 窗口
+  // Cache Lease 时长（Full Snapshot 的 nextSyncAt 提前量）
+  SCOREBOARD_LEASE_MS: 10000,     // 10s lease（与 batch window 对齐，给 SSE 留余量）
+  // 本地缓存元数据 key 前缀
+  SCOREBOARD_CACHE_KEY: 'oj:scoreboard:v1',
+  // 本地快照大小阈值：超过则用 IndexedDB，否则 localStorage（单位字节）
+  SCOREBOARD_CACHE_INDEXEDDB_THRESHOLD: 65536
 };
 
 module.exports = config;

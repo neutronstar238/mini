@@ -18,7 +18,11 @@ async function api(path, opts) {
   var data = {};
   try { data = await res.json(); } catch (_) { /* ignore */ }
   if (!res.ok) {
-    var err = new Error(data.error || ('请求失败 ' + res.status));
+    var apiError = data.error;
+    var message = typeof apiError === 'string'
+      ? apiError
+      : apiError && (apiError.message || apiError.code);
+    var err = new Error(message || data.message || ('请求失败 ' + res.status));
     err.status = res.status;
     throw err;
   }
@@ -33,6 +37,8 @@ function toast(msg, type, ms) {
   var el = document.createElement('div');
   el.className = 'toast-oj toast-' + type;
   el.style.animation = 'toast-in .2s ease';
+  el.setAttribute('role', type === 'err' ? 'alert' : 'status');
+  el.setAttribute('aria-live', type === 'err' ? 'assertive' : 'polite');
   el.textContent = msg;
   root.appendChild(el);
   setTimeout(function () { el.remove(); }, ms);
@@ -41,6 +47,7 @@ function toast(msg, type, ms) {
 var STATUS_TEXT = {
   SUBMITTED: 'Submitted', PENDING: 'Pending', LEASED: 'Leased',
   COMPILING: 'Compiling', RUNNING: 'Running', VERIFYING: 'Verifying',
+  QUEUED: 'Queued', JUDGING: 'Judging', FINISHED: 'Finished', SYSTEM_ERROR: 'System Error',
   AC: 'Accepted', WA: 'Wrong Answer', TLE: 'Time Limit Exceeded',
   MLE: 'Memory Limit Exceeded', RE: 'Runtime Error', CE: 'Compile Error', SE: 'System Error'
 };
@@ -97,11 +104,40 @@ function sseConnect(path, handlers) {
 /** 激活侧边栏导航高亮 */
 (function () {
   var p = location.pathname;
+  if (document.querySelector('.sidebar li.active')) return;
+  var best = null;
   document.querySelectorAll('.sidebar a').forEach(function (a) {
     var href = a.getAttribute('href');
     if (href && href !== '#' && (p === href || p.indexOf(href) === 0)) {
-      var li = a.closest('li');
-      if (li) li.classList.add('active');
+      if (!best || href.length > best.href.length) best = { href: href, li: a.closest('li') };
+    }
+  });
+  if (best && best.li) best.li.classList.add('active');
+})();
+
+/** 移动端侧栏：同步可访问状态，并支持 Esc / 选择导航后关闭 */
+(function () {
+  var toggle = document.querySelector('.cpc-nav-toggle');
+  var sidebar = document.getElementById('sidebar_div');
+  if (!toggle || !sidebar) return;
+
+  function setOpen(open) {
+    sidebar.classList.toggle('show', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  }
+
+  toggle.addEventListener('click', function () {
+    setOpen(!sidebar.classList.contains('show'));
+  });
+  sidebar.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (window.innerWidth < 768) setOpen(false);
+    });
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && sidebar.classList.contains('show')) {
+      setOpen(false);
+      toggle.focus();
     }
   });
 })();

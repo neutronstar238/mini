@@ -17,6 +17,13 @@ const workerRegistry = require('../services/worker-registry');
 const config = require('../config');
 const { internalAuth } = require('../middleware/internalAuth');
 const { generateRegisterCode } = require('../security/trust');
+// Phase 5：关系库权威 Admin（仅 OJ Core 直连 SQLite）
+const submissionRepo = require('../store/repositories/submission-repository');
+const contestRepo = require('../store/repositories/contest-repository');
+const userRepo = require('../store/repositories/user-repository');
+const scoreboard = require('../services/scoreboard');
+const metrics = require('../store/db-metrics');
+const clientDevices = require('../services/client-device-service');
 
 const router = express.Router();
 
@@ -37,19 +44,21 @@ router.use(internalAuth);
 
 /* ================= 总览 ================= */
 router.get('/overview', (_req, res) => {
-  const subs = db.submissions.all();
+  const official = submissionRepo.overviewCounts();
   res.json({
     users: db.users.all().length,
     problems: db.problems.all().length,
-    submissions: subs.length,
-    ac: subs.filter((s) => s.status === 'AC').length,
-    pending: subs.filter((s) => ['PENDING', 'SUBMITTED'].includes(s.status)).length,
-    judging: subs.filter((s) => ['LEASED', 'COMPILING', 'RUNNING', 'VERIFYING'].includes(s.status)).length,
-    workers: db.workers.all().length,
-    onlineWorkers: workerRegistry.onlineCount(),
-    approvedWorkers: db.workers.find((w) => w.trust_status === 'approved').length,
-    anomalies: db.workers.all().reduce((n, w) => n + (w.anomalyCount || 0), 0)
+    submissions: official.submissions,
+    ac: official.ac,
+    pending: official.pending,
+    judging: official.judging,
+    judgeBackend: 'JudgeAdapter'
   });
+});
+
+/* ================= 选手 Chrome 客户端设备 ================= */
+router.get('/devices', (_req, res) => {
+  res.json(clientDevices.list());
 });
 
 /* ================= 节点（Worker 列表，实时状态来自内存 Registry） ================= */
@@ -270,6 +279,101 @@ function hashTestdata(testcases) {
   return crypto.createHash('sha256').update(parts.join('\u0001')).digest('hex');
 }
 
+/* ================= Phase 5：关系库 Admin（submission 查询 / 详情 / 真实榜单 / 用户） ================= */
+
+/**
+ * GET /internal/admin/contests/:id/submissions
+ * 分页 + 过滤（problemId / userId / language / verdict）。列表不返回完整源码。
+ */
+router.get('/contests/:id/submissions', (req, res) => {
+  const r = submissionRepo.listAdminByContest(req.params.id, {
+    page: req.query.page,
+    pageSize: req.query.pageSize,
+    problemId: req.query.problemId,
+    userId: req.query.userId,
+    language: req.query.language,
+    verdict: req.query.verdict
+  });
+  // 列表不含 source_code
+  const list = r.rows.map((s) => ({
+    id: s.id,
+    contestId: s.contest_id,
+    problemId: s.problem_id,
+    problemTitle: s.problem_title || '',
+    problemLabel: s.problem_label || '',
+    userId: s.user_id,
+    username: s.username || '',
+    language: s.language,
+    status: s.status,
+    verdict: s.verdict || null,
+    serverReceivedAt: s.server_received_at,
+    executionTimeMs: s.execution_time_ms,
+    memoryKb: s.memory_kb
+  }));
+  res.json({ total: r.total, page: r.page, pageSize: r.pageSize, submissions: list });
+});
+
+/**
+ * GET /internal/admin/submissions/:id
+ * 完整详情（含 source_code / compile / runtime message）。
+ */
+router.get('/submissions/:id', (req, res) => {
+  const s = submissionRepo.findDetailById(req.params.id);
+  if (!s) return res.status(404).json({ error: '提交不存在' });
+  res.json({ submission: {
+    id: s.id,
+    contestId: s.contestId,
+    problemId: s.problemId,
+    problemTitle: s.problemTitle || '',
+    problemLabel: s.problemLabel || '',
+    userId: s.userId,
+    username: s.username || '',
+    nickname: s.nickname || '',
+    language: s.language,
+    status: s.status,
+    verdict: s.verdict || null,
+    sourceCode: s.sourceCode,
+    serverReceivedAt: s.serverReceivedAt,
+    judgeStartedAt: s.judgeStartedAt,
+    judgeFinishedAt: s.judgeFinishedAt,
+    executionTimeMs: s.executionTimeMs,
+    memoryKb: s.memoryKb,
+    compileMessage: s.compileMessage,
+    runtimeMessage: s.runtimeMessage
+  } });
+});
+
+/**
+ * GET /internal/admin/contests/:id/scoreboard
+ * 真实榜单（Admin 看真实，忽略 freeze 投影）。
+ */
+router.get('/contests/:id/scoreboard', (req, res) => {
+  const snap = scoreboard.fullSnapshot(req.params.id, { admin: true });
+  if (!snap) return res.status(404).json({ error: '比赛不存在' });
+  res.json({ snapshot: snap });
+});
+
+/**
+ * GET /internal/admin/users
+ * 用户基础查询（username 模糊 / 分页）。
+ */
+router.get('/users', (req, res) => {
+  const r = userRepo.listUsers({ username: req.query.username, page: req.query.page, pageSize: req.query.pageSize });
+  res.json(r);
+});
+
+/** Phase 5 指标（SQLite query 计数 / scoreboard 内存态） */
+router.get('/metrics', (_req, res) => {
+  res.json({
+    metrics: metrics.snapshot(),
+    scoreboard: {
+      runtimeSize: scoreboard.getRuntimeSize(),
+      versionMapSize: scoreboard.getVersionMapSize(),
+      dirtySize: scoreboard.getDirtySize()
+    }
+  });
+});
+
 /* ================= 重判 / 抽查（唯一 Scheduler 在此触发） ================= */
 router.post('/rejudge/:submissionId', (req, res) => {
   const s = db.submissions.byId(req.params.submissionId);
@@ -279,6 +383,43 @@ router.post('/rejudge/:submissionId', (req, res) => {
   res.json({ ok: true, status: result });
 });
 
+/* ================= Phase 5：关系库 Rejudge（经 judge-service，Official Judge 权威） ================= */
+const judgeService = require('../services/judge-service');
+const { SUB_STATUS, VERDICT } = require('../services/submission-state');
+
+/**
+ * POST /internal/admin/submissions/:id/rejudge
+ * 关系库重判：Admin 验证（internalAuth）→ status→QUEUED（清旧终态）→ judgeService.dispatch
+ * → Official Judge → FINISHED → recomputeParticipant → dirty → SSE delta。
+ * AC→WA / WA→AC 均能正确回滚/增加榜单。
+ */
+router.post('/submissions/:id/rejudge', (req, res) => {
+  const s = submissionRepo.findById(req.params.id);
+  if (!s) return res.status(404).json({ error: '提交不存在' });
+
+  // 仅终态可重判
+  if (s.status !== SUB_STATUS.FINISHED) {
+    return res.status(400).json({ error: '仅 FINISHED 状态的提交可重判（当前 ' + s.status + '）' });
+  }
+
+  // 重置为 QUEUED，清空旧终态结果（保留 source / 元数据；可选保留 history）
+  const queued = submissionRepo.updateStatus(s.id, {
+    status: SUB_STATUS.QUEUED,
+    verdict: null,
+    judgeStartedAt: null,
+    judgeFinishedAt: null,
+    executionTimeMs: null,
+    memoryKb: null,
+    compileMessage: null,
+    runtimeMessage: null
+  });
+
+  // 重新入队评测（异步，事务外）
+  judgeService.dispatch(queued);
+  audit.log('rejudge_v2', { submission: s.id, contest: s.contestId, problem: s.problemId, user: s.userId, from: s.verdict });
+  res.json({ ok: true, status: SUB_STATUS.QUEUED, submissionId: s.id, from: s.verdict });
+});
+
 router.post('/spotcheck/:submissionId', (req, res) => {
   const result = scheduler.spotCheck(req.params.submissionId);
   if (!result.ok) return res.status(400).json({ error: result.error });
@@ -286,15 +427,52 @@ router.post('/spotcheck/:submissionId', (req, res) => {
   res.json({ ok: true, task: { task_id: result.task.task_id, worker: result.task.worker_id } });
 });
 
+/* ================= 语言启停（受控端点，仅 :3002 Admin 经 internalAuth 调用；Runtime Enhancement Phase） =================
+ * Body: { id: 'cpp23'|'java21'|..., status: 'ENABLED'|'EXPERIMENTAL'|'DISABLED' }
+ * 仅修改内存态 overrideStatus；不持久化（重启恢复代码默认值）。所有语言状态变更必须经过审计。
+ * 安全：internalAuth 已挂在 router.use(internalAuth)，无需再校验。
+ */
+const languageProfiles = require('../language-profiles');
+
+router.get('/languages', (_req, res) => {
+  const ids = Object.keys(languageProfiles.PROFILES);
+  res.json({
+    languages: ids.map((id) => ({
+      id,
+      displayName: languageProfiles.PROFILES[id].displayName,
+      status: languageProfiles.getEffectiveStatus(id),
+      defaultStatus: languageProfiles.PROFILES[id].status,
+      officialSupported: languageProfiles.PROFILES[id].officialJudge.supported,
+      localSupported: languageProfiles.PROFILES[id].localRuntime.supported,
+      officialEnabled: languageProfiles.isOfficialEnabled(id)
+    }))
+  });
+});
+
+router.post('/languages/:id/status', (req, res) => {
+  const id = req.params.id;
+  const status = req.body && req.body.status;
+  if (!status) return res.status(400).json({ error: 'MISSING_STATUS', message: '缺少 status 字段' });
+  if (!languageProfiles.setStatus(id, status)) {
+    return res.status(400).json({ error: 'INVALID_STATUS', message: `无效的 status/language id: id=${id} status=${status}` });
+  }
+  audit.log('language_status_change', { id, status });
+  res.json({ ok: true, id, status, effectiveStatus: languageProfiles.getEffectiveStatus(id) });
+});
+
 /* ================= 内部 SSE 事件流（:3002 Admin 桥接） ================= */
 router.get('/events', (req, res) => {
   // 校验 query 令牌（admin-v2 生成）
   const token = req.query.token;
   const ts = req.query.ts;
-  const secret = process.env.INTERNAL_API_SECRET;
+  const secret = config.internalApiSecret;
   if (!secret || !token || !ts) return res.status(401).json({ error: '缺少令牌' });
   const expect = crypto.createHmac('sha256', secret).update(`${ts}:/internal/admin/events`).digest('hex');
-  if (!crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expect))) return res.status(401).json({ error: '令牌无效' });
+  const actualToken = Buffer.from(token);
+  const expectedToken = Buffer.from(expect);
+  if (actualToken.length !== expectedToken.length || !crypto.timingSafeEqual(actualToken, expectedToken)) {
+    return res.status(401).json({ error: '令牌无效' });
+  }
   // 复用 admin 通道（:3001 的 hub 已广播 admin 事件）
   hub.join('admin', res);
 });

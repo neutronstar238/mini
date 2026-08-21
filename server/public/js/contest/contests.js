@@ -18,22 +18,16 @@ async function load() {
     if (!d.contests.length) { grid.innerHTML = '<div class="text-muted" style="text-align:center;padding:40px 0">暂无已发布的比赛</div>'; return; }
     grid.innerHTML = d.contests.map(function (c) {
       var disabled = c.status === 'upcoming';
-      return '<div class="contest-card' + (disabled ? ' disabled' : '') + '" data-id="' + c.id + '">' +
+      return '<a class="contest-card' + (disabled ? ' disabled' : '') + '" href="/contest/contests/' + encodeURIComponent(c.id) + '/problems">' +
         '<div class="cc-title"><span>' + escapeHtml(c.title) + '</span>' +
         '<span class="cc-badge ' + c.status + '">' + STATUS_LABEL[c.status] + '</span></div>' +
         '<div class="cc-desc">' + (c.description ? escapeHtml(c.description) : '') + '</div>' +
         '<div class="cc-meta"><span>题目 ' + c.problemCount + ' 道</span>' +
         '<span>' + (c.status === 'upcoming' ? '开始于 ' + fmtStart(c.startTimeMs) : '已开始 ' + fmtStart(c.startTimeMs)) + '</span></div>' +
         (disabled ? '<div style="font-size:12px;color:#b45309">点击进入显示「比赛还未开始」</div>' : '') +
-        '</div>';
+        '</a>';
     }).join('');
   } catch (err) { grid.innerHTML = '<div class="text-muted" style="text-align:center;padding:40px 0">' + escapeHtml(err.message) + '</div>'; }
 }
-
-document.getElementById('contest-grid').addEventListener('click', function (e) {
-  var card = e.target.closest('.contest-card');
-  if (!card) return;
-  location.href = '/contest/contests/' + card.dataset.id + '/problems';
-});
 
 load();

@@ -28,14 +28,7 @@ async function load() {
   } catch (err) { tbody.innerHTML = '<tr><td colspan="4" class="empty">' + escapeHtml(err.message) + '</td></tr>'; }
 }
 
-async function refreshStats() {
-  try {
-    var p = await api('/api/contest/contests/' + cid + '/submissions?status=PENDING&pageSize=1').catch(function () { return { total: 0 }; });
-    document.getElementById('stat-pending').textContent = p.total || 0;
-  } catch (_) { /* 忽略 */ }
-}
 sseConnect('/api/contest/events/stream', {
   queue_status: function (d) { document.getElementById('stat-pending').textContent = d.pending == null ? 0 : d.pending; }
 });
-refreshStats();
 load();

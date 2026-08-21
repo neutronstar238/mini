@@ -105,3 +105,8 @@ html, body {
   border: 1px dashed #c3d7f6;
 }
 .login-foot { text-align: center; color: #9aa3b2; font-size: 12px; margin-top: 18px; }
+
+@media (max-width: 480px) {
+  .login-wrap { padding: 12px; }
+  .login-card-oj { padding: 26px 20px 24px; }
+}

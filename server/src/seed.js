@@ -87,5 +87,70 @@ module.exports = function seed(db) {
     added.push('Worker 注册码 OJ-DEMO-WORKER-2024');
   }
 
+  // ---- Phase 4 Development Contest「Browser OJ E2E Test」（幂等：仅当不存在时创建） ----
+  // 三题设计用于完整验证状态机（AC/WA/CE/RE/TLE）与「样例通过 ≠ Accepted」。
+  if (!db.contests.findOne((c) => c.title === 'Browser OJ E2E Test')) {
+    const e2e = db.contests.insert({
+      title: 'Browser OJ E2E Test',
+      description: 'Phase 4 端到端测试比赛：三语言 AC + WA/CE/RE/TLE 全状态机验证。',
+      startTimeMs: Date.now() - 3600 * 1000, // 已开始 1 小时
+      status: 'ongoing',
+      problemIds: [],
+      createdAt: new Date().toISOString()
+    });
+    const e2eDefs = [
+      {
+        title: 'A + B',
+        description: '输入两个整数 $a$ 和 $b$，输出它们的和。\n\n注意：$a,b$ 可能达到 $2\\times10^9$，请使用 64 位整数。',
+        samples: [{ input: '1 2', output: '3' }],
+        testcases: [
+          { input: '1 2', answer: '3' },
+          { input: '-5 8', answer: '3' },
+          { input: '1000000000 1000000000', answer: '2000000000' },
+          // 大于 int32 上限（2147483647），用 int 会溢出 → hidden WA（Case5 关键测试点）
+          { input: '2000000000 2000000000', answer: '4000000000' }
+        ]
+      },
+      {
+        title: '多组求和',
+        description: '输入多组 $(a,b)$，读到文件末尾（EOF），每组输出 $a+b$。\n\n样例输入含 2 组，输出两行。',
+        samples: [{ input: '1 2\n3 4', output: '3\n7' }],
+        testcases: [
+          { input: '1 2\n3 4', answer: '3\n7' },
+          { input: '-1 1\n0 0\n100 200', answer: '0\n0\n300' },
+          { input: '2000000000 2000000000\n1000000000 1000000000', answer: '4000000000\n2000000000' }
+        ]
+      },
+      {
+        title: '1+2+...+n',
+        description: '输入 $n$，输出 $1+2+\\dots+n$。\n\n$1\\le n \\le 10^9$。暴力循环可能超时（TLE），请使用公式。',
+        samples: [{ input: '100', output: '5050' }],
+        testcases: [
+          { input: '100', answer: '5050' },
+          { input: '1', answer: '1' },
+          { input: '1000000000', answer: '500000000500000000' } // 暴力 O(n) 会 TLE
+        ]
+      }
+    ];
+    const e2eProblemIds = [];
+    e2eDefs.forEach((d, i) => {
+      const p = db.problems.insert({
+        contestId: e2e.id,
+        title: d.title,
+        description: d.description,
+        timeLimitMs: 1000,
+        memoryLimitMb: 256,
+        samples: d.samples,
+        testcases: d.testcases,
+        genCode: '', solutionCode: '',
+        order: i + 1,
+        version: 1
+      });
+      e2eProblemIds.push(p.id);
+    });
+    db.contests.update(e2e.id, { problemIds: e2eProblemIds });
+    added.push('E2E 测试比赛(3 题)');
+  }
+
   console.log('[seed] 完成：' + (added.length ? added.join(', ') : '数据已存在，跳过'));
 };

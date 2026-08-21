@@ -9,11 +9,11 @@
 <body class="cpc-body">
   <!-- 顶部导航（亮蓝白顶栏） -->
   <div class="cpc-navbar">
-    <button type="button" class="navbar-toggle cpc-nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('show')">
+    <button type="button" class="navbar-toggle cpc-nav-toggle" aria-label="切换导航" aria-controls="sidebar_div" aria-expanded="false">
       <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
     </button>
     <a class="cpc-brand" href="/contest">Mini-OJ</a>
-    <span class="cpc-brand-subtitle">选手端 · 本地预检 + 可信边缘评测</span>
+    <span class="cpc-brand-subtitle">选手端 · 浏览器本地预检 + 服务器权威判题</span>
   </div>
 
   <header class="cpc-header">
@@ -41,22 +41,29 @@
         <% } %>
       </li>
       <hr>
-      <li <%= (typeof nav !== 'undefined' && nav === 'contests') ? 'class="active"' : '' %>>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'contests') ? 'active' : '' %>">
         <a href="/contest/contests">比赛</a>
       </li>
       <% if (typeof contestId !== 'undefined' && contestId) { %>
         <li class="sidebar-section"><span class="text-muted">比赛内</span></li>
-        <li <%= (typeof nav !== 'undefined' && nav === 'problems') ? 'class="active"' : '' %>>
+        <li class="<%= (typeof nav !== 'undefined' && nav === 'problems') ? 'active' : '' %>">
           <a href="/contest/contests/<%= contestId %>/problems">题目</a>
         </li>
-        <li <%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'class="active"' : '' %>>
+        <li class="<%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'active' : '' %>">
           <a href="/contest/contests/<%= contestId %>/submissions">我的提交</a>
         </li>
-        <li <%= (typeof nav !== 'undefined' && nav === 'rank') ? 'class="active"' : '' %>>
+        <li class="<%= (typeof nav !== 'undefined' && nav === 'rank') ? 'active' : '' %>">
           <a href="/contest/contests/<%= contestId %>/rank">榜单</a>
         </li>
       <% } %>
       <hr>
+      <li class="sidebar-section"><span class="text-muted">参考</span></li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'runtime-info') ? 'active' : '' %>">
+        <a href="/contest/runtime-info">运行环境</a>
+      </li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'faq') ? 'active' : '' %>">
+        <a href="/contest/faq">常见问题</a>
+      </li>
     </ul>
   </header>
 

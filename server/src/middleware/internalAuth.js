@@ -6,12 +6,10 @@
  * - 生产环境必须通过环境变量注入强密钥
  */
 const crypto = require('crypto');
+const config = require('../config');
 
 function internalAuth(req, res, next) {
-  const secret = process.env.INTERNAL_API_SECRET;
-  if (!secret) {
-    return res.status(503).json({ error: 'INTERNAL_API_SECRET 未配置' });
-  }
+  const secret = config.internalApiSecret;
   // 请求头 X-Internal-Token = HMAC-SHA256(secret, timestamp + path)
   const token = req.headers['x-internal-token'];
   const ts = req.headers['x-internal-ts'];

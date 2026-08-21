@@ -9,9 +9,17 @@
   <div class="mono text-muted">ICPC · Solved / Penalty</div>
 </div>
 
+<!-- 状态条：Scoreboard version / SSE 连接 / Cache Lease -->
+<div class="panel-oj" style="padding:8px 14px;margin-bottom:12px">
+  <div class="flex-between">
+    <span id="sb-status" class="mono" style="font-size:12px;color:#6b7280">加载中…</span>
+    <span class="text-muted" style="font-size:12px">实时榜单 · 10s 批量刷新</span>
+  </div>
+</div>
+
 <div class="panel-oj">
   <div style="overflow-x:auto">
-    <table class="table-oj table-striped table-hover" style="margin-bottom:0;min-width:100%">
+    <table class="table-oj table-striped table-hover rank-table" style="margin-bottom:0;min-width:100%">
       <thead id="rank-head"></thead>
       <tbody id="rank-tbody"><tr><td colspan="4" class="empty">加载中…</td></tr></tbody>
     </table>
@@ -19,5 +27,6 @@
 </div>
 
 <script>window.__CONTEST_ID__ = '<%= cid %>';</script>
+<script src="/js/contest/scoreboard-cache.js"></script>
 
 <%- include('../partials/contest-foot', { pageScript: pageScript }) %>

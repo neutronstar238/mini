@@ -10,7 +10,11 @@ function log(type, detail) {
   const e = db.audit.insert({ type, detail, at: new Date().toISOString() });
   // 控制审计表规模（环形）
   const all = db.audit.all();
-  while (all.length > 2000) db.audit.remove(all[0].id);
+  const overflow = all.length - 2000;
+  if (overflow > 0) {
+    all.sort((a, b) => String(a.at || a.createdAt || '').localeCompare(String(b.at || b.createdAt || '')));
+    for (const event of all.slice(0, overflow)) db.audit.remove(event.id);
+  }
   return e;
 }
 

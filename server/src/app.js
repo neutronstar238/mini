@@ -1,10 +1,10 @@
 'use strict';
 /**
- * Mini-OJ 服务端入口 —— 三域架构：中心控制域
+ * Mini-OJ 服务端入口 —— Browser Local Run + Server JudgeAdapter
  * 双 Web 入口（两个域名）：
  *   - 选手端  contest.example.com  → /contest/**（页面与 /api/contest/**）
  *   - 管理端  admin.example.com    → /admin/**（页面与 /api/admin/**）
- * 评测协议  /api/worker/**（仅可信 Worker 用证书身份访问）
+ * 正式判题由 OJ Core 内 JudgeAdapter 完成；/api/worker/** 仅保留早期实验兼容
  * 本地联调：prefixFallback=true 时可直接用 /contest 与 /admin 前缀访问
  */
 const path = require('path');
@@ -17,6 +17,20 @@ const { authOptional } = require('./middleware/auth');
 const seedIfEmpty = require('./seed');
 
 const app = express();
+const publicDir = path.join(__dirname, '..', 'public');
+const immutableRuntimeOptions = {
+  maxAge: '1y',
+  immutable: true,
+  setHeaders: function (res, filePath) {
+    // Runtime modules are consumed from cross-origin-isolated contest pages
+    // and by blob-backed pthread workers. Explicit CORP prevents Chrome from
+    // blocking an otherwise same-origin module as ERR_BLOCKED_BY_RESPONSE.
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    if (filePath.endsWith('.wasm')) res.setHeader('Content-Type', 'application/wasm');
+  }
+};
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
 app.disable('x-powered-by');
@@ -35,23 +49,38 @@ app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
   }
   // HTML 页面响应不缓存，避免开发期更新后浏览器仍显示旧页面
-  if (req.accepts('html')) {
+  // 仅页面导航响应禁用缓存。WASM/module fetch 常用 Accept: */*，不能据此把
+  // 带扩展名的 Runtime 静态资产误判为 HTML 并覆盖其版本化 immutable 缓存。
+  if (!path.extname(req.path) && req.accepts('html')) {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
   }
   next();
 });
-app.use(express.static(path.join(__dirname, '..', 'public'), {
+// 内容版本化的 Runtime URL：版本改变即换路径，才能安全使用 immutable 一年缓存。
+// 物理文件仍只有一份，避免复制 50MB+ 的 WASM 资产。
+app.use('/runtime/runno/0.10.0-ojc4', express.static(path.join(publicDir, 'js', 'runno'), immutableRuntimeOptions));
+app.use('/runtime/pyodide/0.26.4', express.static(path.join(publicDir, 'js', 'pyodide'), immutableRuntimeOptions));
+// Phase 6 — Java 21 Browser Local runtime：
+//   Checkpoint 2 正式资产路径；v1 保留为冻结历史资产，不被静默覆盖。
+app.use('/runtime/java21-browserjdk-compat-v1', express.static(path.join(publicDir, 'js', 'runtime', 'java21-browserjdk-compat-v1'), immutableRuntimeOptions));
+app.use('/runtime/java21-browserjdk-compat-v2', express.static(path.join(publicDir, 'js', 'runtime', 'java21-browserjdk-compat-v2'), immutableRuntimeOptions));
+// Phase 8 — self-built Modern Clang 19.1.7 browser engine.
+app.use('/runtime/cpp-modern-engine-v1', express.static(path.join(publicDir, 'js', 'runtime', 'cpp-modern-engine-v1'), immutableRuntimeOptions));
+
+app.use(express.static(publicDir, {
   setHeaders: function (res, filePath) {
     // .wasm 必须返回 application/wasm，否则 WebAssembly.compileStreaming/instantiateStreaming 退化为 ArrayBuffer 路径
     if (filePath.endsWith('.wasm')) {
       res.setHeader('Content-Type', 'application/wasm');
     }
-    // Runno 自托管运行时大文件（clang.wasm ~31MB、wasm-ld.wasm、python wasm、tar.gz sysroot 等）
-    // URL 稳定（版本化目录），使用 immutable 长缓存：填充 HTTP cache，并利于 V8 Wasm code cache 命中
+    // 旧的未版本化 Runtime URL 仅为兼容保留，必须重新验证，禁止 immutable 缓存旧资产。
     if (/[\\/]js[\\/]runno[\\/]/.test(filePath)) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    }
+    if (/[\\/]js[\\/]pyodide[\\/]/.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     }
   }
 }));
@@ -77,6 +106,10 @@ if (config.entry === 'all' || config.entry === 'contest') {
 if (config.entry === 'all' || config.entry === 'contest') {
   app.use('/api/contest', require('./routes/contest'));
 }
+
+// ---------- 公开 API（Runtime Enhancement Phase：sanitized runtime/compiler info） ----------
+// 仅返回公开安全数据（无 hidden test / secret / db path），供 Runtime Info 页、FAQ 页与 Tooltip 读取。
+app.use('/api/public', require('./routes/public'));
 
 // ---------- 管理端 API（:3002 Admin 服务代理到 :3001 internal API） ----------
 if (config.entry === 'all' || config.entry === 'admin') {
@@ -110,6 +143,9 @@ if (config.entry === 'all' || config.entry === 'contest') {
   app.get('/contest/contests/:cid/problems/:pid', guardPage('/contest/login'), (req, res) => res.render('contest/problem-detail', { user: req.user || null, contestId: req.params.cid, problemId: req.params.pid }));
   app.get('/contest/contests/:cid/submissions', guardPage('/contest/login'), (req, res) => res.render('contest/submissions', { user: req.user || null, contestId: req.params.cid }));
   app.get('/contest/contests/:cid/rank', guardPage('/contest/login'), (req, res) => res.render('contest/rank', { user: req.user || null, contestId: req.params.cid }));
+  // Runtime Enhancement Phase：Runtime Info / FAQ 页（公开，无 guard；只展示 sanitized 数据）
+  app.get('/contest/runtime-info', (req, res) => res.render('contest/runtime-info', { user: req.user || null, contestId: '' }));
+  app.get('/contest/faq', (req, res) => res.render('contest/faq', { user: req.user || null, contestId: '' }));
 }
 
 if (config.entry === 'all' || config.entry === 'admin') {
@@ -118,6 +154,7 @@ if (config.entry === 'all' || config.entry === 'admin') {
   // 管理端页面：未登录一律跳登录页
   app.get('/admin', (req, res) => res.redirect(req.user ? '/admin/overview' : '/admin/login'));
   app.get('/admin/overview', guardPage('/admin/login'), (req, res) => res.render('admin/overview', { user: req.user || null }));
+  app.get('/admin/devices', guardPage('/admin/login'), (req, res) => res.render('admin/devices', { user: req.user || null }));
   app.get('/admin/nodes', guardPage('/admin/login'), (req, res) => res.render('admin/nodes', { user: req.user || null }));
   app.get('/admin/certs', guardPage('/admin/login'), (req, res) => res.render('admin/certs', { user: req.user || null }));
   app.get('/admin/queue', guardPage('/admin/login'), (req, res) => res.render('admin/queue', { user: req.user || null }));
@@ -125,6 +162,9 @@ if (config.entry === 'all' || config.entry === 'admin') {
   app.get('/admin/contests', guardPage('/admin/login'), (req, res) => res.render('admin/contests', { user: req.user || null }));
   app.get('/admin/problems', guardPage('/admin/login'), (req, res) => res.render('admin/problems', { user: req.user || null }));
   app.get('/admin/rejudge', guardPage('/admin/login'), (req, res) => res.render('admin/rejudge', { user: req.user || null }));
+  // Phase 5：Admin 提交查询（关系库）
+  app.get('/admin/submissions', guardPage('/admin/login'), (req, res) => res.render('admin/submissions', { user: req.user || null }));
+  app.get('/admin/contests/:id/submissions', guardPage('/admin/login'), (req, res) => res.render('admin/submissions', { user: req.user || null, contestId: req.params.id }));
 }
 
 // 根路径：按入口跳转（未登录跳对应登录页）
@@ -141,17 +181,23 @@ app.use((err, _req, res, _next) => {
 
 // ---------- 启动 ----------
 seedIfEmpty(db);
+// Phase 4：初始化关系型主链路 DB（WAL + schema migration）并从文档种子数据补齐
+if (config.entry === 'all' || config.entry === 'contest') {
+  require('./db/sqlite').getOjDb();
+  require('./services/oj-seed-sync').syncFromDocStore();
+  require('./services/judge-service').init(); // 启动时扫描 QUEUED/JUDGING 做恢复
+}
 // 重启后从 DB 重建内存榜单（仅 OJ Core / 联调模式）
 if (config.entry === 'all' || config.entry === 'contest') {
   require('./services/scoreboard').recomputeFromDb();
+  require('./services/client-device-service').start();
 }
 app.listen(config.port, config.host, () => {
   console.log('┌──────────────────────────────────────────────────────┐');
-  console.log('│  Mini-OJ 中心控制域  ·  本地预检+可信边缘评测        │');
+  console.log('│  Mini-OJ · 浏览器本地预检 + 服务器权威判题          │');
   console.log(`│  选手端 http://localhost:${config.port}/contest              │`);
   console.log(`│  管理端 http://localhost:${config.port}/admin               │`);
-  console.log(`│  Worker  http://localhost:${config.port}/api/worker          │`);
+  console.log('│  正式判题: OJ Core JudgeAdapter                       │');
   console.log('│  演示账号: admin/admin123  user1/user123              │');
-  console.log('│  Worker 注册码: OJ-DEMO-WORKER-2024                    │');
   console.log('└──────────────────────────────────────────────────────┘');
 });

@@ -120,6 +120,7 @@ function createCollections(dataDir) {
     submissions: new Collection(driver, 'submissions'),
     judgeAttempts: new Collection(driver, 'judge_attempts'),
     workers: new Collection(driver, 'workers'),
+    clientDevices: new Collection(driver, 'client_devices'),
     registerCodes: new Collection(driver, 'register_codes'),
     queueTickets: new Collection(driver, 'queue_tickets'),
     audit: new Collection(driver, 'audit'),

@@ -1,15 +1,20 @@
 {
   "name": "mini-oj-server",
   "version": "1.0.0",
-  "description": "在线评测系统服务端（评测任务本地化下沉）",
+  "description": "Chrome 浏览器本地编译运行 + 服务器 JudgeAdapter 权威判题",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "seed": "node src/seed.js",
-    "dev": "node --watch src/app.js"
+    "dev": "node --watch src/app.js",
+    "test:e2e": "node ../scripts/e2e/oj-main-path.js",
+    "test:web-runtime": "node test/web-runtime-edge.e2e.js"
   },
   "engines": {
     "node": ">=16"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

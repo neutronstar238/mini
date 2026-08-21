@@ -8,7 +8,7 @@
 </head>
 <body class="cpc-body">
   <div class="cpc-navbar cpc-navbar-admin">
-    <button type="button" class="navbar-toggle cpc-nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('show')">
+    <button type="button" class="navbar-toggle cpc-nav-toggle" aria-label="切换导航" aria-controls="sidebar_div" aria-expanded="false">
       <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
     </button>
     <a class="cpc-brand" href="/admin">Mini-OJ</a>
@@ -29,29 +29,37 @@
         <% } %>
       </li>
       <hr>
-      <li <%= (typeof nav === 'undefined' || nav === 'overview') ? 'class="active"' : '' %>>
+      <li class="<%= (typeof nav === 'undefined' || nav === 'overview') ? 'active' : '' %>">
         <a href="/admin/overview">总览</a>
       </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'nodes') ? 'class="active"' : '' %>>
-        <a href="/admin/nodes">节点管理</a>
-      </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'certs') ? 'class="active"' : '' %>>
-        <a href="/admin/certs">证书/注册码</a>
-      </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'queue') ? 'class="active"' : '' %>>
-        <a href="/admin/queue">任务队列</a>
-      </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'contests') ? 'class="active"' : '' %>>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'contests') ? 'active' : '' %>">
         <a href="/admin/contests">比赛管理</a>
       </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'problems') ? 'class="active"' : '' %>>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'problems') ? 'active' : '' %>">
         <a href="/admin/problems">题目管理</a>
       </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'rejudge') ? 'class="active"' : '' %>>
-        <a href="/admin/rejudge">重判/抽查</a>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'active' : '' %>">
+        <a href="/admin/submissions">提交查询</a>
       </li>
-      <li <%= (typeof nav !== 'undefined' && nav === 'audit') ? 'class="active"' : '' %>>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'devices') ? 'active' : '' %>">
+        <a href="/admin/devices">客户端设备</a>
+      </li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'rejudge') ? 'active' : '' %>">
+        <a href="/admin/rejudge">重判</a>
+      </li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'audit') ? 'active' : '' %>">
         <a href="/admin/audit">审计</a>
+      </li>
+      <hr>
+      <li class="sidebar-section"><span class="text-muted">遗留实验（非核心链路）</span></li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'nodes') ? 'active' : '' %>">
+        <a href="/admin/nodes">旧 Worker 节点</a>
+      </li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'certs') ? 'active' : '' %>">
+        <a href="/admin/certs">旧注册码</a>
+      </li>
+      <li class="<%= (typeof nav !== 'undefined' && nav === 'queue') ? 'active' : '' %>">
+        <a href="/admin/queue">旧任务队列</a>
       </li>
       <hr>
     </ul>

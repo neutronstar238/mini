@@ -1,0 +1,80 @@
+<%
+  var cid = (typeof contestId !== 'undefined') ? contestId : '';
+%>
+<%- include('../partials/admin-head', { title: '提交查询', nav: 'submissions' }) %>
+<% var pageScript = '/js/admin/submissions.js' %>
+
+<h2 class="page-title">提交查询 <span class="text-muted" style="font-size:13px;font-weight:400">关系库 · Official Verdict</span></h2>
+
+<div class="panel-oj">
+  <div class="panel-body" style="padding:14px">
+    <div class="row" style="margin:0 0 4px">
+      <div class="form-group" style="margin:0 8px 0 0;display:inline-block;vertical-align:top">
+        <label>比赛</label>
+        <select class="form-control" id="f-contest" style="display:inline-block;width:260px"></select>
+      </div>
+      <div class="form-group" style="margin:0 8px 0 0;display:inline-block;vertical-align:top">
+        <label>题目 ID</label>
+        <input class="form-control" id="f-problem" style="display:inline-block;width:120px" placeholder="problemId">
+      </div>
+      <div class="form-group" style="margin:0 8px 0 0;display:inline-block;vertical-align:top">
+        <label>用户 ID</label>
+        <input class="form-control" id="f-user" style="display:inline-block;width:120px" placeholder="userId">
+      </div>
+      <div class="form-group" style="margin:0 8px 0 0;display:inline-block;vertical-align:top">
+        <label>语言</label>
+        <select class="form-control" id="f-language" style="display:inline-block;width:120px">
+          <option value="">全部</option>
+          <option value="c11">C11</option>
+          <option value="cpp11">C++11</option>
+          <option value="python3">Python3</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0 8px 0 0;display:inline-block;vertical-align:top">
+        <label>Verdict</label>
+        <select class="form-control" id="f-verdict" style="display:inline-block;width:150px">
+          <option value="">全部</option>
+          <option value="AC">AC</option>
+          <option value="WA">WA</option>
+          <option value="TLE">TLE</option>
+          <option value="MLE">MLE</option>
+          <option value="RE">RE</option>
+          <option value="CE">CE</option>
+          <option value="SYSTEM_ERROR">SYSTEM_ERROR</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;display:inline-block;vertical-align:top">
+        <label>&nbsp;</label><br>
+        <button class="btn btn-primary btn-sm" id="btn-search">查询</button>
+        <button class="btn btn-default btn-sm" id="btn-reset">重置</button>
+      </div>
+    </div>
+    <div class="mono text-muted" style="font-size:12px;margin-top:6px" id="page-info"></div>
+  </div>
+</div>
+
+<div class="panel-oj">
+  <table class="table-oj table-striped table-hover table-wide" style="margin-bottom:0">
+    <thead><tr>
+      <th style="width:90px">ID</th>
+      <th style="width:60px">题</th>
+      <th>题目</th>
+      <th style="width:110px">用户</th>
+      <th style="width:90px">语言</th>
+      <th style="width:120px">状态/Verdict</th>
+      <th style="width:90px">耗时</th>
+      <th style="width:140px">提交时间</th>
+      <th style="width:120px">操作</th>
+    </tr></thead>
+    <tbody id="sub-tbody"><tr><td colspan="9" class="empty">加载中…</td></tr></tbody>
+  </table>
+</div>
+
+<div class="flex-between mt-16">
+  <button class="btn btn-default btn-sm" id="prev-page">上一页</button>
+  <span class="mono text-muted" id="page-ctrl" style="font-size:13px"></span>
+  <button class="btn btn-default btn-sm" id="next-page">下一页</button>
+</div>
+
+<script>window.__CONTEST_ID__ = '<%= cid %>';</script>
+<%- include('../partials/admin-foot', { pageScript: pageScript }) %>

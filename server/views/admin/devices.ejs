@@ -1,0 +1,41 @@
+<%- include('../partials/admin-head', { title: '客户端设备', nav: 'devices' }) %>
+<% var pageScript = '/js/admin/devices.js' %>
+
+<div class="flex-between" style="gap:16px;flex-wrap:wrap">
+  <div>
+    <h2 class="page-title" style="margin-bottom:4px">客户端设备</h2>
+    <div class="text-muted">选手登录后的 Chrome 客户端；状态变化由服务器通过 SSE 实时推送</div>
+  </div>
+  <div id="device-sse" class="text-muted">实时连接中…</div>
+</div>
+
+<div class="stat-cards mt-16" id="device-stats">
+  <div class="stat-card"><div class="num" id="device-total">-</div><div class="lbl">设备总数</div></div>
+  <div class="stat-card"><div class="num text-success" id="device-online">-</div><div class="lbl">在线</div></div>
+  <div class="stat-card"><div class="num" id="device-offline">-</div><div class="lbl">离线</div></div>
+</div>
+
+<div class="panel-oj mt-16">
+  <div class="panel-heading flex-between" style="gap:12px;flex-wrap:wrap">
+    <span>设备列表</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="device-filter" class="form-control" style="width:110px">
+        <option value="all">全部状态</option>
+        <option value="online">在线</option>
+        <option value="offline">离线</option>
+      </select>
+      <input id="device-search" class="form-control" style="width:190px" placeholder="搜索用户名或设备 ID">
+    </div>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="table-oj table-striped table-hover" style="margin-bottom:0;min-width:980px">
+      <thead><tr>
+        <th style="width:90px">状态</th><th>用户</th><th>设备 ID</th><th>浏览器 / 系统</th>
+        <th>屏幕</th><th>当前页面</th><th>IP</th><th style="width:150px">最后在线</th>
+      </tr></thead>
+      <tbody id="device-tbody"><tr><td colspan="8" class="empty">加载中…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/admin-foot', { pageScript: pageScript }) %>

@@ -1,7 +1,7 @@
-<%- include('../partials/admin-head', { title: '重判/抽查', nav: 'rejudge' }) %>
+<%- include('../partials/admin-head', { title: '重判', nav: 'rejudge' }) %>
 <% var pageScript = '/js/admin/rejudge.js' %>
 
-<h2 class="page-title">重判 / 抽查</h2>
+<h2 class="page-title">重判</h2>
 
 <div class="panel-oj">
   <div class="panel-body">
@@ -11,11 +11,9 @@
     </div>
     <div>
       <button class="btn btn-primary" id="btn-rejudge">重新评测 (Rejudge)</button>
-      <button class="btn btn-info" id="btn-spotcheck">跨节点抽查 (Spot Check)</button>
     </div>
     <p class="text-muted mt-16" style="font-size:13px">
-      重判：将提交置回 PENDING 重新调度；<br>
-      抽查：将提交派发至第二个可信 Worker 重判并比对结果一致性。
+      重判会将 FINISHED 提交置回 QUEUED，并由服务器 JudgeAdapter 重新编译、执行隐藏测试；浏览器本地结果不参与正式判定。
     </p>
   </div>
 </div>
