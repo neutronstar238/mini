@@ -13,7 +13,20 @@ worker/node_modules/
 # 本地运行产物与离线包
 local/work/
 local/offline-packages/
-compat-tests/
+output/
+tmp/
+*.log
+compat-tests/*
+!compat-tests/java21/
+!compat-tests/java21/**
+compat-tests/java21/results/
+compat-tests/java21/cache/cache-results.json
+compat-tests/java21/e2e/*-results.json
+compat-tests/java21/isolation/*-results.json
+compat-tests/java21/memory/*.json
+compat-tests/java21/memory/*.jsonl
+compat-tests/java21/network/*.json
+compat-tests/java21/timeout/*-results.json
 
 # 系统 / 编辑器 / IDE 工具
 .DS_Store
@@ -26,6 +39,18 @@ node_modules/
 paper/
 CCPCOJ/
 
-# 自托管 Runno 运行时大二进制（clang/wasm-ld/python wasm 及 sysroot，约 74MB）
-# 部署时按 deploy/README 从 Runno 官方下载放置；仓库仅保留 JS 运行时代码
+# 自托管 Runno 运行时大二进制（clang/wasm-ld 及 sysroot）
+# 部署时按 deploy/RUNNO-RUNTIME.md 放置；仓库仅保留 JS 运行时代码
 server/public/js/runno/langs/
+
+# 自托管 Pyodide 0.26.4 运行时（约 13MB）；由固定哈希脚本恢复
+server/public/js/pyodide/
+
+# BrowserJDK reproducible-build workspaces and generated runtime binaries.
+# Release manifests/reports are committed; large assets are installed locally.
+browserjdk-oj/.build/
+browserjdk-oj/runtime/
+browserjdk-oj/dist/
+server/public/js/runtime/java21-browserjdk-compat-v1/
+server/public/js/runtime/java21-browserjdk-compat-v2/
+server/public/js/runtime/cpp-modern-engine-v1/

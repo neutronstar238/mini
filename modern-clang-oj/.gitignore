@@ -1,0 +1,12 @@
+build/
+src/
+cache/
+logs/
+out/
+repro-*/
+stack-smoke/
+*.tar
+*.tar.gz
+*.wasm
+*.a
+*.o
