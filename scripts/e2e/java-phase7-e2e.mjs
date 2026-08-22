@@ -281,7 +281,9 @@ async function main() {
     } else {
       await chrome.page.locator('#ide-lang').selectOption('java');
       const selected = await pageState(chrome.page);
-      report.cases.push(record('runtime-not-loaded', /NOT_LOADED|idle|^$/.test(initial.runtimeStatus) ? 'PASS' : 'FAIL', {initial, afterLanguageSelection: selected}));
+      const loadingVisible = /Java 21 Runtime:\s*(Loading|Preparing|Ready)\b/i.test(selected.runtimeStatus)
+        && /检查 Java 21 Runtime 缓存|正在下载 Runtime|正在启动 OpenJDK 21|Runtime Ready/i.test(selected.runtimeProgress);
+      report.cases.push(record('runtime-loading-visible', loadingVisible ? 'PASS' : 'FAIL', {initial, afterLanguageSelection: selected}));
       const localStart = net.mark();
       progress('local-run', 'begin');
       const localRun = await withTimeout(uiRun(chrome.page, JAVA_SOURCE, '7 8'), OP_TIMEOUT_MS, 'Java local UI run');

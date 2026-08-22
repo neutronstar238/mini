@@ -158,7 +158,8 @@ function pchEnabled() {
 }
 
 function ideLanguageLabel(lang) {
-  if (lang === 'python') return 'Python 3';
+  if (lang === 'python') return 'Python 3.12';
+  if (lang === 'java') return 'Java 21';
   if (lang === 'c') return 'C11';
   if (lang === 'cpp') return 'C++11';
   if (lang === 'c17') return 'C17';
@@ -184,11 +185,12 @@ function formatCompileInfo(r) {
   if (t.frontendMs != null || t.backendMs != null) {
     if (t.frontendMs != null) parts.push('解析与检查 ' + t.frontendMs + 'ms');
     if (t.backendMs != null) parts.push('生成机器码 ' + t.backendMs + 'ms');
-  } else {
-    parts.push('编译 ' + t.compileMs + 'ms');
+  } else if (t.compileMs != null || t.compileTime != null) {
+    parts.push('编译 ' + (t.compileMs != null ? t.compileMs : t.compileTime) + 'ms');
   }
+  if (r.language === 'java' && t.runtimeLoadMs) parts.unshift('Runtime 初始化 ' + t.runtimeLoadMs + 'ms');
   if (t.linkMs) parts.push('链接 ' + t.linkMs + 'ms');
-  return '✓ 编译成功 · ' + parts.join(' · ');
+  return parts.length ? '✓ 编译成功 · ' + parts.join(' · ') : '';
 }
 
 // 中断器工厂：killers 用于真正杀死进行中的编译/执行 Worker，避免后台残留
@@ -240,7 +242,6 @@ var runVersion = 0;         // 运行版本令牌：新点击自增，用于丢�
  */
 async function runIde(code, lang, stdin, opts) {
   var isModernPreview = lang === 'c17' || lang === 'cpp17';
-  if (!isModernPreview) await ensureRunno();
   var t0 = performance.now();
   var abort = (opts && opts.abort) || null;
   var abortPromise = abort ? new Promise(function (_, reject) {
@@ -250,7 +251,10 @@ async function runIde(code, lang, stdin, opts) {
   // 优先走 ide-runner 轻量管线（RuntimeManager 统一分发：python → Persistent Worker；c/cpp → Clang/WASI）
   // 未就绪则回退 Runno headlessRunCode 旧管线
   var useRunner = await ensureIdeRunner();
-  if (isModernPreview && !useRunner) throw new Error('Modern C/C++ Browser Runtime 未就绪');
+  if ((isModernPreview || lang === 'java') && !useRunner) {
+    throw new Error((lang === 'java' ? 'Java 21' : 'Modern C/C++') + ' Browser Runtime 未就绪');
+  }
+  if (!useRunner) await ensureRunno();
   var invoke;
   if (useRunner) {
     invoke = window.__IDE_RUNNER__.runCode({
@@ -344,13 +348,16 @@ async function onRun() {
   var stdin = $('ide-input').value;
   var btn = $('ide-run');
   var isCpp = lang === 'cpp' || lang === 'c' || lang === 'cpp17' || lang === 'c17';
+  var runningDetail = isCpp ? '编译 C/C++，可能需数秒'
+    : lang === 'java' ? '准备 Java 21 Runtime，首次需下载约 30 MB 并启动 JVM'
+    : '编译 Python，可能需数秒';
 
   var abort = newAbort();
   abortRun = abort;
 
   $('ide-output-wrap').style.display = '';
   $('ide-output-head').innerHTML = '<span class="oj-source-tag">LOCAL</span> ' + escapeHtml(ideLanguageLabel(lang));
-  $('ide-time').textContent = '运行中…（编译 ' + (isCpp ? 'C/C++' : 'Python') + '，可能需数秒）';
+  $('ide-time').textContent = '运行中…（' + runningDetail + '）';
   $('ide-timing').textContent = '';
   $('ide-output').innerHTML = '<span style="color:#94a3b8">…</span>';
   btn.textContent = '◼ 中断';
@@ -1083,9 +1090,13 @@ if (!subscribeRuntimeProgress()) {
 /* Retry 按钮（点击进度条内的"重试"） */
 $('rp-retry').addEventListener('click', function () {
   var rid = this.dataset.runtimeId;
-  if (!rid || !window.__IDE_RUNNER__ || !window.__IDE_RUNNER__.retryModernRuntime) return;
+  if (!rid || !window.__IDE_RUNNER__) return;
+  var retry = rid === 'java21-browserjdk-compat-v2'
+    ? window.__IDE_RUNNER__.retryJavaRuntime
+    : window.__IDE_RUNNER__.retryModernRuntime;
+  if (typeof retry !== 'function') return;
   this.disabled = true;
-  window.__IDE_RUNNER__.retryModernRuntime(rid, {}).finally(function () {
+  Promise.resolve(retry.call(window.__IDE_RUNNER__, rid, {})).finally(function () {
     this.disabled = false;
   }.bind(this));
 });
