@@ -1,0 +1,11 @@
+{
+  "id": "33_bitwise_uint",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "stdint bitwise operations",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

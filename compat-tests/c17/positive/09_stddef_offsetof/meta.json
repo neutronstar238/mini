@@ -1,0 +1,11 @@
+{
+  "id": "09_stddef_offsetof",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "stddef sizeof/offsetof",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

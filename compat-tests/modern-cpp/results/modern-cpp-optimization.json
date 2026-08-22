@@ -1,0 +1,579 @@
+{
+  "schemaVersion": "modern-cpp-optimization-ab-v1",
+  "generatedAt": "2026-08-21T14:40:37.361Z",
+  "threshold": {
+    "compatibilityPercent": 100,
+    "medianRatioMax": 1.5,
+    "p95CompileLinkMsMax": 5000
+  },
+  "referenceHost": "yqzl-server",
+  "repetitions": 2,
+  "cases": [
+    {
+      "id": "c17-stdio",
+      "language": "c17",
+      "expected": "42",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "42",
+        "stderr": "",
+        "wallMs": 413,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 233,
+            "linkMs": 27,
+            "executionMs": 1.1,
+            "artifactBytes": 43847,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 33,
+            "linkMs": 13,
+            "executionMs": 1.1,
+            "artifactBytes": 43847,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 171,
+            "linkMs": 27,
+            "executionMs": 1.4,
+            "artifactBytes": 43696,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 34,
+            "linkMs": 14,
+            "executionMs": 1.1,
+            "artifactBytes": 43696,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "c17-math",
+      "language": "c17",
+      "expected": "4 -4 -3 3",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "4 -4 -3 3",
+        "stderr": "",
+        "wallMs": 382,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4 -4 -3 3",
+            "stderr": "",
+            "compileMs": 25,
+            "linkMs": 9,
+            "executionMs": 0.7,
+            "artifactBytes": 17884,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4 -4 -3 3",
+            "stderr": "",
+            "compileMs": 21,
+            "linkMs": 9,
+            "executionMs": 0.5,
+            "artifactBytes": 17884,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4 -4 -3 3",
+            "stderr": "",
+            "compileMs": 30,
+            "linkMs": 10,
+            "executionMs": 0.6,
+            "artifactBytes": 17774,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4 -4 -3 3",
+            "stderr": "",
+            "compileMs": 22,
+            "linkMs": 8,
+            "executionMs": 0.5,
+            "artifactBytes": 17774,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "c17-bfs",
+      "language": "c17",
+      "expected": "2",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "2",
+        "stderr": "",
+        "wallMs": 411,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "2",
+            "stderr": "",
+            "compileMs": 30,
+            "linkMs": 9,
+            "executionMs": 0.5,
+            "artifactBytes": 19743,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "2",
+            "stderr": "",
+            "compileMs": 19,
+            "linkMs": 10,
+            "executionMs": 0.6,
+            "artifactBytes": 19743,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "2",
+            "stderr": "",
+            "compileMs": 77,
+            "linkMs": 9,
+            "executionMs": 0.5,
+            "artifactBytes": 18046,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "2",
+            "stderr": "",
+            "compileMs": 33,
+            "linkMs": 10,
+            "executionMs": 0.5,
+            "artifactBytes": 18046,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "c17-dijkstra",
+      "language": "c17",
+      "expected": "8",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "8",
+        "stderr": "",
+        "wallMs": 392,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "8",
+            "stderr": "",
+            "compileMs": 30,
+            "linkMs": 9,
+            "executionMs": 0.5,
+            "artifactBytes": 19615,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "8",
+            "stderr": "",
+            "compileMs": 20,
+            "linkMs": 10,
+            "executionMs": 0.5,
+            "artifactBytes": 19615,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "8",
+            "stderr": "",
+            "compileMs": 59,
+            "linkMs": 13,
+            "executionMs": 0.8,
+            "artifactBytes": 18459,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "8",
+            "stderr": "",
+            "compileMs": 38,
+            "linkMs": 8,
+            "executionMs": 0.5,
+            "artifactBytes": 18459,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "cpp17-structured-bindings",
+      "language": "cpp17",
+      "expected": "3",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "3",
+        "stderr": "",
+        "wallMs": 816,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "3",
+            "stderr": "",
+            "compileMs": 997,
+            "linkMs": 21,
+            "executionMs": 2,
+            "artifactBytes": 773502,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "3",
+            "stderr": "",
+            "compileMs": 704,
+            "linkMs": 18,
+            "executionMs": 1.9,
+            "artifactBytes": 773502,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "3",
+            "stderr": "",
+            "compileMs": 836,
+            "linkMs": 16,
+            "executionMs": 1.4,
+            "artifactBytes": 707446,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "3",
+            "stderr": "",
+            "compileMs": 731,
+            "linkMs": 16,
+            "executionMs": 1.4,
+            "artifactBytes": 707446,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "cpp17-optional",
+      "language": "cpp17",
+      "expected": "42",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "42",
+        "stderr": "",
+        "wallMs": 720,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 621,
+            "linkMs": 16,
+            "executionMs": 1.4,
+            "artifactBytes": 718390,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 608,
+            "linkMs": 16,
+            "executionMs": 1.2,
+            "artifactBytes": 718390,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 635,
+            "linkMs": 15,
+            "executionMs": 1.1,
+            "artifactBytes": 705682,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "42",
+            "stderr": "",
+            "compileMs": 564,
+            "linkMs": 16,
+            "executionMs": 1.2,
+            "artifactBytes": 705682,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "cpp17-vector",
+      "language": "cpp17",
+      "expected": "4",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "4",
+        "stderr": "",
+        "wallMs": 785,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4",
+            "stderr": "",
+            "compileMs": 697,
+            "linkMs": 20,
+            "executionMs": 2.4,
+            "artifactBytes": 749459,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4",
+            "stderr": "",
+            "compileMs": 830,
+            "linkMs": 23,
+            "executionMs": 2.6,
+            "artifactBytes": 749459,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4",
+            "stderr": "",
+            "compileMs": 1030,
+            "linkMs": 25,
+            "executionMs": 1.8,
+            "artifactBytes": 705682,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "4",
+            "stderr": "",
+            "compileMs": 1284,
+            "linkMs": 26,
+            "executionMs": 1.8,
+            "artifactBytes": 705682,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "cpp17-algorithm",
+      "language": "cpp17",
+      "expected": "123",
+      "gcc14": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "123",
+        "stderr": "",
+        "wallMs": 898,
+        "matchesExpected": true
+      },
+      "browser": {
+        "-O0": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "123",
+            "stderr": "",
+            "compileMs": 1278,
+            "linkMs": 28,
+            "executionMs": 3,
+            "artifactBytes": 833350,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "123",
+            "stderr": "",
+            "compileMs": 937,
+            "linkMs": 24,
+            "executionMs": 2.6,
+            "artifactBytes": 833350,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ],
+        "-O2": [
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "123",
+            "stderr": "",
+            "compileMs": 1006,
+            "linkMs": 23,
+            "executionMs": 2.1,
+            "artifactBytes": 794781,
+            "cacheHit": false,
+            "matchesExpected": true
+          },
+          {
+            "compileStatus": "PASS",
+            "runStatus": "PASS",
+            "stdout": "123",
+            "stderr": "",
+            "compileMs": 1050,
+            "linkMs": 24,
+            "executionMs": 2,
+            "artifactBytes": 794781,
+            "cacheHit": false,
+            "matchesExpected": true
+          }
+        ]
+      }
+    }
+  ],
+  "ubExcludedFromRates": true,
+  "referenceVersion": [
+    "gcc-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0",
+    "g++-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0"
+  ],
+  "summary": {
+    "gcc14AllExpected": true,
+    "metrics": {
+      "-O0": {
+        "runs": 16,
+        "compatible": 16,
+        "compatibilityPercent": 100,
+        "medianCompileLinkMs": 260,
+        "p95CompileLinkMs": 1306,
+        "medianArtifactBytes": 43847
+      },
+      "-O2": {
+        "runs": 16,
+        "compatible": 16,
+        "compatibilityPercent": 100,
+        "medianCompileLinkMs": 198,
+        "p95CompileLinkMs": 1310,
+        "medianArtifactBytes": 43696
+      }
+    },
+    "o2MedianRatio": 0.7615384615384615,
+    "optimizationPolicy": "-O2",
+    "optimizationMismatch": false,
+    "status": "PASS"
+  }
+}

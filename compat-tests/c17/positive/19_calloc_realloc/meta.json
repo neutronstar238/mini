@@ -1,0 +1,11 @@
+{
+  "id": "19_calloc_realloc",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "calloc/realloc/free",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

@@ -1,0 +1,2527 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-21T15:44:24.208Z",
+  "engineRuntimeId": "cpp-modern-engine-v2",
+  "optimizationPolicy": "-O2",
+  "profiles": {
+    "c17": {
+      "runtimeId": "c17-gcc14-compat-v2",
+      "checks": {
+        "evidenceFix": {
+          "pass": true,
+          "evidence": "PASS"
+        },
+        "runtimeV2Evidence": {
+          "pass": true,
+          "evidence": "PASS"
+        },
+        "optimizationPolicy": {
+          "pass": true,
+          "evidence": {
+            "gcc14AllExpected": true,
+            "metrics": {
+              "-O0": {
+                "runs": 16,
+                "compatible": 16,
+                "compatibilityPercent": 100,
+                "medianCompileLinkMs": 260,
+                "p95CompileLinkMs": 1306,
+                "medianArtifactBytes": 43847
+              },
+              "-O2": {
+                "runs": 16,
+                "compatible": 16,
+                "compatibilityPercent": 100,
+                "medianCompileLinkMs": 198,
+                "p95CompileLinkMs": 1310,
+                "medianArtifactBytes": 43696
+              }
+            },
+            "o2MedianRatio": 0.7615384615384615,
+            "optimizationPolicy": "-O2",
+            "optimizationMismatch": false,
+            "status": "PASS"
+          }
+        },
+        "chromeE2E": {
+          "pass": true,
+          "evidence": {
+            "modernPass": true,
+            "limitsPass": true,
+            "networkPass": true,
+            "progressPass": true,
+            "cachedColdPass": true,
+            "largeAssetReusePass": true,
+            "uiPass": true,
+            "frozenPass": true,
+            "status": "PASS"
+          }
+        },
+        "networkIsolation": {
+          "pass": true,
+          "evidence": {
+            "totalRequests": 114,
+            "localRunNetworkRequestCount": 87,
+            "runtimeRequests": 87,
+            "allowedPolicy": "same-origin GET runtime assets only",
+            "inProcessBlobRequests": [
+              {
+                "at": 1787327013402,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/c6097463-f433-45ba-a57d-8750c8f90990",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327013482,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/4ee778c9-86bf-458c-bdeb-01add580bfc0",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327013606,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/e34d7422-4d21-4943-b86f-e61bb08b6abb",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327013689,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/a0bf6ec6-d09a-4be2-810d-fb61ad665a5e",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014249,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/bae8bef5-1a43-4229-a356-2e4818c20f1a",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014332,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/fbe512b6-35dd-4e11-9ea1-1147d0d87e27",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014450,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/a45acec8-b2c1-477d-9b60-373a67875c8b",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014543,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/2cead861-29fe-4873-bbdb-7cf6b3a9b72c",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014719,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/924a0269-ce45-4536-94c4-cee9fd8c8261",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014810,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/2aa7c6c0-9366-4256-a1bf-055094cf53e5",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327020991,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/99c67049-8587-479f-bb0f-1713606249aa",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327021064,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/4ae58145-5859-4330-b862-44f53504a37b",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327021286,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/ba623dec-33f9-47cf-945b-aada3b3c2814",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327021369,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/794bc533-13b2-4891-8f98-43c290fa99c4",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327024130,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/8de66365-e35f-4f4f-8158-95c23fc53b69",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327024201,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/9d4a3052-380f-496e-8fd4-808eedf9cfbf",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026152,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/377289ad-5672-4eee-a8d0-b7a531cc5356",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026230,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/2d69ccbb-9afe-49fd-a168-4bdcc29ade34",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026329,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/d5e64b3f-bf32-4db3-a286-c70a55645480",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026403,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/1553f77f-49d9-4fd7-85a5-5eaa58c84142",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026564,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/5ef37064-31c9-435d-85b7-41634cba8784",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026634,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/5db4f5ef-9179-441a-8c24-a9db1cd9f4ea",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327032782,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/14aa65b0-f7c0-414b-aa45-c0818718d3d4",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327032861,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/7fe678a7-7fb4-466b-b112-bfc9d912d017",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327033037,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/6f2929d9-265b-4823-b06c-ab8c5db0e1a1",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327033107,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/61c14529-ad81-49aa-a660-cc38e3e3b83e",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              }
+            ],
+            "unrelatedBackgroundRequests": [
+              {
+                "at": 1787327031727,
+                "method": "POST",
+                "url": "http://127.0.0.1:55876/api/contest/devices/heartbeat",
+                "resourceType": "fetch",
+                "bodyBytes": 351,
+                "bodySha256": "2022b60a97195a28c52c6c4752ca25f0540f3a41b858941bb0f62e0917cac317",
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              }
+            ],
+            "runtimeRequestViolations": [],
+            "sourceLikeRequests": [],
+            "submissionRequests": [],
+            "pass": true
+          }
+        },
+        "reproducibleBuild": {
+          "pass": true,
+          "evidence": {
+            "generator": "PASS",
+            "manifest": "PASS"
+          }
+        },
+        "engineeringRedistributionReady": {
+          "pass": true,
+          "evidence": {
+            "technicalValidated": true,
+            "engineeringRedistributionReady": true,
+            "legalReviewRequired": true,
+            "redistributable": false,
+            "ENGINEERING_REDISTRIBUTION_READY": true,
+            "LEGAL_REVIEW_REQUIRED": true,
+            "REDISTRIBUTABLE": false,
+            "decision": "DISTRIBUTION_BLOCKED",
+            "engineeringArtifacts": {
+              "status": "PASS",
+              "files": [
+                {
+                  "file": "server/public/js/runtime/cpp-modern-engine-v1/LICENSE",
+                  "exists": true,
+                  "bytes": 395
+                },
+                {
+                  "file": "server/public/js/runtime/cpp-modern-engine-v1/THIRD_PARTY_LICENSE_MATRIX.md",
+                  "exists": true,
+                  "bytes": 1226
+                },
+                {
+                  "file": "server/public/js/runtime/cpp-modern-engine-v1/THIRD_PARTY_NOTICES.md",
+                  "exists": true,
+                  "bytes": 122559
+                },
+                {
+                  "file": "scripts/build-modern-runtime-v2-overlay.mjs",
+                  "exists": true,
+                  "bytes": 4840
+                },
+                {
+                  "file": "scripts/verify-modern-runtime-evidence.mjs",
+                  "exists": true,
+                  "bytes": 22976
+                },
+                {
+                  "file": "scripts/verify-modern-runtime-v2-overlay.mjs",
+                  "exists": true,
+                  "bytes": 17844
+                }
+              ],
+              "sourcePinsPresent": true,
+              "selfBuiltCompilerAndLinker": true,
+              "unknownBinaryFiles": []
+            }
+          }
+        },
+        "largeAssetReuse": {
+          "pass": true,
+          "evidence": [
+            {
+              "file": "clang.wasm",
+              "requestCount": 1,
+              "networkTransferCount": 1,
+              "transferBytes": 54726910,
+              "pass": true
+            },
+            {
+              "file": "wasm-ld.wasm",
+              "requestCount": 1,
+              "networkTransferCount": 1,
+              "transferBytes": 29051896,
+              "pass": true
+            },
+            {
+              "file": "sysroot.tar",
+              "requestCount": 1,
+              "networkTransferCount": 1,
+              "transferBytes": 21258540,
+              "pass": true
+            }
+          ]
+        },
+        "formalSubmitDisabled": {
+          "pass": true,
+          "evidence": {
+            "productionEnabled": false,
+            "fallbackCompilerAllowed": false,
+            "c17Compiler": "gcc-14",
+            "cpp17Compiler": "g++-14"
+          }
+        },
+        "positiveCompile": {
+          "pass": true,
+          "evidence": {
+            "expected": 36,
+            "discovered": 36,
+            "serverMatchesExpected": 36,
+            "browserMatchesExpected": 36,
+            "matrixCompatible": 36,
+            "blockedOrNotRun": 0,
+            "notCounted": false
+          }
+        },
+        "negativeCE": {
+          "pass": true,
+          "evidence": {
+            "expected": 15,
+            "discovered": 15,
+            "serverMatchesExpected": 15,
+            "browserMatchesExpected": 15,
+            "matrixCompatible": 15,
+            "blockedOrNotRun": 0,
+            "notCounted": false
+          }
+        },
+        "warningNoCE": {
+          "pass": true,
+          "evidence": {
+            "expected": 10,
+            "discovered": 10,
+            "serverMatchesExpected": 10,
+            "browserMatchesExpected": 10,
+            "matrixCompatible": 10,
+            "blockedOrNotRun": 0,
+            "notCounted": false
+          }
+        },
+        "acmMinimum": {
+          "pass": true,
+          "evidence": {
+            "expected": 30,
+            "discovered": 30,
+            "serverMatchesExpected": 30,
+            "browserMatchesExpected": 30,
+            "matrixCompatible": 30,
+            "blockedOrNotRun": 0,
+            "notCounted": false
+          }
+        },
+        "compatibilityOutput": {
+          "pass": true,
+          "evidence": {
+            "positive": {
+              "expected": 36,
+              "discovered": 36,
+              "serverMatchesExpected": 36,
+              "browserMatchesExpected": 36,
+              "matrixCompatible": 36,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "acm-corpus": {
+              "expected": 30,
+              "discovered": 30,
+              "serverMatchesExpected": 30,
+              "browserMatchesExpected": 30,
+              "matrixCompatible": 30,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "negative": {
+              "expected": 15,
+              "discovered": 15,
+              "serverMatchesExpected": 15,
+              "browserMatchesExpected": 15,
+              "matrixCompatible": 15,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "warnings": {
+              "expected": 10,
+              "discovered": 10,
+              "serverMatchesExpected": 10,
+              "browserMatchesExpected": 10,
+              "matrixCompatible": 10,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "ub": {
+              "expected": 4,
+              "discovered": 4,
+              "serverMatchesExpected": null,
+              "browserMatchesExpected": null,
+              "matrixCompatible": null,
+              "blockedOrNotRun": 0,
+              "notCounted": true
+            }
+          }
+        },
+        "correctnessOutput": {
+          "pass": true,
+          "evidence": {
+            "positive": {
+              "expected": 36,
+              "discovered": 36,
+              "serverMatchesExpected": 36,
+              "browserMatchesExpected": 36,
+              "matrixCompatible": 36,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "acm-corpus": {
+              "expected": 30,
+              "discovered": 30,
+              "serverMatchesExpected": 30,
+              "browserMatchesExpected": 30,
+              "matrixCompatible": 30,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "negative": {
+              "expected": 15,
+              "discovered": 15,
+              "serverMatchesExpected": 15,
+              "browserMatchesExpected": 15,
+              "matrixCompatible": 15,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "warnings": {
+              "expected": 10,
+              "discovered": 10,
+              "serverMatchesExpected": 10,
+              "browserMatchesExpected": 10,
+              "matrixCompatible": 10,
+              "blockedOrNotRun": 0,
+              "notCounted": false
+            },
+            "ub": {
+              "expected": 4,
+              "discovered": 4,
+              "serverMatchesExpected": null,
+              "browserMatchesExpected": null,
+              "matrixCompatible": null,
+              "blockedOrNotRun": 0,
+              "notCounted": true
+            }
+          }
+        },
+        "timeout": {
+          "pass": true,
+          "evidence": {
+            "local": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 3,
+                "sha256": "084c799cd551dd1d8d5c5f9a5d593b2e931f5e36122ee5c793c1d08a19839cc0",
+                "text": "42\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "42",
+              "outputMatches": true,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 55358,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.6,
+                "instantiateMs": 0.4,
+                "executionMs": 2,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 201,
+                "compileMs": 365,
+                "linkMs": 38,
+                "cacheHit": false,
+                "artifactBytes": 55358
+              }
+            },
+            "sample": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 3,
+                "sha256": "238903180cc104ec2c5d8b3f20c5bc61b389ec0a967df8cc208cdc7cd454174f",
+                "text": "15\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "15",
+              "outputMatches": true,
+              "cacheHit": true,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 55358,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.7,
+                "instantiateMs": 0.3,
+                "executionMs": 1.7,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 629,
+                "compileMs": 0,
+                "linkMs": 0,
+                "cacheHit": true,
+                "artifactBytes": 55358
+              }
+            },
+            "cache": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 3,
+                "sha256": "238903180cc104ec2c5d8b3f20c5bc61b389ec0a967df8cc208cdc7cd454174f",
+                "text": "15\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "15",
+              "outputMatches": true,
+              "cacheHit": true,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 55358,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.7,
+                "instantiateMs": 0.3,
+                "executionMs": 1.7,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 629,
+                "compileMs": 0,
+                "linkMs": 0,
+                "cacheHit": true,
+                "artifactBytes": 55358
+              }
+            },
+            "ce": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "CE",
+              "runStatus": "CE",
+              "exitCode": 1,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 142,
+                "sha256": "1fe51c4c1916e8b9bd84e901371d05f7cdcf86b4f7df42217ac26012a3388a85",
+                "text": "/program:1:18: error: use of undeclared identifier 'this'    1 | int main(void) { this is not C; }      |                  ^1 error generated.",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": null,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": null,
+              "timing": {
+                "compilerInitMs": 186,
+                "compileMs": 8,
+                "linkMs": 0,
+                "totalMs": 194,
+                "optimizationLevel": "-O2",
+                "executionMs": 0,
+                "cacheHit": false,
+                "artifactBytes": 0
+              }
+            },
+            "re": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "RE",
+              "exitCode": 134,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 774,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.4,
+                "instantiateMs": 0.3,
+                "executionMs": 0.3,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 225,
+                "compileMs": 12,
+                "linkMs": 14,
+                "cacheHit": false,
+                "artifactBytes": 774
+              }
+            },
+            "timeout": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "TLE",
+              "exitCode": -1,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 115,
+                "sha256": "9b2890bac9f4cc5d7670a6f8ee8878db14481c41df32f2d2f9ae7adf5d57a973",
+                "text": "本地运行超时（6s）已终止。Local Timeout 仅用于调试保护，正式 TLE 以服务器 Judge 为准。",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": true,
+              "aborted": true,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 809,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "compilerInitMs": 186,
+                "compileMs": 32,
+                "linkMs": 12,
+                "totalMs": 233,
+                "optimizationLevel": "-O2",
+                "executionMs": 6000,
+                "cacheHit": false,
+                "artifactBytes": 809
+              }
+            },
+            "statsAfterTimeout": {
+              "requestId": 6,
+              "type": "stats",
+              "runtimeId": "cpp-modern-engine-v2",
+              "engineRuntimeId": "cpp-modern-engine-v2",
+              "state": "READY",
+              "ready": true,
+              "runtimeAssetHash": "8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419",
+              "compilerGlueVerified": true,
+              "linkerGlueVerified": true,
+              "proxyFsMounted": true,
+              "proxyFs": {
+                "mountpoint": "/shared",
+                "root": "/",
+                "source": "clang.FS",
+                "target": "wasm-ld.FS",
+                "mounted": true
+              },
+              "cacheSize": 3,
+              "cacheCapacity": 8,
+              "memory": {
+                "compilerLinearMemoryBytes": null,
+                "linkerLinearMemoryBytes": null,
+                "cachedArtifactBytes": 56941
+              },
+              "counters": {
+                "initCount": 1,
+                "compileCount": 4,
+                "linkCount": 3,
+                "runCount": 0,
+                "cacheHits": 1,
+                "cacheMisses": 4,
+                "bytesCompiled": 56941,
+                "bytesExecuted": 0
+              }
+            },
+            "aliveAfterTimeout": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 2,
+                "sha256": "1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2",
+                "text": "3\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "3",
+              "outputMatches": true,
+              "cacheHit": true,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 55358,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.6,
+                "instantiateMs": 0.3,
+                "executionMs": 1.7,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 629,
+                "compileMs": 0,
+                "linkMs": 0,
+                "cacheHit": true,
+                "artifactBytes": 55358
+              }
+            },
+            "outputTruncation": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 1048576,
+                "sha256": "4e29ad18ab9f42d7c233500771a39d7c852b200baf328fd00fbbe3fecea1eb56",
+                "text": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "evidenceTruncated": true
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": true,
+              "outputTruncatedFields": [
+                "stdout"
+              ],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 3224,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.4,
+                "instantiateMs": 0.3,
+                "executionMs": 12.8,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 170,
+                "compileMs": 56,
+                "linkMs": 15,
+                "cacheHit": false,
+                "artifactBytes": 3224
+              }
+            },
+            "stderrTruncation": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "c17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 1048576,
+                "sha256": "39b7909f0f28b1b169e9206e1472d327c68c9cb56108931b21aeea6c87cfee7c",
+                "text": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+                "evidenceTruncated": true
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": true,
+              "outputTruncatedFields": [
+                "stderr"
+              ],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 2946,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.3,
+                "instantiateMs": 1.5,
+                "executionMs": 2559.5,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 179,
+                "compileMs": 19,
+                "linkMs": 12,
+                "cacheHit": false,
+                "artifactBytes": 2946
+              }
+            },
+            "headerGuard": null,
+            "pass": true
+          }
+        }
+      },
+      "blockers": [],
+      "status": "BETA",
+      "submissionEnabled": false
+    },
+    "cpp17": {
+      "runtimeId": "cpp17-gcc14-compat-v2",
+      "checks": {
+        "evidenceFix": {
+          "pass": true,
+          "evidence": "PASS"
+        },
+        "runtimeV2Evidence": {
+          "pass": true,
+          "evidence": "PASS"
+        },
+        "optimizationPolicy": {
+          "pass": true,
+          "evidence": {
+            "gcc14AllExpected": true,
+            "metrics": {
+              "-O0": {
+                "runs": 16,
+                "compatible": 16,
+                "compatibilityPercent": 100,
+                "medianCompileLinkMs": 260,
+                "p95CompileLinkMs": 1306,
+                "medianArtifactBytes": 43847
+              },
+              "-O2": {
+                "runs": 16,
+                "compatible": 16,
+                "compatibilityPercent": 100,
+                "medianCompileLinkMs": 198,
+                "p95CompileLinkMs": 1310,
+                "medianArtifactBytes": 43696
+              }
+            },
+            "o2MedianRatio": 0.7615384615384615,
+            "optimizationPolicy": "-O2",
+            "optimizationMismatch": false,
+            "status": "PASS"
+          }
+        },
+        "chromeE2E": {
+          "pass": true,
+          "evidence": {
+            "modernPass": true,
+            "limitsPass": true,
+            "networkPass": true,
+            "progressPass": true,
+            "cachedColdPass": true,
+            "largeAssetReusePass": true,
+            "uiPass": true,
+            "frozenPass": true,
+            "status": "PASS"
+          }
+        },
+        "networkIsolation": {
+          "pass": true,
+          "evidence": {
+            "totalRequests": 114,
+            "localRunNetworkRequestCount": 87,
+            "runtimeRequests": 87,
+            "allowedPolicy": "same-origin GET runtime assets only",
+            "inProcessBlobRequests": [
+              {
+                "at": 1787327013402,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/c6097463-f433-45ba-a57d-8750c8f90990",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327013482,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/4ee778c9-86bf-458c-bdeb-01add580bfc0",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327013606,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/e34d7422-4d21-4943-b86f-e61bb08b6abb",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327013689,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/a0bf6ec6-d09a-4be2-810d-fb61ad665a5e",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014249,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/bae8bef5-1a43-4229-a356-2e4818c20f1a",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014332,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/fbe512b6-35dd-4e11-9ea1-1147d0d87e27",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014450,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/a45acec8-b2c1-477d-9b60-373a67875c8b",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014543,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/2cead861-29fe-4873-bbdb-7cf6b3a9b72c",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014719,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/924a0269-ce45-4536-94c4-cee9fd8c8261",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327014810,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/2aa7c6c0-9366-4256-a1bf-055094cf53e5",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327020991,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/99c67049-8587-479f-bb0f-1713606249aa",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327021064,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/4ae58145-5859-4330-b862-44f53504a37b",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327021286,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/ba623dec-33f9-47cf-945b-aada3b3c2814",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327021369,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/794bc533-13b2-4891-8f98-43c290fa99c4",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327024130,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/8de66365-e35f-4f4f-8158-95c23fc53b69",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327024201,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/9d4a3052-380f-496e-8fd4-808eedf9cfbf",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026152,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/377289ad-5672-4eee-a8d0-b7a531cc5356",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026230,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/2d69ccbb-9afe-49fd-a168-4bdcc29ade34",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026329,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/d5e64b3f-bf32-4db3-a286-c70a55645480",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026403,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/1553f77f-49d9-4fd7-85a5-5eaa58c84142",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026564,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/5ef37064-31c9-435d-85b7-41634cba8784",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327026634,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/5db4f5ef-9179-441a-8c24-a9db1cd9f4ea",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327032782,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/14aa65b0-f7c0-414b-aa45-c0818718d3d4",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327032861,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/7fe678a7-7fb4-466b-b112-bfc9d912d017",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327033037,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/6f2929d9-265b-4823-b06c-ab8c5db0e1a1",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              },
+              {
+                "at": 1787327033107,
+                "method": "GET",
+                "url": "blob:http://127.0.0.1:55876/61c14529-ad81-49aa-a660-cc38e3e3b83e",
+                "resourceType": "script",
+                "bodyBytes": 0,
+                "bodySha256": null,
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              }
+            ],
+            "unrelatedBackgroundRequests": [
+              {
+                "at": 1787327031727,
+                "method": "POST",
+                "url": "http://127.0.0.1:55876/api/contest/devices/heartbeat",
+                "resourceType": "fetch",
+                "bodyBytes": 351,
+                "bodySha256": "2022b60a97195a28c52c6c4752ca25f0540f3a41b858941bb0f62e0917cac317",
+                "bodyFields": [],
+                "hasSourceLikeBody": false
+              }
+            ],
+            "runtimeRequestViolations": [],
+            "sourceLikeRequests": [],
+            "submissionRequests": [],
+            "pass": true
+          }
+        },
+        "reproducibleBuild": {
+          "pass": true,
+          "evidence": {
+            "generator": "PASS",
+            "manifest": "PASS"
+          }
+        },
+        "engineeringRedistributionReady": {
+          "pass": true,
+          "evidence": {
+            "technicalValidated": true,
+            "engineeringRedistributionReady": true,
+            "legalReviewRequired": true,
+            "redistributable": false,
+            "ENGINEERING_REDISTRIBUTION_READY": true,
+            "LEGAL_REVIEW_REQUIRED": true,
+            "REDISTRIBUTABLE": false,
+            "decision": "DISTRIBUTION_BLOCKED",
+            "engineeringArtifacts": {
+              "status": "PASS",
+              "files": [
+                {
+                  "file": "server/public/js/runtime/cpp-modern-engine-v1/LICENSE",
+                  "exists": true,
+                  "bytes": 395
+                },
+                {
+                  "file": "server/public/js/runtime/cpp-modern-engine-v1/THIRD_PARTY_LICENSE_MATRIX.md",
+                  "exists": true,
+                  "bytes": 1226
+                },
+                {
+                  "file": "server/public/js/runtime/cpp-modern-engine-v1/THIRD_PARTY_NOTICES.md",
+                  "exists": true,
+                  "bytes": 122559
+                },
+                {
+                  "file": "scripts/build-modern-runtime-v2-overlay.mjs",
+                  "exists": true,
+                  "bytes": 4840
+                },
+                {
+                  "file": "scripts/verify-modern-runtime-evidence.mjs",
+                  "exists": true,
+                  "bytes": 22976
+                },
+                {
+                  "file": "scripts/verify-modern-runtime-v2-overlay.mjs",
+                  "exists": true,
+                  "bytes": 17844
+                }
+              ],
+              "sourcePinsPresent": true,
+              "selfBuiltCompilerAndLinker": true,
+              "unknownBinaryFiles": []
+            }
+          }
+        },
+        "largeAssetReuse": {
+          "pass": true,
+          "evidence": [
+            {
+              "file": "clang.wasm",
+              "requestCount": 1,
+              "networkTransferCount": 1,
+              "transferBytes": 54726910,
+              "pass": true
+            },
+            {
+              "file": "wasm-ld.wasm",
+              "requestCount": 1,
+              "networkTransferCount": 1,
+              "transferBytes": 29051896,
+              "pass": true
+            },
+            {
+              "file": "sysroot.tar",
+              "requestCount": 1,
+              "networkTransferCount": 1,
+              "transferBytes": 21258540,
+              "pass": true
+            }
+          ]
+        },
+        "formalSubmitDisabled": {
+          "pass": true,
+          "evidence": {
+            "productionEnabled": false,
+            "fallbackCompilerAllowed": false,
+            "c17Compiler": "gcc-14",
+            "cpp17Compiler": "g++-14"
+          }
+        },
+        "positiveCompile": {
+          "pass": true,
+          "evidence": {
+            "reference": {
+              "total": 35,
+              "passed": 35,
+              "failed": 0,
+              "blocked": 0
+            },
+            "browser": {
+              "total": 35,
+              "passed": 35
+            }
+          }
+        },
+        "negativeCE": {
+          "pass": true,
+          "evidence": {
+            "reference": {
+              "total": 15,
+              "passed": 15,
+              "failed": 0,
+              "blocked": 0
+            },
+            "browser": {
+              "total": 15,
+              "passed": 15
+            }
+          }
+        },
+        "warningNoCE": {
+          "pass": true,
+          "evidence": {
+            "reference": {
+              "total": 10,
+              "passed": 10,
+              "failed": 0,
+              "blocked": 0
+            },
+            "browser": {
+              "total": 10,
+              "passed": 10
+            }
+          }
+        },
+        "acmMinimum": {
+          "pass": true,
+          "evidence": {
+            "reference": {
+              "total": 45,
+              "passed": 45,
+              "failed": 0,
+              "blocked": 0
+            },
+            "browser": {
+              "total": 45,
+              "passed": 45
+            }
+          }
+        },
+        "bits": {
+          "pass": true,
+          "evidence": {
+            "status": "PASS",
+            "runStatus": "PASS",
+            "pass": true,
+            "pchPolicy": "DISABLED",
+            "stdout": "8\n",
+            "stderr": "",
+            "timing": {
+              "wasmCompileMs": 1.8,
+              "instantiateMs": 5.3,
+              "executionMs": 2.9,
+              "optimizationLevel": "-O2",
+              "compilerInitMs": 166,
+              "compileMs": 1022,
+              "linkMs": 20,
+              "cacheHit": false,
+              "artifactBytes": 705821
+            }
+          }
+        },
+        "pchPolicy": {
+          "pass": true,
+          "evidence": {
+            "policy": "DISABLED",
+            "decision": "PCH_DISABLED",
+            "benchmark": {
+              "samples": [
+                {
+                  "sample": 1,
+                  "status": "PASS",
+                  "compileMs": 1250,
+                  "runMs": 2,
+                  "output": "8"
+                },
+                {
+                  "sample": 2,
+                  "status": "PASS",
+                  "compileMs": 1254,
+                  "runMs": 2,
+                  "output": "8"
+                },
+                {
+                  "sample": 3,
+                  "status": "PASS",
+                  "compileMs": 1249,
+                  "runMs": 2,
+                  "output": "8"
+                }
+              ],
+              "sampleCount": 3,
+              "metric": "remote compiler wall time (ms), no PCH",
+              "candidate": "bits/stdc++.h A+B",
+              "pchArtifactBuilt": false
+            },
+            "rationale": [
+              "The v2 Browser profile declares pchPolicy=none and publishes no PCH artifact.",
+              "Keep PCH disabled until a separate cache/artifact contract is approved."
+            ],
+            "browser": {
+              "profileId": "cpp17-gcc14-compat-v2",
+              "pchPolicy": "DISABLED",
+              "bitsNoPch": {
+                "cold": {
+                  "compileMs": 1236,
+                  "linkMs": 21,
+                  "totalMs": null,
+                  "cacheHit": false,
+                  "compileStatus": "PASS",
+                  "runStatus": "PASS",
+                  "stdout": "8\n",
+                  "stderr": ""
+                },
+                "warm": {
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "totalMs": null,
+                  "cacheHit": true,
+                  "compileStatus": "PASS",
+                  "runStatus": "PASS",
+                  "stdout": "8\n",
+                  "stderr": ""
+                }
+              },
+              "explicitIncludes": {
+                "cold": {
+                  "compileMs": 839,
+                  "linkMs": 20,
+                  "totalMs": null,
+                  "cacheHit": false,
+                  "compileStatus": "PASS",
+                  "runStatus": "PASS",
+                  "stdout": "8\n",
+                  "stderr": ""
+                },
+                "warm": {
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "totalMs": null,
+                  "cacheHit": true,
+                  "compileStatus": "PASS",
+                  "runStatus": "PASS",
+                  "stdout": "8\n",
+                  "stderr": ""
+                }
+              },
+              "thresholds": {
+                "compileMs": 500,
+                "aggregateOverheadRatio": 0.25,
+                "minimumPchBenefitRatio": 0.3
+              },
+              "observed": {
+                "coldCompileOverheadRatio": 0.4731823599523242,
+                "thresholdTriggered": true,
+                "pchBenefitMeasured": false
+              },
+              "decision": "DISABLED",
+              "decisionReason": "No Browser PCH artifact is published; retain DISABLED even when the cold/warm threshold is triggered."
+            }
+          }
+        },
+        "pchNeutrality": {
+          "pass": true,
+          "evidence": "N/A when PCH is disabled"
+        },
+        "headerGuard": {
+          "pass": true,
+          "evidence": [
+            {
+              "id": "header-algorithm",
+              "header": "algorithm",
+              "omittedHeader": "algorithm",
+              "expected": "12",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::sort requires <algorithm>",
+                "timing": {
+                  "optimizationLevel": "-O2",
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "headerGuard": "ENABLED"
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 312,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.Wuepkl/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.Wuepkl/main.cpp:3:40: error: ‘sort’ is not a member of ‘std’; did you mean ‘qsort’?\n    3 | int main(){std::vector<int>v{2,1};std::sort(v.begin(),v.end());std::cout<<v[0]<<v[1]<<\"\\n\";}\n      |                                        ^~~~\n      |                                        qsort\n"
+              },
+              "guardRequired": true,
+              "guardDecision": "ENABLED+PASS",
+              "guardEnabled": true,
+              "guardPass": true,
+              "status": "GUARDED"
+            },
+            {
+              "id": "header-vector",
+              "header": "vector",
+              "omittedHeader": "vector",
+              "expected": "3",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::vector requires <vector>",
+                "timing": {
+                  "optimizationLevel": "-O2",
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "headerGuard": "ENABLED"
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 255,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.xkl5pA/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:17: error: ‘vector’ is not a member of ‘std’\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n      |                 ^~~~~~\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:1: note: ‘std::vector’ is defined in header ‘<vector>’; this is probably fixable by adding ‘#include <vector>’\n    1 | #include <iostream>\n  +++ |+#include <vector>\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:24: error: expected primary-expression before ‘int’\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n      |                        ^~~\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:48: error: ‘v’ was not declared in this scope\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n      |                                                ^\n"
+              },
+              "guardRequired": true,
+              "guardDecision": "ENABLED+PASS",
+              "guardEnabled": true,
+              "guardPass": true,
+              "status": "GUARDED"
+            },
+            {
+              "id": "header-string",
+              "header": "string",
+              "omittedHeader": "string",
+              "expected": "5",
+              "browser": {
+                "status": "PASS",
+                "runStatus": "PASS",
+                "pass": true,
+                "stdout": "5\n",
+                "stderr": "",
+                "timing": {
+                  "wasmCompileMs": 1.8,
+                  "instantiateMs": 1.3,
+                  "executionMs": 1.8,
+                  "optimizationLevel": "-O2",
+                  "compilerInitMs": 178,
+                  "compileMs": 737,
+                  "linkMs": 20,
+                  "cacheHit": false,
+                  "artifactBytes": 705682
+                }
+              },
+              "gcc14": {
+                "status": "PASS",
+                "pass": true,
+                "compileMs": 320,
+                "runMs": 2,
+                "compileStderr": ""
+              },
+              "guardRequired": false,
+              "guardDecision": "NOT_NEEDED",
+              "guardEnabled": false,
+              "guardPass": true,
+              "status": "MATCH"
+            },
+            {
+              "id": "header-map",
+              "header": "map",
+              "omittedHeader": "map",
+              "expected": "7",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "/program:2:17: error: no template named 'map' in namespace 'std'; did you mean 'max'?    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |            ~~~~~^~~      |                 max/sys/include/c++/v1/__algorithm/max.h:29:1: note: 'max' declared here   29 | max(_LIBCPP_LIFETIMEBOUND const _Tp& __a, _LIBCPP_LIFETIMEBOUND const _Tp& __b, _Compare __comp) {      | ^/program:2:29: error: expected ';' after expression    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |                             ^      |                             ;/program:2:12: error: reference to overloaded function could not be resolved; did you mean to call it?    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |            ^~~~~~~~~~~~~~~~~/sys/include/c++/v1/__algorithm/max.h:29:1: note: possible target for call   29 | max(_LIBCPP_LIFETIMEBOUND const _Tp& __a, _LIBCPP_LIFETIMEBOUND const _Tp& __b, _Compare __comp) {      | ^/sys/include/c++/v1/__algorithm/max.h:35:1: note: possible target for call   35 | max(_LIBCPP_LIFETIMEBOUND const _Tp& __a, _LIBCPP_LIFETIMEBOUND const _Tp& __b) {      | ^/sys/include/c++/v1/__algorithm/max.h:43:1: note: possible target for call   43 | max(initializer_list<_Tp> __t, _Compare __comp) {      | ^/sys/include/c++/v1/__algorithm/max.h:48:82: note: possible target for call   48 | _LIBCPP_NODISCARD inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 _Tp max(initializer_list<_Tp> __t) {      |                                                                                  ^/program:2:29: error: use of undeclared identifier 'm'    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |                             ^fatal error: too many errors emitted, stopping now [-ferror-limit=]5 errors generated.",
+                "timing": {
+                  "compilerInitMs": 180,
+                  "compileMs": 742,
+                  "linkMs": 0,
+                  "totalMs": 922,
+                  "optimizationLevel": "-O2",
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "artifactBytes": 0
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 251,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.KhQQGK/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:17: error: ‘map’ is not a member of ‘std’\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n      |                 ^~~\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:1: note: ‘std::map’ is defined in header ‘<map>’; this is probably fixable by adding ‘#include <map>’\n    1 | #include <iostream>\n  +++ |+#include <map>\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:21: error: expected primary-expression before ‘int’\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n      |                     ^~~\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:49: error: ‘m’ was not declared in this scope; did you mean ‘tm’?\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n      |                                                 ^\n      |                                                 tm\n"
+              },
+              "guardRequired": false,
+              "guardDecision": "NOT_NEEDED",
+              "guardEnabled": false,
+              "guardPass": true,
+              "status": "MATCH"
+            },
+            {
+              "id": "header-set",
+              "header": "set",
+              "omittedHeader": "set",
+              "expected": "2",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "/program:2:17: error: no template named 'set' in namespace 'std'; did you mean 'get'?    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |            ~~~~~^~~      |                 get/sys/include/c++/v1/tuple:1064:1: note: 'get' declared here 1064 | get(tuple<_Tp...>& __t) _NOEXCEPT {      | ^/program:2:25: error: expected ';' after expression    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |                         ^      |                         ;/program:2:12: error: reference to overloaded function could not be resolved; did you mean to call it?    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |            ^~~~~~~~~~~~~/sys/include/c++/v1/tuple:1064:1: note: possible target for call 1064 | get(tuple<_Tp...>& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/tuple:1071:1: note: possible target for call 1071 | get(const tuple<_Tp...>& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/tuple:1078:1: note: possible target for call 1078 | get(tuple<_Tp...>&& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/tuple:1085:1: note: possible target for call 1085 | get(const tuple<_Tp...>&& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:649:1: note: possible target for call  649 | get(pair<_T1, _T2>& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:655:1: note: possible target for call  655 | get(const pair<_T1, _T2>& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:661:1: note: possible target for call  661 | get(pair<_T1, _T2>&& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:667:1: note: possible target for call  667 | get(const pair<_T1, _T2>&& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/array:447:65: note: possible target for call  447 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 _Tp& get(array<_Tp, _Size>& __a) _NOEXCEPT {      |                                                                 ^/sys/include/c++/v1/array:453:71: note: possible target for call  453 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 const _Tp& get(const array<_Tp, _Size>& __a) _NOEXCEPT {      |                                                                       ^/sys/include/c++/v1/array:459:66: note: possible target for call  459 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 _Tp&& get(array<_Tp, _Size>&& __a) _NOEXCEPT {      |                                                                  ^/sys/include/c++/v1/array:465:72: note: possible target for call  465 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 const _Tp&& get(const array<_Tp, _Size>&& __a) _NOEXCEPT {      |                                                                        ^/sys/include/c++/v1/__utility/pair.h:673:45: note: possible target for call  673 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1& get(pair<_T1, _T2>& __p) _NOEXCEPT {      |                                             ^/sys/include/c++/v1/__utility/pair.h:678:51: note: possible target for call  678 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const& get(pair<_T1, _T2> const& __p) _NOEXCEPT {      |                                                   ^/sys/include/c++/v1/__utility/pair.h:683:46: note: possible target for call  683 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1&& get(pair<_T1, _T2>&& __p) _NOEXCEPT {      |                                              ^/sys/include/c++/v1/__utility/pair.h:688:52: note: possible target for call  688 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const&& get(pair<_T1, _T2> const&& __p) _NOEXCEPT {      |                                                    ^/sys/include/c++/v1/__utility/pair.h:693:45: note: possible target for call  693 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1& get(pair<_T2, _T1>& __p) _NOEXCEPT {      |                                             ^/sys/include/c++/v1/__utility/pair.h:698:51: note: possible target for call  698 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const& get(pair<_T2, _T1> const& __p) _NOEXCEPT {      |                                                   ^/sys/include/c++/v1/__utility/pair.h:703:46: note: possible target for call  703 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1&& get(pair<_T2, _T1>&& __p) _NOEXCEPT {      |                                              ^/sys/include/c++/v1/__utility/pair.h:708:52: note: possible target for call  708 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const&& get(pair<_T2, _T1> const&& __p) _NOEXCEPT {      |                                                    ^/sys/include/c++/v1/tuple:1093:45: note: possible target for call 1093 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1& get(tuple<_Args...>& __tup) noexcept {      |                                             ^/sys/include/c++/v1/tuple:1098:51: note: possible target for call 1098 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const& get(tuple<_Args...> const& __tup) noexcept {      |                                                   ^/sys/include/c++/v1/tuple:1103:46: note: possible target for call 1103 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1&& get(tuple<_Args...>&& __tup) noexcept {      |                                              ^/sys/include/c++/v1/tuple:1108:52: note: possible target for call 1108 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const&& get(tuple<_Args...> const&& __tup) noexcept {      |                                                    ^/sys/include/c++/v1/variant:1362:1: note: possible target for call 1362 | get(variant<_Types...>& __v) {      | ^/sys/include/c++/v1/variant:1371:1: note: possible target for call 1371 | get(variant<_Types...>&& __v) {      | ^/sys/include/c++/v1/variant:1380:1: note: possible target for call 1380 | get(const variant<_Types...>& __v) {      | ^/sys/include/c++/v1/variant:1389:1: note: possible target for call 1389 | get(const variant<_Types...>&& __v) {      | ^/sys/include/c++/v1/variant:1396:84: note: possible target for call 1396 | _LIBCPP_HIDE_FROM_ABI _LIBCPP_AVAILABILITY_THROW_BAD_VARIANT_ACCESS constexpr _Tp& get(variant<_Types...>& __v) {      |                                                                                    ^/sys/include/c++/v1/variant:1402:85: note: possible target for call 1402 | _LIBCPP_HIDE_FROM_ABI _LIBCPP_AVAILABILITY_THROW_BAD_VARIANT_ACCESS constexpr _Tp&& get(variant<_Types...>&& __v) {      |                                                                                     ^/sys/include/c++/v1/variant:1409:1: note: possible target for call 1409 | get(const variant<_Types...>& __v) {      | ^/sys/include/c++/v1/variant:1416:1: note: possible target for call 1416 | get(const variant<_Types...>&& __v) {      | ^/program:2:25: error: use of undeclared identifier 's'    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |                         ^fatal error: too many errors emitted, stopping now [-ferror-limit=]5 errors generated.",
+                "timing": {
+                  "compilerInitMs": 160,
+                  "compileMs": 848,
+                  "linkMs": 0,
+                  "totalMs": 1009,
+                  "optimizationLevel": "-O2",
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "artifactBytes": 0
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 258,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.FcjZvU/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:17: error: ‘set’ is not a member of ‘std’\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n      |                 ^~~\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:1: note: ‘std::set’ is defined in header ‘<set>’; this is probably fixable by adding ‘#include <set>’\n    1 | #include <iostream>\n  +++ |+#include <set>\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:21: error: expected primary-expression before ‘int’\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n      |                     ^~~\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:45: error: ‘s’ was not declared in this scope\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n      |                                             ^\n"
+              },
+              "guardRequired": false,
+              "guardDecision": "NOT_NEEDED",
+              "guardEnabled": false,
+              "guardPass": true,
+              "status": "MATCH"
+            },
+            {
+              "id": "header-numeric",
+              "header": "numeric",
+              "omittedHeader": "numeric",
+              "expected": "6",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "/program:2:28: error: no member named 'gcd' in namespace 'std'    2 | int main(){std::cout<<std::gcd(84,30)<<\"\\n\";}      |                       ~~~~~^1 error generated.",
+                "timing": {
+                  "compilerInitMs": 162,
+                  "compileMs": 670,
+                  "linkMs": 0,
+                  "totalMs": 832,
+                  "optimizationLevel": "-O2",
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "artifactBytes": 0
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 249,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.5r3arI/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.5r3arI/main.cpp:2:28: error: ‘gcd’ is not a member of ‘std’\n    2 | int main(){std::cout<<std::gcd(84,30)<<\"\\n\";}\n      |                            ^~~\n"
+              },
+              "guardRequired": false,
+              "guardDecision": "NOT_NEEDED",
+              "guardEnabled": false,
+              "guardPass": true,
+              "status": "MATCH"
+            },
+            {
+              "id": "header-memory",
+              "header": "memory",
+              "omittedHeader": "memory",
+              "expected": "9",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::make_unique requires <memory>",
+                "timing": {
+                  "optimizationLevel": "-O2",
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "headerGuard": "ENABLED"
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 253,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.VTmdhH/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.VTmdhH/main.cpp:2:24: error: ‘make_unique’ is not a member of ‘std’\n    2 | int main(){auto p=std::make_unique<int>(9);std::cout<<*p<<\"\\n\";}\n      |                        ^~~~~~~~~~~\n/tmp/mini-cpp17.VTmdhH/main.cpp:2:1: note: ‘std::make_unique’ is defined in header ‘<memory>’; this is probably fixable by adding ‘#include <memory>’\n    1 | #include <iostream>\n  +++ |+#include <memory>\n    2 | int main(){auto p=std::make_unique<int>(9);std::cout<<*p<<\"\\n\";}\n/tmp/mini-cpp17.VTmdhH/main.cpp:2:36: error: expected primary-expression before ‘int’\n    2 | int main(){auto p=std::make_unique<int>(9);std::cout<<*p<<\"\\n\";}\n      |                                    ^~~\n"
+              },
+              "guardRequired": true,
+              "guardDecision": "ENABLED+PASS",
+              "guardEnabled": true,
+              "guardPass": true,
+              "status": "GUARDED"
+            },
+            {
+              "id": "header-functional",
+              "header": "functional",
+              "omittedHeader": "functional",
+              "expected": "5",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::invoke requires <functional>",
+                "timing": {
+                  "optimizationLevel": "-O2",
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "headerGuard": "ENABLED"
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 250,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.lCyTcv/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.lCyTcv/main.cpp:2:28: error: ‘invoke’ is not a member of ‘std’\n    2 | int main(){std::cout<<std::invoke([](int x){return x+1;},4)<<\"\\n\";}\n      |                            ^~~~~~\n/tmp/mini-cpp17.lCyTcv/main.cpp:2:1: note: ‘std::invoke’ is defined in header ‘<functional>’; this is probably fixable by adding ‘#include <functional>’\n    1 | #include <iostream>\n  +++ |+#include <functional>\n    2 | int main(){std::cout<<std::invoke([](int x){return x+1;},4)<<\"\\n\";}\n"
+              },
+              "guardRequired": true,
+              "guardDecision": "ENABLED+PASS",
+              "guardEnabled": true,
+              "guardPass": true,
+              "status": "GUARDED"
+            },
+            {
+              "id": "header-tuple",
+              "header": "tuple",
+              "omittedHeader": "tuple",
+              "expected": "8",
+              "browser": {
+                "status": "PASS",
+                "runStatus": "PASS",
+                "pass": true,
+                "stdout": "8\n",
+                "stderr": "",
+                "timing": {
+                  "wasmCompileMs": 1.6,
+                  "instantiateMs": 1.4,
+                  "executionMs": 2.1,
+                  "optimizationLevel": "-O2",
+                  "compilerInitMs": 196,
+                  "compileMs": 785,
+                  "linkMs": 19,
+                  "cacheHit": false,
+                  "artifactBytes": 705682
+                }
+              },
+              "gcc14": {
+                "status": "PASS",
+                "pass": true,
+                "compileMs": 323,
+                "runMs": 2,
+                "compileStderr": ""
+              },
+              "guardRequired": false,
+              "guardDecision": "NOT_NEEDED",
+              "guardEnabled": false,
+              "guardPass": true,
+              "status": "MATCH"
+            },
+            {
+              "id": "header-optional",
+              "header": "optional",
+              "omittedHeader": "optional",
+              "expected": "11",
+              "browser": {
+                "status": "CE",
+                "runStatus": "CE",
+                "pass": false,
+                "stdout": "",
+                "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::optional requires <optional>",
+                "timing": {
+                  "optimizationLevel": "-O2",
+                  "compileMs": 0,
+                  "linkMs": 0,
+                  "executionMs": 0,
+                  "cacheHit": false,
+                  "headerGuard": "ENABLED"
+                }
+              },
+              "gcc14": {
+                "status": "COMPILE_ERROR",
+                "pass": false,
+                "compileMs": 255,
+                "runMs": null,
+                "compileStderr": "/tmp/mini-cpp17.kERKv6/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.kERKv6/main.cpp:2:17: error: ‘optional’ is not a member of ‘std’\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n      |                 ^~~~~~~~\n/tmp/mini-cpp17.kERKv6/main.cpp:2:1: note: ‘std::optional’ is defined in header ‘<optional>’; this is probably fixable by adding ‘#include <optional>’\n    1 | #include <iostream>\n  +++ |+#include <optional>\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n/tmp/mini-cpp17.kERKv6/main.cpp:2:26: error: expected primary-expression before ‘int’\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n      |                          ^~~\n/tmp/mini-cpp17.kERKv6/main.cpp:2:46: error: ‘x’ was not declared in this scope\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n      |                                              ^\n"
+              },
+              "guardRequired": true,
+              "guardDecision": "ENABLED+PASS",
+              "guardEnabled": true,
+              "guardPass": true,
+              "status": "GUARDED"
+            }
+          ]
+        },
+        "compatibilityOutput": {
+          "pass": true,
+          "evidence": {
+            "expected": 105,
+            "browser": {
+              "passed": 105,
+              "failed": 0,
+              "blocked": 0
+            }
+          }
+        },
+        "correctnessOutput": {
+          "pass": true,
+          "evidence": {
+            "feature": {
+              "total": 35,
+              "passed": 35
+            },
+            "acm": {
+              "total": 45,
+              "passed": 45
+            }
+          }
+        },
+        "timeout": {
+          "pass": true,
+          "evidence": {
+            "local": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 3,
+                "sha256": "084c799cd551dd1d8d5c5f9a5d593b2e931f5e36122ee5c793c1d08a19839cc0",
+                "text": "42\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "42",
+              "outputMatches": true,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 705829,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 2.1,
+                "instantiateMs": 3.4,
+                "executionMs": 2.7,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 181,
+                "compileMs": 1760,
+                "linkMs": 33,
+                "cacheHit": false,
+                "artifactBytes": 705829
+              }
+            },
+            "sample": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 3,
+                "sha256": "238903180cc104ec2c5d8b3f20c5bc61b389ec0a967df8cc208cdc7cd454174f",
+                "text": "15\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "15",
+              "outputMatches": true,
+              "cacheHit": true,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 705829,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 1.3,
+                "instantiateMs": 0.9,
+                "executionMs": 2.1,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 629,
+                "compileMs": 0,
+                "linkMs": 0,
+                "cacheHit": true,
+                "artifactBytes": 705829
+              }
+            },
+            "cache": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 3,
+                "sha256": "238903180cc104ec2c5d8b3f20c5bc61b389ec0a967df8cc208cdc7cd454174f",
+                "text": "15\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "15",
+              "outputMatches": true,
+              "cacheHit": true,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 705829,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 1.3,
+                "instantiateMs": 0.9,
+                "executionMs": 2.1,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 629,
+                "compileMs": 0,
+                "linkMs": 0,
+                "cacheHit": true,
+                "artifactBytes": 705829
+              }
+            },
+            "ce": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "CE",
+              "runStatus": "CE",
+              "exitCode": 1,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 162,
+                "sha256": "79df79b1b68f48b769bdb25b4588e002510cacc12a893fa6554bf9317f710c2c",
+                "text": "/program:1:14: error: invalid use of 'this' outside of a non-static member function    1 | int main() { this is not C++; }      |              ^1 error generated.",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": null,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": null,
+              "timing": {
+                "compilerInitMs": 168,
+                "compileMs": 4,
+                "linkMs": 0,
+                "totalMs": 173,
+                "optimizationLevel": "-O2",
+                "executionMs": 0,
+                "cacheHit": false,
+                "artifactBytes": 0
+              }
+            },
+            "re": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "RE",
+              "exitCode": 134,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 774,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.3,
+                "instantiateMs": 0.4,
+                "executionMs": 0.3,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 191,
+                "compileMs": 9,
+                "linkMs": 17,
+                "cacheHit": false,
+                "artifactBytes": 774
+              }
+            },
+            "timeout": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "TLE",
+              "exitCode": -1,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 115,
+                "sha256": "9b2890bac9f4cc5d7670a6f8ee8878db14481c41df32f2d2f9ae7adf5d57a973",
+                "text": "本地运行超时（6s）已终止。Local Timeout 仅用于调试保护，正式 TLE 以服务器 Judge 为准。",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": true,
+              "aborted": true,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 809,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "compilerInitMs": 158,
+                "compileMs": 9,
+                "linkMs": 19,
+                "totalMs": 188,
+                "optimizationLevel": "-O2",
+                "executionMs": 6000,
+                "cacheHit": false,
+                "artifactBytes": 809
+              }
+            },
+            "statsAfterTimeout": {
+              "requestId": 15,
+              "type": "stats",
+              "runtimeId": "cpp-modern-engine-v2",
+              "engineRuntimeId": "cpp-modern-engine-v2",
+              "state": "READY",
+              "ready": true,
+              "runtimeAssetHash": "8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419",
+              "compilerGlueVerified": true,
+              "linkerGlueVerified": true,
+              "proxyFsMounted": true,
+              "proxyFs": {
+                "mountpoint": "/shared",
+                "root": "/",
+                "source": "clang.FS",
+                "target": "wasm-ld.FS",
+                "mounted": true
+              },
+              "cacheSize": 8,
+              "cacheCapacity": 8,
+              "memory": {
+                "compilerLinearMemoryBytes": null,
+                "linkerLinearMemoryBytes": null,
+                "cachedArtifactBytes": 770523
+              },
+              "counters": {
+                "initCount": 1,
+                "compileCount": 10,
+                "linkCount": 8,
+                "runCount": 0,
+                "cacheHits": 3,
+                "cacheMisses": 10,
+                "bytesCompiled": 770523,
+                "bytesExecuted": 0
+              }
+            },
+            "aliveAfterTimeout": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 2,
+                "sha256": "1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2",
+                "text": "3\n",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": "3",
+              "outputMatches": true,
+              "cacheHit": true,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 705829,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 1.5,
+                "instantiateMs": 0.8,
+                "executionMs": 1.9,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 629,
+                "compileMs": 0,
+                "linkMs": 0,
+                "cacheHit": true,
+                "artifactBytes": 705829
+              }
+            },
+            "outputTruncation": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 1048576,
+                "sha256": "5ae9782017a68037004b2bf806c77d324db4d915ed3725d84eb3121b2ad16061",
+                "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+                "evidenceTruncated": true
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": true,
+              "outputTruncatedFields": [
+                "stdout"
+              ],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 3224,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.3,
+                "instantiateMs": 0.3,
+                "executionMs": 11.3,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 165,
+                "compileMs": 22,
+                "linkMs": 15,
+                "cacheHit": false,
+                "artifactBytes": 3224
+              }
+            },
+            "stderrTruncation": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "PASS",
+              "runStatus": "PASS",
+              "exitCode": 0,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 1048576,
+                "sha256": "cb6f0d17c72c68cb346435a9334ff613ae00008704f82599fe8e90d230598ef1",
+                "text": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+                "evidenceTruncated": true
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": true,
+              "outputTruncatedFields": [
+                "stderr"
+              ],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": 2946,
+              "stage": null,
+              "headerGuard": null,
+              "compilerWorkerPreserved": true,
+              "timing": {
+                "wasmCompileMs": 0.3,
+                "instantiateMs": 0.3,
+                "executionMs": 2455.5,
+                "optimizationLevel": "-O2",
+                "compilerInitMs": 172,
+                "compileMs": 20,
+                "linkMs": 16,
+                "cacheHit": false,
+                "artifactBytes": 2946
+              }
+            },
+            "headerGuard": {
+              "runtimeId": "cpp-modern-engine-v2",
+              "profileId": "cpp17-gcc14-compat-v2",
+              "compileStatus": "CE",
+              "runStatus": "CE",
+              "exitCode": -1,
+              "stdout": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "text": "",
+                "evidenceTruncated": false
+              },
+              "stderr": {
+                "bytes": 102,
+                "sha256": "06e16881e18470cb635d5359e53d3df6b4877091211f417daaed160056f56839",
+                "text": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::vector requires <vector>",
+                "evidenceTruncated": false
+              },
+              "expected": null,
+              "outputMatches": null,
+              "cacheHit": false,
+              "timedOut": false,
+              "aborted": false,
+              "outputTruncated": false,
+              "outputTruncatedFields": [],
+              "limitField": null,
+              "limitBytes": null,
+              "actualBytes": null,
+              "artifactBytes": null,
+              "stage": "gcc14-header",
+              "headerGuard": {
+                "policy": "proven-mismatch-v1",
+                "missing": [
+                  {
+                    "name": "vector",
+                    "header": "vector"
+                  }
+                ]
+              },
+              "compilerWorkerPreserved": null,
+              "timing": {
+                "optimizationLevel": "-O2",
+                "compileMs": 0,
+                "linkMs": 0,
+                "executionMs": 0,
+                "cacheHit": false,
+                "headerGuard": "ENABLED"
+              }
+            },
+            "pass": true
+          }
+        }
+      },
+      "blockers": [],
+      "status": "BETA",
+      "submissionEnabled": false
+    }
+  },
+  "blockingFailures": [],
+  "formalSubmit": {
+    "productionEnabled": false,
+    "fallbackCompilerAllowed": false,
+    "c17Compiler": "gcc-14",
+    "cpp17Compiler": "g++-14"
+  },
+  "status": "PASS"
+}

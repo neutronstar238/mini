@@ -1,0 +1,11 @@
+{
+  "id": "04_stdint_widths",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "stdint fixed-width integers",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

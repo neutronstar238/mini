@@ -1,0 +1,17 @@
+{
+  "id": "c17-negative-03_undeclared_identifier",
+  "suite": "negative",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "CE",
+  "oracle": "compile-diagnostic",
+  "tags": [
+    "c17",
+    "negative",
+    "compile-error"
+  ],
+  "notes": "Uses an undeclared identifier."
+}

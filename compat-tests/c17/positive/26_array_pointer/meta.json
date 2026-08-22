@@ -1,0 +1,11 @@
+{
+  "id": "26_array_pointer",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "array pointer",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "05_inttypes_format",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "inttypes format macros",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

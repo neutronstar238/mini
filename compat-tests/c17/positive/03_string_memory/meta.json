@@ -1,0 +1,11 @@
+{
+  "id": "03_string_memory",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "string.h memset/memcpy/strlen",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

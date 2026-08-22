@@ -1,0 +1,25 @@
+{
+  "id": "c17-warnings-06_maybe_uninitialized",
+  "suite": "warnings",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "PASS_WITH_WARNINGS",
+  "oracle": "compile-warning",
+  "tags": [
+    "c17",
+    "warning",
+    "compile-diagnostic"
+  ],
+  "compileOnly": true,
+  "extraFlags": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wmaybe-uninitialized"
+  ],
+  "minimumWarnings": 1,
+  "notes": "The local value is intentionally not definitely initialized."
+}

@@ -1,0 +1,11 @@
+{
+  "id": "30_strtok",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "string strtok",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

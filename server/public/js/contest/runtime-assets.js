@@ -217,6 +217,14 @@ const RUNTIME_ASSETS_MANIFEST = {
     reuseFrom: 'cpp-modern-engine-v1',
     inheritsStandard: 'c++17'
   },
+  'c17-gcc14-compat-v2': {
+    reuseFrom: 'cpp-modern-engine-v2',
+    inheritsStandard: 'c17'
+  },
+  'cpp17-gcc14-compat-v2': {
+    reuseFrom: 'cpp-modern-engine-v2',
+    inheritsStandard: 'c++17'
+  },
   'cpp20-gcc14-compat-v1': {
     reuseFrom: 'cpp-modern-engine-v1',
     inheritsStandard: 'c++20'
@@ -228,6 +236,11 @@ const RUNTIME_ASSETS_MANIFEST = {
   'cpp-modern-engine-v1': {
     purpose: 'Self-built Clang/LLD 19.1.7 Browser Runtime',
     manifestUrl: '/runtime/cpp-modern-engine-v1/runtime-manifest.json',
+    assets: []
+  },
+  'cpp-modern-engine-v2': {
+    purpose: 'Clang/LLD 19.1.7 compiler plus disposable execution Worker overlay',
+    manifestUrl: '/runtime/cpp-modern-engine-v2/runtime-manifest.json',
     assets: []
   },
   // Java runtime assets are resolved from the cryptographically pinned build
@@ -277,14 +290,15 @@ async function loadManifestAssets(runtimeId) {
       throw new Error('Invalid runtime asset manifest entry: ' + JSON.stringify(asset));
     }
     return {
-      url: '/runtime/' + runtimeId + '/' + asset.file,
+      file: asset.file,
+      url: asset.url || asset.path || ('/runtime/' + runtimeId + '/' + asset.file),
       bytes: asset.bytes,
       sha256: String(asset.sha256).toLowerCase(),
       cacheKey: runtimeId + '-' + asset.file,
       runtimeId: runtimeId
     };
   });
-  if (runtimeId === 'cpp-modern-engine-v1') {
+  if (runtimeId === 'cpp-modern-engine-v1' || runtimeId === 'cpp-modern-engine-v2') {
     const files = new Set(assets.map(function (asset) { return String(asset.file || asset.url || '').split('/').pop().toLowerCase(); }));
     const required = ['clang.wasm', 'wasm-ld.wasm', 'clang.js', 'wasm-ld.js'];
     const missing = required.filter(function (file) { return !files.has(file); });
@@ -297,10 +311,31 @@ async function loadManifestAssets(runtimeId) {
   entry.assets = assets;
   // The immutable cache identity is the SHA-256 of the manifest's original
   // bytes; a declared alias is only corroborating metadata.
-  entry.runtimeAssetHash = await sha256HexBuffer(raw);
+  const rawManifestHash = await sha256HexBuffer(raw);
   const declaredRuntimeAssetHash = manifest.runtimeAssetHash || manifest.assetHash || manifest.assetsHash || null;
-  if (declaredRuntimeAssetHash && String(declaredRuntimeAssetHash).toLowerCase() !== entry.runtimeAssetHash) {
-    throw new Error('Runtime manifest runtimeAssetHash does not match raw manifest bytes');
+  if (manifest.runtimeHashAlgorithm === 'canonical-runtime-identity-v1') {
+    if (!manifest.runtimeIdentity || !declaredRuntimeAssetHash) {
+      throw new Error('Canonical runtime identity is incomplete');
+    }
+    function canonical(value) {
+      if (Array.isArray(value)) return value.map(canonical);
+      if (!value || typeof value !== 'object') return value;
+      const out = {};
+      Object.keys(value).sort().forEach(function (key) { out[key] = canonical(value[key]); });
+      return out;
+    }
+    const canonicalBytes = new TextEncoder().encode(JSON.stringify(canonical(manifest.runtimeIdentity)));
+    entry.runtimeAssetHash = await sha256HexBuffer(canonicalBytes);
+    if (String(declaredRuntimeAssetHash).toLowerCase() !== entry.runtimeAssetHash) {
+      throw new Error('Runtime manifest canonical runtimeAssetHash mismatch');
+    }
+    entry.manifestFileSha256 = rawManifestHash;
+  } else {
+    // v1 cache identity is intentionally the SHA-256 of the final manifest bytes.
+    entry.runtimeAssetHash = rawManifestHash;
+    if (declaredRuntimeAssetHash && String(declaredRuntimeAssetHash).toLowerCase() !== entry.runtimeAssetHash) {
+      throw new Error('Runtime manifest runtimeAssetHash does not match raw manifest bytes');
+    }
   }
   return resolveAssets(runtimeId);
 }

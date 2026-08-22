@@ -1,0 +1,2846 @@
+{
+  "schemaVersion": "cpp17-compatibility-matrix-v1",
+  "generatedAt": "2026-08-21T15:33:24.941Z",
+  "profile": {
+    "id": "cpp17",
+    "status": "BETA",
+    "standard": "c++17",
+    "compiler": "g++-14",
+    "flags": [
+      "-std=c++17",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-DONLINE_JUDGE"
+    ],
+    "compileCommand": [
+      "g++-14",
+      "-std=c++17",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-DONLINE_JUDGE",
+      "<src>",
+      "-o",
+      "<out>"
+    ],
+    "runCommand": [
+      "<out>",
+      "<",
+      "<in>"
+    ],
+    "referenceStatus": "GCC14_REFERENCE_READY",
+    "compilerVersion": "GCC 14.2.0 reference (Formal Submit disabled)",
+    "os": "Ubuntu 24.04 LTS",
+    "localRuntime": {
+      "runtimeId": "cpp17-gcc14-compat-v2",
+      "pchPolicy": "none",
+      "status": "BETA",
+      "assetHash": "8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419"
+    }
+  },
+  "corpus": {
+    "manifest": "matrix-manifest.json",
+    "declaredCounts": {
+      "features": 35,
+      "acm": 45,
+      "negative": 15,
+      "warnings": 10,
+      "ub": 4,
+      "total": 109
+    },
+    "summary": {
+      "total": 109,
+      "passed": 105,
+      "failed": 0,
+      "blocked": 0,
+      "ubReported": 4,
+      "byCategory": {
+        "feature": {
+          "total": 35,
+          "passed": 35,
+          "failed": 0,
+          "blocked": 0
+        },
+        "acm": {
+          "total": 45,
+          "passed": 45,
+          "failed": 0,
+          "blocked": 0
+        },
+        "negative": {
+          "total": 15,
+          "passed": 15,
+          "failed": 0,
+          "blocked": 0
+        },
+        "warning": {
+          "total": 10,
+          "passed": 10,
+          "failed": 0,
+          "blocked": 0
+        },
+        "ub": {
+          "total": 4,
+          "passed": 4,
+          "failed": 0,
+          "blocked": 0
+        }
+      }
+    }
+  },
+  "reference": {
+    "status": "GCC14_REFERENCE_READY",
+    "file": "reference-cpp17.json",
+    "host": "yqzl-server"
+  },
+  "browser": {
+    "status": "PASS",
+    "mode": "real-chrome",
+    "harness": "compat-tests/java21/e2e/harness.mjs",
+    "profileId": "cpp17-gcc14-compat-v2",
+    "baseUrl": "http://127.0.0.1:56423",
+    "start": {
+      "contestHref": "/contest/contests/b61aff93-fb31-4ba8-9f5e-93f539b8308e/problems",
+      "problemHref": "/contest/contests/b61aff93-fb31-4ba8-9f5e-93f539b8308e/problems/f9204b04-b20c-4ac7-ba73-d2cc07be5fe9",
+      "problemUrl": "http://127.0.0.1:56423/contest/contests/b61aff93-fb31-4ba8-9f5e-93f539b8308e/problems/f9204b04-b20c-4ac7-ba73-d2cc07be5fe9",
+      "title": "A + B"
+    },
+    "selectedCaseCount": 105,
+    "skippedCaseCount": 4,
+    "skipped": {
+      "bits": [],
+      "acm": 0,
+      "ub": 4,
+      "reason": "UB remains evidence-only; all feature, ACM, negative, and warning cases are selected."
+    },
+    "bitsNoPchAB": {
+      "status": "PASS",
+      "runStatus": "PASS",
+      "pass": true,
+      "pchPolicy": "DISABLED",
+      "stdout": "8\n",
+      "stderr": "",
+      "timing": {
+        "wasmCompileMs": 1.8,
+        "instantiateMs": 5.3,
+        "executionMs": 2.9,
+        "optimizationLevel": "-O2",
+        "compilerInitMs": 166,
+        "compileMs": 1022,
+        "linkMs": 20,
+        "cacheHit": false,
+        "artifactBytes": 705821
+      }
+    },
+    "bitsPerformance": {
+      "profileId": "cpp17-gcc14-compat-v2",
+      "pchPolicy": "DISABLED",
+      "bitsNoPch": {
+        "cold": {
+          "compileMs": 1236,
+          "linkMs": 21,
+          "totalMs": null,
+          "cacheHit": false,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        },
+        "warm": {
+          "compileMs": 0,
+          "linkMs": 0,
+          "totalMs": null,
+          "cacheHit": true,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        }
+      },
+      "explicitIncludes": {
+        "cold": {
+          "compileMs": 839,
+          "linkMs": 20,
+          "totalMs": null,
+          "cacheHit": false,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        },
+        "warm": {
+          "compileMs": 0,
+          "linkMs": 0,
+          "totalMs": null,
+          "cacheHit": true,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        }
+      },
+      "thresholds": {
+        "compileMs": 500,
+        "aggregateOverheadRatio": 0.25,
+        "minimumPchBenefitRatio": 0.3
+      },
+      "observed": {
+        "coldCompileOverheadRatio": 0.4731823599523242,
+        "thresholdTriggered": true,
+        "pchBenefitMeasured": false
+      },
+      "decision": "DISABLED",
+      "decisionReason": "No Browser PCH artifact is published; retain DISABLED even when the cold/warm threshold is triggered."
+    },
+    "headerMismatchProbes": [
+      {
+        "id": "header-algorithm",
+        "header": "algorithm",
+        "omittedHeader": "algorithm",
+        "expected": "12",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::sort requires <algorithm>",
+          "timing": {
+            "optimizationLevel": "-O2",
+            "compileMs": 0,
+            "linkMs": 0,
+            "executionMs": 0,
+            "cacheHit": false,
+            "headerGuard": "ENABLED"
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 312,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.Wuepkl/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.Wuepkl/main.cpp:3:40: error: ‘sort’ is not a member of ‘std’; did you mean ‘qsort’?\n    3 | int main(){std::vector<int>v{2,1};std::sort(v.begin(),v.end());std::cout<<v[0]<<v[1]<<\"\\n\";}\n      |                                        ^~~~\n      |                                        qsort\n"
+        },
+        "guardRequired": true,
+        "guardDecision": "ENABLED+PASS",
+        "guardEnabled": true,
+        "guardPass": true,
+        "status": "GUARDED"
+      },
+      {
+        "id": "header-vector",
+        "header": "vector",
+        "omittedHeader": "vector",
+        "expected": "3",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::vector requires <vector>",
+          "timing": {
+            "optimizationLevel": "-O2",
+            "compileMs": 0,
+            "linkMs": 0,
+            "executionMs": 0,
+            "cacheHit": false,
+            "headerGuard": "ENABLED"
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 255,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.xkl5pA/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:17: error: ‘vector’ is not a member of ‘std’\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n      |                 ^~~~~~\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:1: note: ‘std::vector’ is defined in header ‘<vector>’; this is probably fixable by adding ‘#include <vector>’\n    1 | #include <iostream>\n  +++ |+#include <vector>\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:24: error: expected primary-expression before ‘int’\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n      |                        ^~~\n/tmp/mini-cpp17.xkl5pA/main.cpp:2:48: error: ‘v’ was not declared in this scope\n    2 | int main(){std::vector<int>v{1,2,3};std::cout<<v.size()<<\"\\n\";}\n      |                                                ^\n"
+        },
+        "guardRequired": true,
+        "guardDecision": "ENABLED+PASS",
+        "guardEnabled": true,
+        "guardPass": true,
+        "status": "GUARDED"
+      },
+      {
+        "id": "header-string",
+        "header": "string",
+        "omittedHeader": "string",
+        "expected": "5",
+        "browser": {
+          "status": "PASS",
+          "runStatus": "PASS",
+          "pass": true,
+          "stdout": "5\n",
+          "stderr": "",
+          "timing": {
+            "wasmCompileMs": 1.8,
+            "instantiateMs": 1.3,
+            "executionMs": 1.8,
+            "optimizationLevel": "-O2",
+            "compilerInitMs": 178,
+            "compileMs": 737,
+            "linkMs": 20,
+            "cacheHit": false,
+            "artifactBytes": 705682
+          }
+        },
+        "gcc14": {
+          "status": "PASS",
+          "pass": true,
+          "compileMs": 320,
+          "runMs": 2,
+          "compileStderr": ""
+        },
+        "guardRequired": false,
+        "guardDecision": "NOT_NEEDED",
+        "guardEnabled": false,
+        "guardPass": true,
+        "status": "MATCH"
+      },
+      {
+        "id": "header-map",
+        "header": "map",
+        "omittedHeader": "map",
+        "expected": "7",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "/program:2:17: error: no template named 'map' in namespace 'std'; did you mean 'max'?    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |            ~~~~~^~~      |                 max/sys/include/c++/v1/__algorithm/max.h:29:1: note: 'max' declared here   29 | max(_LIBCPP_LIFETIMEBOUND const _Tp& __a, _LIBCPP_LIFETIMEBOUND const _Tp& __b, _Compare __comp) {      | ^/program:2:29: error: expected ';' after expression    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |                             ^      |                             ;/program:2:12: error: reference to overloaded function could not be resolved; did you mean to call it?    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |            ^~~~~~~~~~~~~~~~~/sys/include/c++/v1/__algorithm/max.h:29:1: note: possible target for call   29 | max(_LIBCPP_LIFETIMEBOUND const _Tp& __a, _LIBCPP_LIFETIMEBOUND const _Tp& __b, _Compare __comp) {      | ^/sys/include/c++/v1/__algorithm/max.h:35:1: note: possible target for call   35 | max(_LIBCPP_LIFETIMEBOUND const _Tp& __a, _LIBCPP_LIFETIMEBOUND const _Tp& __b) {      | ^/sys/include/c++/v1/__algorithm/max.h:43:1: note: possible target for call   43 | max(initializer_list<_Tp> __t, _Compare __comp) {      | ^/sys/include/c++/v1/__algorithm/max.h:48:82: note: possible target for call   48 | _LIBCPP_NODISCARD inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 _Tp max(initializer_list<_Tp> __t) {      |                                                                                  ^/program:2:29: error: use of undeclared identifier 'm'    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}      |                             ^fatal error: too many errors emitted, stopping now [-ferror-limit=]5 errors generated.",
+          "timing": {
+            "compilerInitMs": 180,
+            "compileMs": 742,
+            "linkMs": 0,
+            "totalMs": 922,
+            "optimizationLevel": "-O2",
+            "executionMs": 0,
+            "cacheHit": false,
+            "artifactBytes": 0
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 251,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.KhQQGK/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:17: error: ‘map’ is not a member of ‘std’\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n      |                 ^~~\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:1: note: ‘std::map’ is defined in header ‘<map>’; this is probably fixable by adding ‘#include <map>’\n    1 | #include <iostream>\n  +++ |+#include <map>\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:21: error: expected primary-expression before ‘int’\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n      |                     ^~~\n/tmp/mini-cpp17.KhQQGK/main.cpp:2:49: error: ‘m’ was not declared in this scope; did you mean ‘tm’?\n    2 | int main(){std::map<int,int>m{{1,7}};std::cout<<m.at(1)<<\"\\n\";}\n      |                                                 ^\n      |                                                 tm\n"
+        },
+        "guardRequired": false,
+        "guardDecision": "NOT_NEEDED",
+        "guardEnabled": false,
+        "guardPass": true,
+        "status": "MATCH"
+      },
+      {
+        "id": "header-set",
+        "header": "set",
+        "omittedHeader": "set",
+        "expected": "2",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "/program:2:17: error: no template named 'set' in namespace 'std'; did you mean 'get'?    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |            ~~~~~^~~      |                 get/sys/include/c++/v1/tuple:1064:1: note: 'get' declared here 1064 | get(tuple<_Tp...>& __t) _NOEXCEPT {      | ^/program:2:25: error: expected ';' after expression    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |                         ^      |                         ;/program:2:12: error: reference to overloaded function could not be resolved; did you mean to call it?    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |            ^~~~~~~~~~~~~/sys/include/c++/v1/tuple:1064:1: note: possible target for call 1064 | get(tuple<_Tp...>& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/tuple:1071:1: note: possible target for call 1071 | get(const tuple<_Tp...>& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/tuple:1078:1: note: possible target for call 1078 | get(tuple<_Tp...>&& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/tuple:1085:1: note: possible target for call 1085 | get(const tuple<_Tp...>&& __t) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:649:1: note: possible target for call  649 | get(pair<_T1, _T2>& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:655:1: note: possible target for call  655 | get(const pair<_T1, _T2>& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:661:1: note: possible target for call  661 | get(pair<_T1, _T2>&& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/__utility/pair.h:667:1: note: possible target for call  667 | get(const pair<_T1, _T2>&& __p) _NOEXCEPT {      | ^/sys/include/c++/v1/array:447:65: note: possible target for call  447 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 _Tp& get(array<_Tp, _Size>& __a) _NOEXCEPT {      |                                                                 ^/sys/include/c++/v1/array:453:71: note: possible target for call  453 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 const _Tp& get(const array<_Tp, _Size>& __a) _NOEXCEPT {      |                                                                       ^/sys/include/c++/v1/array:459:66: note: possible target for call  459 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 _Tp&& get(array<_Tp, _Size>&& __a) _NOEXCEPT {      |                                                                  ^/sys/include/c++/v1/array:465:72: note: possible target for call  465 | inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 const _Tp&& get(const array<_Tp, _Size>&& __a) _NOEXCEPT {      |                                                                        ^/sys/include/c++/v1/__utility/pair.h:673:45: note: possible target for call  673 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1& get(pair<_T1, _T2>& __p) _NOEXCEPT {      |                                             ^/sys/include/c++/v1/__utility/pair.h:678:51: note: possible target for call  678 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const& get(pair<_T1, _T2> const& __p) _NOEXCEPT {      |                                                   ^/sys/include/c++/v1/__utility/pair.h:683:46: note: possible target for call  683 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1&& get(pair<_T1, _T2>&& __p) _NOEXCEPT {      |                                              ^/sys/include/c++/v1/__utility/pair.h:688:52: note: possible target for call  688 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const&& get(pair<_T1, _T2> const&& __p) _NOEXCEPT {      |                                                    ^/sys/include/c++/v1/__utility/pair.h:693:45: note: possible target for call  693 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1& get(pair<_T2, _T1>& __p) _NOEXCEPT {      |                                             ^/sys/include/c++/v1/__utility/pair.h:698:51: note: possible target for call  698 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const& get(pair<_T2, _T1> const& __p) _NOEXCEPT {      |                                                   ^/sys/include/c++/v1/__utility/pair.h:703:46: note: possible target for call  703 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1&& get(pair<_T2, _T1>&& __p) _NOEXCEPT {      |                                              ^/sys/include/c++/v1/__utility/pair.h:708:52: note: possible target for call  708 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const&& get(pair<_T2, _T1> const&& __p) _NOEXCEPT {      |                                                    ^/sys/include/c++/v1/tuple:1093:45: note: possible target for call 1093 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1& get(tuple<_Args...>& __tup) noexcept {      |                                             ^/sys/include/c++/v1/tuple:1098:51: note: possible target for call 1098 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const& get(tuple<_Args...> const& __tup) noexcept {      |                                                   ^/sys/include/c++/v1/tuple:1103:46: note: possible target for call 1103 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1&& get(tuple<_Args...>&& __tup) noexcept {      |                                              ^/sys/include/c++/v1/tuple:1108:52: note: possible target for call 1108 | inline _LIBCPP_HIDE_FROM_ABI constexpr _T1 const&& get(tuple<_Args...> const&& __tup) noexcept {      |                                                    ^/sys/include/c++/v1/variant:1362:1: note: possible target for call 1362 | get(variant<_Types...>& __v) {      | ^/sys/include/c++/v1/variant:1371:1: note: possible target for call 1371 | get(variant<_Types...>&& __v) {      | ^/sys/include/c++/v1/variant:1380:1: note: possible target for call 1380 | get(const variant<_Types...>& __v) {      | ^/sys/include/c++/v1/variant:1389:1: note: possible target for call 1389 | get(const variant<_Types...>&& __v) {      | ^/sys/include/c++/v1/variant:1396:84: note: possible target for call 1396 | _LIBCPP_HIDE_FROM_ABI _LIBCPP_AVAILABILITY_THROW_BAD_VARIANT_ACCESS constexpr _Tp& get(variant<_Types...>& __v) {      |                                                                                    ^/sys/include/c++/v1/variant:1402:85: note: possible target for call 1402 | _LIBCPP_HIDE_FROM_ABI _LIBCPP_AVAILABILITY_THROW_BAD_VARIANT_ACCESS constexpr _Tp&& get(variant<_Types...>&& __v) {      |                                                                                     ^/sys/include/c++/v1/variant:1409:1: note: possible target for call 1409 | get(const variant<_Types...>& __v) {      | ^/sys/include/c++/v1/variant:1416:1: note: possible target for call 1416 | get(const variant<_Types...>&& __v) {      | ^/program:2:25: error: use of undeclared identifier 's'    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}      |                         ^fatal error: too many errors emitted, stopping now [-ferror-limit=]5 errors generated.",
+          "timing": {
+            "compilerInitMs": 160,
+            "compileMs": 848,
+            "linkMs": 0,
+            "totalMs": 1009,
+            "optimizationLevel": "-O2",
+            "executionMs": 0,
+            "cacheHit": false,
+            "artifactBytes": 0
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 258,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.FcjZvU/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:17: error: ‘set’ is not a member of ‘std’\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n      |                 ^~~\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:1: note: ‘std::set’ is defined in header ‘<set>’; this is probably fixable by adding ‘#include <set>’\n    1 | #include <iostream>\n  +++ |+#include <set>\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:21: error: expected primary-expression before ‘int’\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n      |                     ^~~\n/tmp/mini-cpp17.FcjZvU/main.cpp:2:45: error: ‘s’ was not declared in this scope\n    2 | int main(){std::set<int>s{1,1,2};std::cout<<s.size()<<\"\\n\";}\n      |                                             ^\n"
+        },
+        "guardRequired": false,
+        "guardDecision": "NOT_NEEDED",
+        "guardEnabled": false,
+        "guardPass": true,
+        "status": "MATCH"
+      },
+      {
+        "id": "header-numeric",
+        "header": "numeric",
+        "omittedHeader": "numeric",
+        "expected": "6",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "/program:2:28: error: no member named 'gcd' in namespace 'std'    2 | int main(){std::cout<<std::gcd(84,30)<<\"\\n\";}      |                       ~~~~~^1 error generated.",
+          "timing": {
+            "compilerInitMs": 162,
+            "compileMs": 670,
+            "linkMs": 0,
+            "totalMs": 832,
+            "optimizationLevel": "-O2",
+            "executionMs": 0,
+            "cacheHit": false,
+            "artifactBytes": 0
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 249,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.5r3arI/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.5r3arI/main.cpp:2:28: error: ‘gcd’ is not a member of ‘std’\n    2 | int main(){std::cout<<std::gcd(84,30)<<\"\\n\";}\n      |                            ^~~\n"
+        },
+        "guardRequired": false,
+        "guardDecision": "NOT_NEEDED",
+        "guardEnabled": false,
+        "guardPass": true,
+        "status": "MATCH"
+      },
+      {
+        "id": "header-memory",
+        "header": "memory",
+        "omittedHeader": "memory",
+        "expected": "9",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::make_unique requires <memory>",
+          "timing": {
+            "optimizationLevel": "-O2",
+            "compileMs": 0,
+            "linkMs": 0,
+            "executionMs": 0,
+            "cacheHit": false,
+            "headerGuard": "ENABLED"
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 253,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.VTmdhH/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.VTmdhH/main.cpp:2:24: error: ‘make_unique’ is not a member of ‘std’\n    2 | int main(){auto p=std::make_unique<int>(9);std::cout<<*p<<\"\\n\";}\n      |                        ^~~~~~~~~~~\n/tmp/mini-cpp17.VTmdhH/main.cpp:2:1: note: ‘std::make_unique’ is defined in header ‘<memory>’; this is probably fixable by adding ‘#include <memory>’\n    1 | #include <iostream>\n  +++ |+#include <memory>\n    2 | int main(){auto p=std::make_unique<int>(9);std::cout<<*p<<\"\\n\";}\n/tmp/mini-cpp17.VTmdhH/main.cpp:2:36: error: expected primary-expression before ‘int’\n    2 | int main(){auto p=std::make_unique<int>(9);std::cout<<*p<<\"\\n\";}\n      |                                    ^~~\n"
+        },
+        "guardRequired": true,
+        "guardDecision": "ENABLED+PASS",
+        "guardEnabled": true,
+        "guardPass": true,
+        "status": "GUARDED"
+      },
+      {
+        "id": "header-functional",
+        "header": "functional",
+        "omittedHeader": "functional",
+        "expected": "5",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::invoke requires <functional>",
+          "timing": {
+            "optimizationLevel": "-O2",
+            "compileMs": 0,
+            "linkMs": 0,
+            "executionMs": 0,
+            "cacheHit": false,
+            "headerGuard": "ENABLED"
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 250,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.lCyTcv/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.lCyTcv/main.cpp:2:28: error: ‘invoke’ is not a member of ‘std’\n    2 | int main(){std::cout<<std::invoke([](int x){return x+1;},4)<<\"\\n\";}\n      |                            ^~~~~~\n/tmp/mini-cpp17.lCyTcv/main.cpp:2:1: note: ‘std::invoke’ is defined in header ‘<functional>’; this is probably fixable by adding ‘#include <functional>’\n    1 | #include <iostream>\n  +++ |+#include <functional>\n    2 | int main(){std::cout<<std::invoke([](int x){return x+1;},4)<<\"\\n\";}\n"
+        },
+        "guardRequired": true,
+        "guardDecision": "ENABLED+PASS",
+        "guardEnabled": true,
+        "guardPass": true,
+        "status": "GUARDED"
+      },
+      {
+        "id": "header-tuple",
+        "header": "tuple",
+        "omittedHeader": "tuple",
+        "expected": "8",
+        "browser": {
+          "status": "PASS",
+          "runStatus": "PASS",
+          "pass": true,
+          "stdout": "8\n",
+          "stderr": "",
+          "timing": {
+            "wasmCompileMs": 1.6,
+            "instantiateMs": 1.4,
+            "executionMs": 2.1,
+            "optimizationLevel": "-O2",
+            "compilerInitMs": 196,
+            "compileMs": 785,
+            "linkMs": 19,
+            "cacheHit": false,
+            "artifactBytes": 705682
+          }
+        },
+        "gcc14": {
+          "status": "PASS",
+          "pass": true,
+          "compileMs": 323,
+          "runMs": 2,
+          "compileStderr": ""
+        },
+        "guardRequired": false,
+        "guardDecision": "NOT_NEEDED",
+        "guardEnabled": false,
+        "guardPass": true,
+        "status": "MATCH"
+      },
+      {
+        "id": "header-optional",
+        "header": "optional",
+        "omittedHeader": "optional",
+        "expected": "11",
+        "browser": {
+          "status": "CE",
+          "runStatus": "CE",
+          "pass": false,
+          "stdout": "",
+          "stderr": "Local GCC14 compatibility CE: GCC 14 requires explicit standard headers: std::optional requires <optional>",
+          "timing": {
+            "optimizationLevel": "-O2",
+            "compileMs": 0,
+            "linkMs": 0,
+            "executionMs": 0,
+            "cacheHit": false,
+            "headerGuard": "ENABLED"
+          }
+        },
+        "gcc14": {
+          "status": "COMPILE_ERROR",
+          "pass": false,
+          "compileMs": 255,
+          "runMs": null,
+          "compileStderr": "/tmp/mini-cpp17.kERKv6/main.cpp: In function ‘int main()’:\n/tmp/mini-cpp17.kERKv6/main.cpp:2:17: error: ‘optional’ is not a member of ‘std’\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n      |                 ^~~~~~~~\n/tmp/mini-cpp17.kERKv6/main.cpp:2:1: note: ‘std::optional’ is defined in header ‘<optional>’; this is probably fixable by adding ‘#include <optional>’\n    1 | #include <iostream>\n  +++ |+#include <optional>\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n/tmp/mini-cpp17.kERKv6/main.cpp:2:26: error: expected primary-expression before ‘int’\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n      |                          ^~~\n/tmp/mini-cpp17.kERKv6/main.cpp:2:46: error: ‘x’ was not declared in this scope\n    2 | int main(){std::optional<int>x=11;std::cout<<x.value_or(0)<<\"\\n\";}\n      |                                              ^\n"
+        },
+        "guardRequired": true,
+        "guardDecision": "ENABLED+PASS",
+        "guardEnabled": true,
+        "guardPass": true,
+        "status": "GUARDED"
+      }
+    ],
+    "network": {
+      "totalRequests": 492,
+      "sourceLikeRequests": 0,
+      "submissions": 0
+    },
+    "summary": {
+      "passed": 105,
+      "failed": 0,
+      "blocked": 0
+    },
+    "results": [
+      {
+        "id": "feature-01-structured-bindings",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.1,
+          "instantiateMs": 1.6,
+          "executionMs": 3.5,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 210,
+          "compileMs": 2116,
+          "linkMs": 74,
+          "cacheHit": false,
+          "artifactBytes": 707446
+        }
+      },
+      {
+        "id": "feature-02-if-constexpr",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "5\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1,
+          "executionMs": 2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 267,
+          "compileMs": 1083,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-03-fold-expression",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "10\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.3,
+          "instantiateMs": 1,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 202,
+          "compileMs": 756,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-04-optional",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "42\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1.1,
+          "executionMs": 1.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 184,
+          "compileMs": 680,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-05-variant",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "ok\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1,
+          "executionMs": 1.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 183,
+          "compileMs": 761,
+          "linkMs": 28,
+          "cacheHit": false,
+          "artifactBytes": 707277
+        }
+      },
+      {
+        "id": "feature-06-any",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "7\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2,
+          "instantiateMs": 1.6,
+          "executionMs": 2.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 183,
+          "compileMs": 990,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-07-string-view",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "comp\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.6,
+          "executionMs": 1.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 232,
+          "compileMs": 886,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 705691
+        }
+      },
+      {
+        "id": "feature-08-tuple-apply",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.1,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 202,
+          "compileMs": 930,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-09-invoke",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "12\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1,
+          "executionMs": 1.5,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 214,
+          "compileMs": 731,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705717
+        }
+      },
+      {
+        "id": "feature-10-filesystem",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": ".txt\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.6,
+          "instantiateMs": 5.5,
+          "executionMs": 1.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 201,
+          "compileMs": 929,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 722013
+        }
+      },
+      {
+        "id": "feature-11-shared-pointer",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "9\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1.2,
+          "executionMs": 1.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 213,
+          "compileMs": 782,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 706659
+        }
+      },
+      {
+        "id": "feature-12-unique-pointer",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "11\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.6,
+          "instantiateMs": 0.9,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 195,
+          "compileMs": 722,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-13-array",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1.1,
+          "executionMs": 1.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 195,
+          "compileMs": 672,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-14-vector",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 0.8,
+          "executionMs": 1.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 178,
+          "compileMs": 726,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-15-deque",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.2,
+          "executionMs": 2.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 194,
+          "compileMs": 951,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 713322
+        }
+      },
+      {
+        "id": "feature-16-list",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2,
+          "instantiateMs": 8.5,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 203,
+          "compileMs": 788,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 705951
+        }
+      },
+      {
+        "id": "feature-17-map",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1,
+          "executionMs": 1.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 215,
+          "compileMs": 1027,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 714974
+        }
+      },
+      {
+        "id": "feature-18-set",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.6,
+          "instantiateMs": 5.2,
+          "executionMs": 2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 186,
+          "compileMs": 803,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 707235
+        }
+      },
+      {
+        "id": "feature-19-unordered-map",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 206,
+          "compileMs": 801,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 711640
+        }
+      },
+      {
+        "id": "feature-20-unordered-set",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.2,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 178,
+          "compileMs": 1015,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 710606
+        }
+      },
+      {
+        "id": "feature-21-priority-queue",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "8\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.1,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 218,
+          "compileMs": 856,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 707493
+        }
+      },
+      {
+        "id": "feature-22-algorithm",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "123\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.2,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 226,
+          "compileMs": 924,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 794781
+        }
+      },
+      {
+        "id": "feature-23-numeric",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6:24\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 6.1,
+          "executionMs": 2.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 201,
+          "compileMs": 817,
+          "linkMs": 27,
+          "cacheHit": false,
+          "artifactBytes": 705878
+        }
+      },
+      {
+        "id": "feature-24-functional",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "15\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.4,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 224,
+          "compileMs": 958,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-25-type-traits",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "true\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1,
+          "executionMs": 1.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 220,
+          "compileMs": 768,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 705711
+        }
+      },
+      {
+        "id": "feature-26-chrono",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.3,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 202,
+          "compileMs": 872,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-27-random",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "5\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1,
+          "executionMs": 1.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 208,
+          "compileMs": 775,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 705996
+        }
+      },
+      {
+        "id": "feature-28-regex",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1,
+          "executionMs": 2.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 178,
+          "compileMs": 1998,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 804847
+        }
+      },
+      {
+        "id": "feature-29-constexpr",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "25\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 0.9,
+          "executionMs": 1.5,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 202,
+          "compileMs": 679,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-30-inline-variable",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "17\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 0.9,
+          "executionMs": 1.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 175,
+          "compileMs": 700,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-31-nested-namespace",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "19\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.3,
+          "executionMs": 2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 181,
+          "compileMs": 905,
+          "linkMs": 23,
+          "cacheHit": false,
+          "artifactBytes": 705773
+        }
+      },
+      {
+        "id": "feature-32-aggregate-init",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "15\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.6,
+          "instantiateMs": 1.1,
+          "executionMs": 2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 208,
+          "compileMs": 941,
+          "linkMs": 22,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-33-bits-shim",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "9\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.2,
+          "instantiateMs": 1.4,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 207,
+          "compileMs": 1117,
+          "linkMs": 22,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "feature-34-hello-world",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "CPP17_BROWSER_OK\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.4,
+          "executionMs": 1.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 230,
+          "compileMs": 940,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705690
+        }
+      },
+      {
+        "id": "feature-35-a-plus-b",
+        "category": "feature",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "8\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 217,
+          "compileMs": 794,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 705821
+        }
+      },
+      {
+        "id": "acm-01-a-plus-b",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "16\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.6,
+          "instantiateMs": 1.3,
+          "executionMs": 2.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 213,
+          "compileMs": 1067,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705821
+        }
+      },
+      {
+        "id": "acm-02-sort",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1 2 3 4 5 \n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.3,
+          "executionMs": 2.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 212,
+          "compileMs": 1062,
+          "linkMs": 22,
+          "cacheHit": false,
+          "artifactBytes": 795168
+        }
+      },
+      {
+        "id": "acm-03-binary-search",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1 0\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1,
+          "executionMs": 1.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 206,
+          "compileMs": 991,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705995
+        }
+      },
+      {
+        "id": "acm-04-prefix-sum",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "8\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.3,
+          "instantiateMs": 0.9,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 204,
+          "compileMs": 892,
+          "linkMs": 17,
+          "cacheHit": false,
+          "artifactBytes": 706148
+        }
+      },
+      {
+        "id": "acm-05-difference-array",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2 3 3 1 1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.5,
+          "executionMs": 2.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 171,
+          "compileMs": 885,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 706256
+        }
+      },
+      {
+        "id": "acm-06-bfs",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "0 1 1 2 ",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1,
+          "executionMs": 1.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 211,
+          "compileMs": 1272,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 711371
+        }
+      },
+      {
+        "id": "acm-07-dfs-components",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1.2,
+          "executionMs": 2.2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 185,
+          "compileMs": 1109,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 708360
+        }
+      },
+      {
+        "id": "acm-08-dijkstra",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 1,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 185,
+          "compileMs": 1246,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 709476
+        }
+      },
+      {
+        "id": "acm-09-floyd",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "7\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 1,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 178,
+          "compileMs": 895,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-10-union-find",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2,
+          "instantiateMs": 2.3,
+          "executionMs": 2.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 162,
+          "compileMs": 1085,
+          "linkMs": 30,
+          "cacheHit": false,
+          "artifactBytes": 705930
+        }
+      },
+      {
+        "id": "acm-11-kruskal",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.1,
+          "executionMs": 3.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 211,
+          "compileMs": 1273,
+          "linkMs": 23,
+          "cacheHit": false,
+          "artifactBytes": 715307
+        }
+      },
+      {
+        "id": "acm-12-prim",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.3,
+          "instantiateMs": 1.6,
+          "executionMs": 2.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 192,
+          "compileMs": 1096,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 706827
+        }
+      },
+      {
+        "id": "acm-13-topological-sort",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "0 1 2 \n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.1,
+          "instantiateMs": 1.3,
+          "executionMs": 2.2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 198,
+          "compileMs": 1499,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 711079
+        }
+      },
+      {
+        "id": "acm-14-scc",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.4,
+          "executionMs": 2.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 225,
+          "compileMs": 1713,
+          "linkMs": 27,
+          "cacheHit": false,
+          "artifactBytes": 712338
+        }
+      },
+      {
+        "id": "acm-15-kmp",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.2,
+          "instantiateMs": 1.7,
+          "executionMs": 3.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 227,
+          "compileMs": 1390,
+          "linkMs": 28,
+          "cacheHit": false,
+          "artifactBytes": 706142
+        }
+      },
+      {
+        "id": "acm-16-trie",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2,
+          "instantiateMs": 1.2,
+          "executionMs": 2.5,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 223,
+          "compileMs": 1286,
+          "linkMs": 23,
+          "cacheHit": false,
+          "artifactBytes": 707429
+        }
+      },
+      {
+        "id": "acm-17-next-greater",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3 3 -1 ",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 2.4,
+          "executionMs": 2.2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 184,
+          "compileMs": 1151,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 707435
+        }
+      },
+      {
+        "id": "acm-18-sliding-min",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1 0 0 \n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1,
+          "executionMs": 1.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 201,
+          "compileMs": 1119,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 710964
+        }
+      },
+      {
+        "id": "acm-19-kth-largest",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.1,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 186,
+          "compileMs": 1161,
+          "linkMs": 25,
+          "cacheHit": false,
+          "artifactBytes": 707891
+        }
+      },
+      {
+        "id": "acm-20-knapsack-01",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "8\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.6,
+          "instantiateMs": 2.3,
+          "executionMs": 3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 210,
+          "compileMs": 1946,
+          "linkMs": 34,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-21-knapsack-complete",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "9\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 6.3,
+          "instantiateMs": 2.9,
+          "executionMs": 5.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 254,
+          "compileMs": 1926,
+          "linkMs": 45,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-22-lis",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.2,
+          "instantiateMs": 1.3,
+          "executionMs": 3.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 360,
+          "compileMs": 2170,
+          "linkMs": 27,
+          "cacheHit": false,
+          "artifactBytes": 707400
+        }
+      },
+      {
+        "id": "acm-23-lcs",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.3,
+          "executionMs": 2.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 185,
+          "compileMs": 1202,
+          "linkMs": 22,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-24-fenwick",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "9\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.5,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 179,
+          "compileMs": 1289,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-25-segment-tree",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "10\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.1,
+          "instantiateMs": 1.5,
+          "executionMs": 2.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 215,
+          "compileMs": 1621,
+          "linkMs": 29,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-26-fast-power",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "243\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.9,
+          "executionMs": 2.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 230,
+          "compileMs": 1345,
+          "linkMs": 23,
+          "cacheHit": false,
+          "artifactBytes": 705807
+        }
+      },
+      {
+        "id": "acm-27-matrix-fibonacci",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "55\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.5,
+          "executionMs": 2.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 229,
+          "compileMs": 1425,
+          "linkMs": 26,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-28-sieve",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "8\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1.7,
+          "executionMs": 3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 226,
+          "compileMs": 1642,
+          "linkMs": 29,
+          "cacheHit": false,
+          "artifactBytes": 706844
+        }
+      },
+      {
+        "id": "acm-29-gcd-lcm",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6 24\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.1,
+          "instantiateMs": 1.6,
+          "executionMs": 2.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 211,
+          "compileMs": 1530,
+          "linkMs": 28,
+          "cacheHit": false,
+          "artifactBytes": 705878
+        }
+      },
+      {
+        "id": "acm-30-modular-inverse",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.1,
+          "executionMs": 1.8,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 236,
+          "compileMs": 1544,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705949
+        }
+      },
+      {
+        "id": "acm-31-substring-search",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "7\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 1,
+          "executionMs": 3.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 199,
+          "compileMs": 1345,
+          "linkMs": 25,
+          "cacheHit": false,
+          "artifactBytes": 705917
+        }
+      },
+      {
+        "id": "acm-32-interval-merge",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1-5 7-8 ",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 3,
+          "executionMs": 3.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 188,
+          "compileMs": 1819,
+          "linkMs": 27,
+          "cacheHit": false,
+          "artifactBytes": 715222
+        }
+      },
+      {
+        "id": "acm-33-geometry-cross",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.1,
+          "instantiateMs": 2.3,
+          "executionMs": 2.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 218,
+          "compileMs": 1384,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705760
+        }
+      },
+      {
+        "id": "acm-34-bitmask-subsets",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.1,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 210,
+          "compileMs": 1337,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-35-max-subarray",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.2,
+          "instantiateMs": 2.3,
+          "executionMs": 2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 193,
+          "compileMs": 1379,
+          "linkMs": 25,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-36-fast-io-sum",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "10\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.2,
+          "executionMs": 2.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 213,
+          "compileMs": 1406,
+          "linkMs": 27,
+          "cacheHit": false,
+          "artifactBytes": 705881
+        }
+      },
+      {
+        "id": "acm-37-tuple-binding",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "5ok\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2,
+          "instantiateMs": 1.2,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 215,
+          "compileMs": 1331,
+          "linkMs": 26,
+          "cacheHit": false,
+          "artifactBytes": 705817
+        }
+      },
+      {
+        "id": "acm-38-optional-default",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "17\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.9,
+          "instantiateMs": 3.5,
+          "executionMs": 3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 210,
+          "compileMs": 1629,
+          "linkMs": 26,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-39-variant-visit",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "8\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 3,
+          "instantiateMs": 3.3,
+          "executionMs": 2.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 241,
+          "compileMs": 2271,
+          "linkMs": 38,
+          "cacheHit": false,
+          "artifactBytes": 707323
+        }
+      },
+      {
+        "id": "acm-40-regex-filter",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.2,
+          "instantiateMs": 1.3,
+          "executionMs": 3.2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 276,
+          "compileMs": 2760,
+          "linkMs": 23,
+          "cacheHit": false,
+          "artifactBytes": 804846
+        }
+      },
+      {
+        "id": "acm-41-bits-header-probe",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "6\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.4,
+          "instantiateMs": 1.5,
+          "executionMs": 2.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 199,
+          "compileMs": 1169,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-42-multiset",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "2 1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.3,
+          "executionMs": 2.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 200,
+          "compileMs": 1339,
+          "linkMs": 23,
+          "cacheHit": false,
+          "artifactBytes": 709188
+        }
+      },
+      {
+        "id": "negative-01-missing-semicolon",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:2:48: error: expected ';' after expression    2 | int main(){ std::cout << \"missing\" << std::endl }      |                                                ^      |                                                ;1 error generated.",
+        "timing": {
+          "compilerInitMs": 193,
+          "compileMs": 857,
+          "linkMs": 0,
+          "totalMs": 1050,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-02-undeclared-name",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:20: error: use of undeclared identifier 'unknown_identifier'    1 | int main(){ return unknown_identifier; }      |                    ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 197,
+          "compileMs": 12,
+          "linkMs": 0,
+          "totalMs": 209,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-03-invalid-conversion",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:18: error: cannot initialize a variable of type 'int *' with an rvalue of type 'int'    1 | int main(){ int* p = 7; return *p; }      |                  ^   ~1 error generated.",
+        "timing": {
+          "compilerInitMs": 209,
+          "compileMs": 6,
+          "linkMs": 0,
+          "totalMs": 216,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-04-unknown-type",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:13: error: unknown type name 'MissingType'    1 | int main(){ MissingType x; return 0; }      |             ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 213,
+          "compileMs": 6,
+          "linkMs": 0,
+          "totalMs": 220,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-05-mismatched-brace",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:34: error: expected '}'    1 | int main(){ if(true){ return 0; }      |                                  ^/program:1:11: note: to match this '{'    1 | int main(){ if(true){ return 0; }      |           ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 206,
+          "compileMs": 4,
+          "linkMs": 0,
+          "totalMs": 210,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-06-no-main-link",
+        "category": "negative",
+        "compileStatus": "PASS",
+        "runStatus": "RE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 0.6,
+          "instantiateMs": 0.4,
+          "executionMs": 1.2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 230,
+          "compileMs": 7,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 9674
+        }
+      },
+      {
+        "id": "negative-07-duplicate-definition",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:24: error: redefinition of 'f'    1 | int f(){return 1;} int f(){return 2;} int main(){return f();}      |                        ^/program:1:5: note: previous definition is here    1 | int f(){return 1;} int f(){return 2;} int main(){return f();}      |     ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 232,
+          "compileMs": 5,
+          "linkMs": 0,
+          "totalMs": 238,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-08-bad-template",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:58: error: no matching function for call to 'id'    1 | template<class T> T id(T x){return x;} int main(){return id<>();}      |                                                          ^~~~/program:1:21: note: candidate function template not viable: requires single argument 'x', but no arguments were provided    1 | template<class T> T id(T x){return x;} int main(){return id<>();}      |                     ^  ~~~1 error generated.",
+        "timing": {
+          "compilerInitMs": 216,
+          "compileMs": 5,
+          "linkMs": 0,
+          "totalMs": 221,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-09-missing-member",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:45: error: no member named 'y' in 'S'    1 | struct S{int x;}; int main(){S s{};return s.y;}      |                                           ~ ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 215,
+          "compileMs": 5,
+          "linkMs": 0,
+          "totalMs": 221,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-10-invalid-structured-binding",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:2:17: error: type 'std::pair<int, int>' decomposes into 2 elements, but 3 names were provided    2 | int main(){auto [a,b,c]=std::pair<int,int>{1,2};return a+b+c;}      |                 ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 236,
+          "compileMs": 159,
+          "linkMs": 0,
+          "totalMs": 395,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-11-static-assert",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:15: error: static assertion failed due to requirement 'sizeof(long) == 1': intentional C++17 gate failure    1 | static_assert(sizeof(long)==1,\"intentional C++17 gate failure\");      |               ^~~~~~~~~~~~~~~/program:1:27: note: expression evaluates to '4 == 1'    1 | static_assert(sizeof(long)==1,\"intentional C++17 gate failure\");      |               ~~~~~~~~~~~~^~~1 error generated.",
+        "timing": {
+          "compilerInitMs": 193,
+          "compileMs": 4,
+          "linkMs": 0,
+          "totalMs": 197,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-12-ambiguous-overload",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "cpp17-submission-wasm-ld: error: /shared/program.o: undefined symbol: f(double)",
+        "timing": {
+          "compilerInitMs": 202,
+          "compileMs": 9,
+          "linkMs": 21,
+          "totalMs": 233,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-13-deleted-copy",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:61: error: call to deleted constructor of 'X'    1 | struct X{X()=default;X(const X&)=delete;}; int main(){X a;X b=a;}      |                                                             ^ ~/program:1:22: note: 'X' has been explicitly marked deleted here    1 | struct X{X()=default;X(const X&)=delete;}; int main(){X a;X b=a;}      |                      ^1 error generated.",
+        "timing": {
+          "compilerInitMs": 219,
+          "compileMs": 5,
+          "linkMs": 0,
+          "totalMs": 225,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-14-invalid-range-for",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:21: error: invalid range expression of type 'int'; no viable 'begin' function available    1 | int main(){for(int x: 7)return x;}      |                     ^ ~1 error generated.",
+        "timing": {
+          "compilerInitMs": 227,
+          "compileMs": 5,
+          "linkMs": 0,
+          "totalMs": 232,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "negative-15-bad-enum",
+        "category": "negative",
+        "compileStatus": "CE",
+        "runStatus": "CE",
+        "pass": true,
+        "outputMatches": false,
+        "stdout": "",
+        "stderr": "/program:1:44: error: no member named 'B' in 'E'    1 | enum class E{A}; int main(){return (int)E::B;}      |                                         ~~~^1 error generated.",
+        "timing": {
+          "compilerInitMs": 221,
+          "compileMs": 8,
+          "linkMs": 0,
+          "totalMs": 229,
+          "optimizationLevel": "-O2",
+          "executionMs": 0,
+          "cacheHit": false,
+          "artifactBytes": 0
+        }
+      },
+      {
+        "id": "warning-01-unused-variable",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "unused-variable\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 4.2,
+          "instantiateMs": 3.6,
+          "executionMs": 4.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 235,
+          "compileMs": 1223,
+          "linkMs": 59,
+          "cacheHit": false,
+          "artifactBytes": 705690
+        }
+      },
+      {
+        "id": "warning-02-unused-parameter",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.3,
+          "instantiateMs": 2.1,
+          "executionMs": 3.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 410,
+          "compileMs": 1751,
+          "linkMs": 30,
+          "cacheHit": false,
+          "artifactBytes": 705706
+        }
+      },
+      {
+        "id": "warning-03-sign-compare",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 0.9,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 255,
+          "compileMs": 1380,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "warning-04-shadow",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 2.2,
+          "instantiateMs": 3.4,
+          "executionMs": 1.9,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 173,
+          "compileMs": 893,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 705698
+        }
+      },
+      {
+        "id": "warning-05-missing-field",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1.3,
+          "executionMs": 1.7,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 175,
+          "compileMs": 781,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "warning-06-assignment-in-condition",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "assigned\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.3,
+          "instantiateMs": 0.9,
+          "executionMs": 1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 168,
+          "compileMs": 800,
+          "linkMs": 20,
+          "cacheHit": false,
+          "artifactBytes": 705674
+        }
+      },
+      {
+        "id": "warning-07-switch-enum",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "A\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 4.4,
+          "executionMs": 1.6,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 160,
+          "compileMs": 769,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 705674
+        }
+      },
+      {
+        "id": "warning-08-unused-function",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "function\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 1.7,
+          "executionMs": 1.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 187,
+          "compileMs": 719,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705674
+        }
+      },
+      {
+        "id": "warning-09-type-limits",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "1\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.7,
+          "instantiateMs": 1,
+          "executionMs": 2.1,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 172,
+          "compileMs": 824,
+          "linkMs": 24,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "warning-10-reorder",
+        "category": "warning",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "3\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.8,
+          "instantiateMs": 6.2,
+          "executionMs": 2.2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 168,
+          "compileMs": 758,
+          "linkMs": 21,
+          "cacheHit": false,
+          "artifactBytes": 705682
+        }
+      },
+      {
+        "id": "acm-43-spfa",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "0 2 1 6 4\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.5,
+          "instantiateMs": 0.9,
+          "executionMs": 2.3,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 178,
+          "compileMs": 1374,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 713674
+        }
+      },
+      {
+        "id": "acm-44-string-hash",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "0 7\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.6,
+          "instantiateMs": 1,
+          "executionMs": 2,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 164,
+          "compileMs": 1012,
+          "linkMs": 19,
+          "cacheHit": false,
+          "artifactBytes": 708181
+        }
+      },
+      {
+        "id": "acm-45-large-array",
+        "category": "acm",
+        "compileStatus": "PASS",
+        "runStatus": "PASS",
+        "pass": true,
+        "outputMatches": true,
+        "stdout": "9900000\n",
+        "stderr": "",
+        "timing": {
+          "wasmCompileMs": 1.4,
+          "instantiateMs": 0.9,
+          "executionMs": 2.4,
+          "optimizationLevel": "-O2",
+          "compilerInitMs": 175,
+          "compileMs": 1030,
+          "linkMs": 18,
+          "cacheHit": false,
+          "artifactBytes": 705903
+        }
+      }
+    ]
+  },
+  "browserCoverageComplete": true,
+  "pch": {
+    "policy": "DISABLED",
+    "decision": "PCH_DISABLED",
+    "benchmark": {
+      "samples": [
+        {
+          "sample": 1,
+          "status": "PASS",
+          "compileMs": 1250,
+          "runMs": 2,
+          "output": "8"
+        },
+        {
+          "sample": 2,
+          "status": "PASS",
+          "compileMs": 1254,
+          "runMs": 2,
+          "output": "8"
+        },
+        {
+          "sample": 3,
+          "status": "PASS",
+          "compileMs": 1249,
+          "runMs": 2,
+          "output": "8"
+        }
+      ],
+      "sampleCount": 3,
+      "metric": "remote compiler wall time (ms), no PCH",
+      "candidate": "bits/stdc++.h A+B",
+      "pchArtifactBuilt": false
+    },
+    "rationale": [
+      "The v2 Browser profile declares pchPolicy=none and publishes no PCH artifact.",
+      "Keep PCH disabled until a separate cache/artifact contract is approved."
+    ],
+    "browser": {
+      "profileId": "cpp17-gcc14-compat-v2",
+      "pchPolicy": "DISABLED",
+      "bitsNoPch": {
+        "cold": {
+          "compileMs": 1236,
+          "linkMs": 21,
+          "totalMs": null,
+          "cacheHit": false,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        },
+        "warm": {
+          "compileMs": 0,
+          "linkMs": 0,
+          "totalMs": null,
+          "cacheHit": true,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        }
+      },
+      "explicitIncludes": {
+        "cold": {
+          "compileMs": 839,
+          "linkMs": 20,
+          "totalMs": null,
+          "cacheHit": false,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        },
+        "warm": {
+          "compileMs": 0,
+          "linkMs": 0,
+          "totalMs": null,
+          "cacheHit": true,
+          "compileStatus": "PASS",
+          "runStatus": "PASS",
+          "stdout": "8\n",
+          "stderr": ""
+        }
+      },
+      "thresholds": {
+        "compileMs": 500,
+        "aggregateOverheadRatio": 0.25,
+        "minimumPchBenefitRatio": 0.3
+      },
+      "observed": {
+        "coldCompileOverheadRatio": 0.4731823599523242,
+        "thresholdTriggered": true,
+        "pchBenefitMeasured": false
+      },
+      "decision": "DISABLED",
+      "decisionReason": "No Browser PCH artifact is published; retain DISABLED even when the cold/warm threshold is triggered."
+    }
+  },
+  "betaGate": {
+    "status": "PASS",
+    "reason": null
+  }
+}

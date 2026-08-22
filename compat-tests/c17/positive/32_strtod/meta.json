@@ -1,0 +1,11 @@
+{
+  "id": "32_strtod",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "stdlib strtod",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

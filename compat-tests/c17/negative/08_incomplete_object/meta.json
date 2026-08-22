@@ -1,0 +1,17 @@
+{
+  "id": "c17-negative-08_incomplete_object",
+  "suite": "negative",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "CE",
+  "oracle": "compile-diagnostic",
+  "tags": [
+    "c17",
+    "negative",
+    "compile-error"
+  ],
+  "notes": "An incomplete struct type cannot define an automatic object."
+}

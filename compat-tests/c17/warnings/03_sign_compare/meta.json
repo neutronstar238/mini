@@ -1,0 +1,25 @@
+{
+  "id": "c17-warnings-03_sign_compare",
+  "suite": "warnings",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "PASS_WITH_WARNINGS",
+  "oracle": "compile-warning",
+  "tags": [
+    "c17",
+    "warning",
+    "compile-diagnostic"
+  ],
+  "compileOnly": true,
+  "extraFlags": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wsign-compare"
+  ],
+  "minimumWarnings": 1,
+  "notes": "Signed/unsigned comparison is a diagnostic under -Wsign-compare."
+}

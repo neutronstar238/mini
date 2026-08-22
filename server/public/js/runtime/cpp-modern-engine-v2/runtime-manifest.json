@@ -1,0 +1,282 @@
+{
+  "runtimeId": "cpp-modern-engine-v2",
+  "engineRuntimeId": "cpp-modern-engine-v2",
+  "status": "BETA",
+  "target": "wasm32-unknown-wasi",
+  "runtimeHashAlgorithm": "canonical-runtime-identity-v1",
+  "runtimeIdentity": {
+    "contractVersion": 2,
+    "engineRuntimeId": "cpp-modern-engine-v2",
+    "executionProtocolVersion": "compiler-execution-workers-v1",
+    "orderedAssets": [
+      {
+        "bytes": 913,
+        "file": "bits/stdc++.h",
+        "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1",
+        "url": "/runtime/cpp-modern-engine-v2/bits/stdc++.h"
+      },
+      {
+        "bytes": 55940,
+        "file": "code/controller.mjs",
+        "sha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e",
+        "url": "/js/contest/ide-wasi-worker-modern.js"
+      },
+      {
+        "bytes": 4947,
+        "file": "code/executor.mjs",
+        "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166",
+        "url": "/js/contest/ide-wasi-execution-worker-modern.js"
+      },
+      {
+        "bytes": 78609,
+        "file": "shared/clang.js",
+        "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160",
+        "url": "/runtime/cpp-modern-engine-v1/clang.js"
+      },
+      {
+        "bytes": 54726610,
+        "file": "shared/clang.wasm",
+        "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60",
+        "url": "/runtime/cpp-modern-engine-v1/clang.wasm"
+      },
+      {
+        "bytes": 1454,
+        "file": "shared/loader.mjs",
+        "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f",
+        "url": "/runtime/cpp-modern-engine-v1/loader.mjs"
+      },
+      {
+        "bytes": 21258240,
+        "file": "shared/sysroot.tar",
+        "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d",
+        "url": "/runtime/cpp-modern-engine-v1/sysroot.tar"
+      },
+      {
+        "bytes": 76348,
+        "file": "shared/wasm-ld.js",
+        "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419",
+        "url": "/runtime/cpp-modern-engine-v1/wasm-ld.js"
+      },
+      {
+        "bytes": 29051596,
+        "file": "shared/wasm-ld.wasm",
+        "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429",
+        "url": "/runtime/cpp-modern-engine-v1/wasm-ld.wasm"
+      }
+    ],
+    "peeledSourcePins": {
+      "emscripten": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+      "llvm": "cd708029e0b2869e80abe31ddb175f7c35361f90",
+      "wasiLibc": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+    },
+    "profileFlags": {
+      "c17-gcc14-compat-v2": [
+        "-std=c17",
+        "-O2"
+      ],
+      "cpp17-gcc14-compat-v2": [
+        "-std=c++17",
+        "-O2"
+      ]
+    },
+    "target": "wasm32-unknown-wasi"
+  },
+  "runtimeAssetHash": "8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419",
+  "inheritedBinaryRuntimeId": "cpp-modern-engine-v1",
+  "llvm": {
+    "tag": "llvmorg-19.1.7",
+    "tagObjectSha": "f34bba6980332ba9447397fc8bd8a0951b224747",
+    "peeledSourceCommit": "cd708029e0b2869e80abe31ddb175f7c35361f90"
+  },
+  "emscripten": {
+    "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+    "image": "emscripten/emsdk:5.0.2",
+    "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d",
+    "imageId": "sha256:658ef57e349acb3f81bf27e55a1200a6c12ee0ded69f4c7cbf6d8651c9d04bec",
+    "version": "5.0.2"
+  },
+  "wasiLibc": {
+    "commit": "574b88da481569b65a237cb80daf9a2d5aeaf82d",
+    "resolvedCommit": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+  },
+  "memory": {
+    "growth": true,
+    "initialBytes": 268435456,
+    "maximumBytes": 1073741824,
+    "stackBytes": 33554432,
+    "threads": false
+  },
+  "profiles": {
+    "c17-gcc14-compat-v2": {
+      "standard": "c17",
+      "flags": [
+        "-std=c17",
+        "-O2"
+      ],
+      "submissionEnabled": false
+    },
+    "cpp17-gcc14-compat-v2": {
+      "standard": "c++17",
+      "flags": [
+        "-std=c++17",
+        "-O2"
+      ],
+      "submissionEnabled": false,
+      "pchPolicy": "none"
+    }
+  },
+  "assets": [
+    {
+      "bytes": 54726610,
+      "file": "shared/clang.wasm",
+      "kind": "compiler",
+      "path": "/runtime/cpp-modern-engine-v1/clang.wasm",
+      "role": "clang",
+      "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60",
+      "url": "/runtime/cpp-modern-engine-v1/clang.wasm",
+      "inheritedFrom": "cpp-modern-engine-v1"
+    },
+    {
+      "bytes": 29051596,
+      "file": "shared/wasm-ld.wasm",
+      "kind": "linker",
+      "path": "/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "role": "wasm-ld",
+      "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429",
+      "url": "/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "inheritedFrom": "cpp-modern-engine-v1"
+    },
+    {
+      "bytes": 78609,
+      "file": "shared/clang.js",
+      "kind": "compiler-glue",
+      "path": "/runtime/cpp-modern-engine-v1/clang.js",
+      "role": "emscripten-worker-glue",
+      "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160",
+      "url": "/runtime/cpp-modern-engine-v1/clang.js",
+      "inheritedFrom": "cpp-modern-engine-v1"
+    },
+    {
+      "bytes": 76348,
+      "file": "shared/wasm-ld.js",
+      "kind": "linker-glue",
+      "path": "/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "role": "emscripten-worker-glue",
+      "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419",
+      "url": "/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "inheritedFrom": "cpp-modern-engine-v1"
+    },
+    {
+      "bytes": 21258240,
+      "file": "shared/sysroot.tar",
+      "kind": "sysroot",
+      "path": "/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "role": "wasi-libc+libc++",
+      "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d",
+      "url": "/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "inheritedFrom": "cpp-modern-engine-v1"
+    },
+    {
+      "bytes": 1454,
+      "file": "shared/loader.mjs",
+      "kind": "loader",
+      "path": "/runtime/cpp-modern-engine-v1/loader.mjs",
+      "role": "asset-loader",
+      "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f",
+      "url": "/runtime/cpp-modern-engine-v1/loader.mjs",
+      "inheritedFrom": "cpp-modern-engine-v1"
+    },
+    {
+      "file": "bits/stdc++.h",
+      "url": "/runtime/cpp-modern-engine-v2/bits/stdc++.h",
+      "kind": "header-shim",
+      "role": "gcc14-compatible-standard-header-aggregate",
+      "mountPath": "/sys/include/c++/v1/bits/stdc++.h",
+      "bytes": 913,
+      "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+    },
+    {
+      "file": "code/controller.mjs",
+      "url": "/js/contest/ide-wasi-worker-modern.js",
+      "kind": "metadata",
+      "role": "control-code",
+      "bytes": 55940,
+      "sha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e"
+    },
+    {
+      "file": "code/executor.mjs",
+      "url": "/js/contest/ide-wasi-execution-worker-modern.js",
+      "kind": "metadata",
+      "role": "execution-code",
+      "bytes": 4947,
+      "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166"
+    }
+  ],
+  "assetInventory": [
+    {
+      "file": "bits/stdc++.h",
+      "url": "/runtime/cpp-modern-engine-v2/bits/stdc++.h",
+      "bytes": 913,
+      "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+    },
+    {
+      "file": "code/controller.mjs",
+      "url": "/js/contest/ide-wasi-worker-modern.js",
+      "bytes": 55940,
+      "sha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e"
+    },
+    {
+      "file": "code/executor.mjs",
+      "url": "/js/contest/ide-wasi-execution-worker-modern.js",
+      "bytes": 4947,
+      "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166"
+    },
+    {
+      "file": "shared/clang.js",
+      "url": "/runtime/cpp-modern-engine-v1/clang.js",
+      "bytes": 78609,
+      "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160"
+    },
+    {
+      "file": "shared/clang.wasm",
+      "url": "/runtime/cpp-modern-engine-v1/clang.wasm",
+      "bytes": 54726610,
+      "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60"
+    },
+    {
+      "file": "shared/loader.mjs",
+      "url": "/runtime/cpp-modern-engine-v1/loader.mjs",
+      "bytes": 1454,
+      "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f"
+    },
+    {
+      "file": "shared/sysroot.tar",
+      "url": "/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "bytes": 21258240,
+      "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d"
+    },
+    {
+      "file": "shared/wasm-ld.js",
+      "url": "/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "bytes": 76348,
+      "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419"
+    },
+    {
+      "file": "shared/wasm-ld.wasm",
+      "url": "/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "bytes": 29051596,
+      "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429"
+    }
+  ],
+  "reproducibleBuild": "PASS",
+  "build": {
+    "sourceDateEpoch": 1770336000,
+    "generatedAt": "2026-02-06T00:00:00Z"
+  },
+  "redistribution": {
+    "technicalValidated": true,
+    "engineeringRedistributionReady": true,
+    "legalReviewRequired": true,
+    "redistributable": false
+  }
+}

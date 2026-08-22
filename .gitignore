@@ -17,6 +17,12 @@ output/
 tmp/
 *.log
 compat-tests/*
+!compat-tests/c17/
+!compat-tests/c17/**
+!compat-tests/cpp17/
+!compat-tests/cpp17/**
+!compat-tests/modern-cpp/
+!compat-tests/modern-cpp/**
 !compat-tests/java21/
 !compat-tests/java21/**
 compat-tests/java21/results/

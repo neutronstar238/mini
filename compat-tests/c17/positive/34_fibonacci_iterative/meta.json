@@ -1,0 +1,11 @@
+{
+  "id": "34_fibonacci_iterative",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "iterative Fibonacci",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

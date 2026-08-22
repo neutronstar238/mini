@@ -1,0 +1,11 @@
+{
+  "id": "22_vla",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "C99/C17 variable length array",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "07_math_rounding",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "math sqrt/floor/ceil/fabs",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

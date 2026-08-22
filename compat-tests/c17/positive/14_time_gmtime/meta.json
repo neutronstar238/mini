@@ -1,0 +1,11 @@
+{
+  "id": "14_time_gmtime",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "time.h gmtime",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

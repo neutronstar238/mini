@@ -1,0 +1,1573 @@
+{
+  "schemaVersion": "cpp17-compatibility-matrix-v1",
+  "profileId": "cpp17-gcc14-compat-v2",
+  "language": "cpp17",
+  "standard": "c++17",
+  "corpusRoot": "compat-tests/cpp17",
+  "generatedBy": "run-cpp17-matrix.mjs",
+  "policy": {
+    "featureMinimum": 32,
+    "acmMinimum": 40,
+    "negativeMinimum": 15,
+    "warningMinimum": 10,
+    "ubRequired": 4,
+    "negativeExpected": "compile_error",
+    "warningFlags": [
+      "-Wall",
+      "-Wextra"
+    ],
+    "warningOverrides": {
+      "warning-04-shadow": [
+        "-Wshadow"
+      ]
+    },
+    "ubScoring": "reported-only",
+    "bitsShim": "bits/include/bits/stdc++.h",
+    "pch": "DISABLED"
+  },
+  "counts": {
+    "features": 35,
+    "acm": 45,
+    "negative": 15,
+    "warnings": 10,
+    "ub": 4,
+    "total": 109
+  },
+  "cases": [
+    {
+      "id": "feature-01-structured-bindings",
+      "category": "feature",
+      "source": "features/feature-01-structured-bindings.cpp",
+      "input": "inputs/feature-01-structured-bindings.in",
+      "expected": "expected/feature-01-structured-bindings.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-02-if-constexpr",
+      "category": "feature",
+      "source": "features/feature-02-if-constexpr.cpp",
+      "input": "inputs/feature-02-if-constexpr.in",
+      "expected": "expected/feature-02-if-constexpr.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-03-fold-expression",
+      "category": "feature",
+      "source": "features/feature-03-fold-expression.cpp",
+      "input": "inputs/feature-03-fold-expression.in",
+      "expected": "expected/feature-03-fold-expression.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-04-optional",
+      "category": "feature",
+      "source": "features/feature-04-optional.cpp",
+      "input": "inputs/feature-04-optional.in",
+      "expected": "expected/feature-04-optional.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-05-variant",
+      "category": "feature",
+      "source": "features/feature-05-variant.cpp",
+      "input": "inputs/feature-05-variant.in",
+      "expected": "expected/feature-05-variant.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-06-any",
+      "category": "feature",
+      "source": "features/feature-06-any.cpp",
+      "input": "inputs/feature-06-any.in",
+      "expected": "expected/feature-06-any.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-07-string-view",
+      "category": "feature",
+      "source": "features/feature-07-string-view.cpp",
+      "input": "inputs/feature-07-string-view.in",
+      "expected": "expected/feature-07-string-view.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-08-tuple-apply",
+      "category": "feature",
+      "source": "features/feature-08-tuple-apply.cpp",
+      "input": "inputs/feature-08-tuple-apply.in",
+      "expected": "expected/feature-08-tuple-apply.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-09-invoke",
+      "category": "feature",
+      "source": "features/feature-09-invoke.cpp",
+      "input": "inputs/feature-09-invoke.in",
+      "expected": "expected/feature-09-invoke.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-10-filesystem",
+      "category": "feature",
+      "source": "features/feature-10-filesystem.cpp",
+      "input": "inputs/feature-10-filesystem.in",
+      "expected": "expected/feature-10-filesystem.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-11-shared-pointer",
+      "category": "feature",
+      "source": "features/feature-11-shared-pointer.cpp",
+      "input": "inputs/feature-11-shared-pointer.in",
+      "expected": "expected/feature-11-shared-pointer.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-12-unique-pointer",
+      "category": "feature",
+      "source": "features/feature-12-unique-pointer.cpp",
+      "input": "inputs/feature-12-unique-pointer.in",
+      "expected": "expected/feature-12-unique-pointer.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-13-array",
+      "category": "feature",
+      "source": "features/feature-13-array.cpp",
+      "input": "inputs/feature-13-array.in",
+      "expected": "expected/feature-13-array.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-14-vector",
+      "category": "feature",
+      "source": "features/feature-14-vector.cpp",
+      "input": "inputs/feature-14-vector.in",
+      "expected": "expected/feature-14-vector.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-15-deque",
+      "category": "feature",
+      "source": "features/feature-15-deque.cpp",
+      "input": "inputs/feature-15-deque.in",
+      "expected": "expected/feature-15-deque.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-16-list",
+      "category": "feature",
+      "source": "features/feature-16-list.cpp",
+      "input": "inputs/feature-16-list.in",
+      "expected": "expected/feature-16-list.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-17-map",
+      "category": "feature",
+      "source": "features/feature-17-map.cpp",
+      "input": "inputs/feature-17-map.in",
+      "expected": "expected/feature-17-map.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-18-set",
+      "category": "feature",
+      "source": "features/feature-18-set.cpp",
+      "input": "inputs/feature-18-set.in",
+      "expected": "expected/feature-18-set.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-19-unordered-map",
+      "category": "feature",
+      "source": "features/feature-19-unordered-map.cpp",
+      "input": "inputs/feature-19-unordered-map.in",
+      "expected": "expected/feature-19-unordered-map.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-20-unordered-set",
+      "category": "feature",
+      "source": "features/feature-20-unordered-set.cpp",
+      "input": "inputs/feature-20-unordered-set.in",
+      "expected": "expected/feature-20-unordered-set.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-21-priority-queue",
+      "category": "feature",
+      "source": "features/feature-21-priority-queue.cpp",
+      "input": "inputs/feature-21-priority-queue.in",
+      "expected": "expected/feature-21-priority-queue.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-22-algorithm",
+      "category": "feature",
+      "source": "features/feature-22-algorithm.cpp",
+      "input": "inputs/feature-22-algorithm.in",
+      "expected": "expected/feature-22-algorithm.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-23-numeric",
+      "category": "feature",
+      "source": "features/feature-23-numeric.cpp",
+      "input": "inputs/feature-23-numeric.in",
+      "expected": "expected/feature-23-numeric.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-24-functional",
+      "category": "feature",
+      "source": "features/feature-24-functional.cpp",
+      "input": "inputs/feature-24-functional.in",
+      "expected": "expected/feature-24-functional.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-25-type-traits",
+      "category": "feature",
+      "source": "features/feature-25-type-traits.cpp",
+      "input": "inputs/feature-25-type-traits.in",
+      "expected": "expected/feature-25-type-traits.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-26-chrono",
+      "category": "feature",
+      "source": "features/feature-26-chrono.cpp",
+      "input": "inputs/feature-26-chrono.in",
+      "expected": "expected/feature-26-chrono.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-27-random",
+      "category": "feature",
+      "source": "features/feature-27-random.cpp",
+      "input": "inputs/feature-27-random.in",
+      "expected": "expected/feature-27-random.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-28-regex",
+      "category": "feature",
+      "source": "features/feature-28-regex.cpp",
+      "input": "inputs/feature-28-regex.in",
+      "expected": "expected/feature-28-regex.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-29-constexpr",
+      "category": "feature",
+      "source": "features/feature-29-constexpr.cpp",
+      "input": "inputs/feature-29-constexpr.in",
+      "expected": "expected/feature-29-constexpr.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-30-inline-variable",
+      "category": "feature",
+      "source": "features/feature-30-inline-variable.cpp",
+      "input": "inputs/feature-30-inline-variable.in",
+      "expected": "expected/feature-30-inline-variable.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-31-nested-namespace",
+      "category": "feature",
+      "source": "features/feature-31-nested-namespace.cpp",
+      "input": "inputs/feature-31-nested-namespace.in",
+      "expected": "expected/feature-31-nested-namespace.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-32-aggregate-init",
+      "category": "feature",
+      "source": "features/feature-32-aggregate-init.cpp",
+      "input": "inputs/feature-32-aggregate-init.in",
+      "expected": "expected/feature-32-aggregate-init.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-33-bits-shim",
+      "category": "feature",
+      "source": "features/feature-33-bits-shim.cpp",
+      "input": "inputs/feature-33-bits-shim.in",
+      "expected": "expected/feature-33-bits-shim.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-34-hello-world",
+      "category": "feature",
+      "source": "features/feature-34-hello-world.cpp",
+      "input": "inputs/feature-34-hello-world.in",
+      "expected": "expected/feature-34-hello-world.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "feature-35-a-plus-b",
+      "category": "feature",
+      "source": "features/feature-35-a-plus-b.cpp",
+      "input": "inputs/feature-35-a-plus-b.in",
+      "expected": "expected/feature-35-a-plus-b.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "c++17-feature",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-01-a-plus-b",
+      "category": "acm",
+      "source": "acm-corpus/acm-01-a-plus-b.cpp",
+      "input": "inputs/acm-01-a-plus-b.in",
+      "expected": "expected/acm-01-a-plus-b.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-02-sort",
+      "category": "acm",
+      "source": "acm-corpus/acm-02-sort.cpp",
+      "input": "inputs/acm-02-sort.in",
+      "expected": "expected/acm-02-sort.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-03-binary-search",
+      "category": "acm",
+      "source": "acm-corpus/acm-03-binary-search.cpp",
+      "input": "inputs/acm-03-binary-search.in",
+      "expected": "expected/acm-03-binary-search.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-04-prefix-sum",
+      "category": "acm",
+      "source": "acm-corpus/acm-04-prefix-sum.cpp",
+      "input": "inputs/acm-04-prefix-sum.in",
+      "expected": "expected/acm-04-prefix-sum.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-05-difference-array",
+      "category": "acm",
+      "source": "acm-corpus/acm-05-difference-array.cpp",
+      "input": "inputs/acm-05-difference-array.in",
+      "expected": "expected/acm-05-difference-array.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-06-bfs",
+      "category": "acm",
+      "source": "acm-corpus/acm-06-bfs.cpp",
+      "input": "inputs/acm-06-bfs.in",
+      "expected": "expected/acm-06-bfs.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-07-dfs-components",
+      "category": "acm",
+      "source": "acm-corpus/acm-07-dfs-components.cpp",
+      "input": "inputs/acm-07-dfs-components.in",
+      "expected": "expected/acm-07-dfs-components.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-08-dijkstra",
+      "category": "acm",
+      "source": "acm-corpus/acm-08-dijkstra.cpp",
+      "input": "inputs/acm-08-dijkstra.in",
+      "expected": "expected/acm-08-dijkstra.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-09-floyd",
+      "category": "acm",
+      "source": "acm-corpus/acm-09-floyd.cpp",
+      "input": "inputs/acm-09-floyd.in",
+      "expected": "expected/acm-09-floyd.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-10-union-find",
+      "category": "acm",
+      "source": "acm-corpus/acm-10-union-find.cpp",
+      "input": "inputs/acm-10-union-find.in",
+      "expected": "expected/acm-10-union-find.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-11-kruskal",
+      "category": "acm",
+      "source": "acm-corpus/acm-11-kruskal.cpp",
+      "input": "inputs/acm-11-kruskal.in",
+      "expected": "expected/acm-11-kruskal.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-12-prim",
+      "category": "acm",
+      "source": "acm-corpus/acm-12-prim.cpp",
+      "input": "inputs/acm-12-prim.in",
+      "expected": "expected/acm-12-prim.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-13-topological-sort",
+      "category": "acm",
+      "source": "acm-corpus/acm-13-topological-sort.cpp",
+      "input": "inputs/acm-13-topological-sort.in",
+      "expected": "expected/acm-13-topological-sort.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-14-scc",
+      "category": "acm",
+      "source": "acm-corpus/acm-14-scc.cpp",
+      "input": "inputs/acm-14-scc.in",
+      "expected": "expected/acm-14-scc.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-15-kmp",
+      "category": "acm",
+      "source": "acm-corpus/acm-15-kmp.cpp",
+      "input": "inputs/acm-15-kmp.in",
+      "expected": "expected/acm-15-kmp.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-16-trie",
+      "category": "acm",
+      "source": "acm-corpus/acm-16-trie.cpp",
+      "input": "inputs/acm-16-trie.in",
+      "expected": "expected/acm-16-trie.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-17-next-greater",
+      "category": "acm",
+      "source": "acm-corpus/acm-17-next-greater.cpp",
+      "input": "inputs/acm-17-next-greater.in",
+      "expected": "expected/acm-17-next-greater.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-18-sliding-min",
+      "category": "acm",
+      "source": "acm-corpus/acm-18-sliding-min.cpp",
+      "input": "inputs/acm-18-sliding-min.in",
+      "expected": "expected/acm-18-sliding-min.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-19-kth-largest",
+      "category": "acm",
+      "source": "acm-corpus/acm-19-kth-largest.cpp",
+      "input": "inputs/acm-19-kth-largest.in",
+      "expected": "expected/acm-19-kth-largest.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-20-knapsack-01",
+      "category": "acm",
+      "source": "acm-corpus/acm-20-knapsack-01.cpp",
+      "input": "inputs/acm-20-knapsack-01.in",
+      "expected": "expected/acm-20-knapsack-01.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-21-knapsack-complete",
+      "category": "acm",
+      "source": "acm-corpus/acm-21-knapsack-complete.cpp",
+      "input": "inputs/acm-21-knapsack-complete.in",
+      "expected": "expected/acm-21-knapsack-complete.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-22-lis",
+      "category": "acm",
+      "source": "acm-corpus/acm-22-lis.cpp",
+      "input": "inputs/acm-22-lis.in",
+      "expected": "expected/acm-22-lis.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-23-lcs",
+      "category": "acm",
+      "source": "acm-corpus/acm-23-lcs.cpp",
+      "input": "inputs/acm-23-lcs.in",
+      "expected": "expected/acm-23-lcs.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-24-fenwick",
+      "category": "acm",
+      "source": "acm-corpus/acm-24-fenwick.cpp",
+      "input": "inputs/acm-24-fenwick.in",
+      "expected": "expected/acm-24-fenwick.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-25-segment-tree",
+      "category": "acm",
+      "source": "acm-corpus/acm-25-segment-tree.cpp",
+      "input": "inputs/acm-25-segment-tree.in",
+      "expected": "expected/acm-25-segment-tree.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-26-fast-power",
+      "category": "acm",
+      "source": "acm-corpus/acm-26-fast-power.cpp",
+      "input": "inputs/acm-26-fast-power.in",
+      "expected": "expected/acm-26-fast-power.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-27-matrix-fibonacci",
+      "category": "acm",
+      "source": "acm-corpus/acm-27-matrix-fibonacci.cpp",
+      "input": "inputs/acm-27-matrix-fibonacci.in",
+      "expected": "expected/acm-27-matrix-fibonacci.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-28-sieve",
+      "category": "acm",
+      "source": "acm-corpus/acm-28-sieve.cpp",
+      "input": "inputs/acm-28-sieve.in",
+      "expected": "expected/acm-28-sieve.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-29-gcd-lcm",
+      "category": "acm",
+      "source": "acm-corpus/acm-29-gcd-lcm.cpp",
+      "input": "inputs/acm-29-gcd-lcm.in",
+      "expected": "expected/acm-29-gcd-lcm.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-30-modular-inverse",
+      "category": "acm",
+      "source": "acm-corpus/acm-30-modular-inverse.cpp",
+      "input": "inputs/acm-30-modular-inverse.in",
+      "expected": "expected/acm-30-modular-inverse.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-31-substring-search",
+      "category": "acm",
+      "source": "acm-corpus/acm-31-substring-search.cpp",
+      "input": "inputs/acm-31-substring-search.in",
+      "expected": "expected/acm-31-substring-search.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-32-interval-merge",
+      "category": "acm",
+      "source": "acm-corpus/acm-32-interval-merge.cpp",
+      "input": "inputs/acm-32-interval-merge.in",
+      "expected": "expected/acm-32-interval-merge.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-33-geometry-cross",
+      "category": "acm",
+      "source": "acm-corpus/acm-33-geometry-cross.cpp",
+      "input": "inputs/acm-33-geometry-cross.in",
+      "expected": "expected/acm-33-geometry-cross.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-34-bitmask-subsets",
+      "category": "acm",
+      "source": "acm-corpus/acm-34-bitmask-subsets.cpp",
+      "input": "inputs/acm-34-bitmask-subsets.in",
+      "expected": "expected/acm-34-bitmask-subsets.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-35-max-subarray",
+      "category": "acm",
+      "source": "acm-corpus/acm-35-max-subarray.cpp",
+      "input": "inputs/acm-35-max-subarray.in",
+      "expected": "expected/acm-35-max-subarray.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-36-fast-io-sum",
+      "category": "acm",
+      "source": "acm-corpus/acm-36-fast-io-sum.cpp",
+      "input": "inputs/acm-36-fast-io-sum.in",
+      "expected": "expected/acm-36-fast-io-sum.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-37-tuple-binding",
+      "category": "acm",
+      "source": "acm-corpus/acm-37-tuple-binding.cpp",
+      "input": "inputs/acm-37-tuple-binding.in",
+      "expected": "expected/acm-37-tuple-binding.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-38-optional-default",
+      "category": "acm",
+      "source": "acm-corpus/acm-38-optional-default.cpp",
+      "input": "inputs/acm-38-optional-default.in",
+      "expected": "expected/acm-38-optional-default.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-39-variant-visit",
+      "category": "acm",
+      "source": "acm-corpus/acm-39-variant-visit.cpp",
+      "input": "inputs/acm-39-variant-visit.in",
+      "expected": "expected/acm-39-variant-visit.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-40-regex-filter",
+      "category": "acm",
+      "source": "acm-corpus/acm-40-regex-filter.cpp",
+      "input": "inputs/acm-40-regex-filter.in",
+      "expected": "expected/acm-40-regex-filter.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-41-bits-header-probe",
+      "category": "acm",
+      "source": "acm-corpus/acm-41-bits-header-probe.cpp",
+      "input": "inputs/acm-41-bits-header-probe.in",
+      "expected": "expected/acm-41-bits-header-probe.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-42-multiset",
+      "category": "acm",
+      "source": "acm-corpus/acm-42-multiset.cpp",
+      "input": "inputs/acm-42-multiset.in",
+      "expected": "expected/acm-42-multiset.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "acm-style",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "negative-01-missing-semicolon",
+      "category": "negative",
+      "source": "negative/negative-01-missing-semicolon.cpp",
+      "input": "inputs/negative-01-missing-semicolon.in",
+      "expected": "expected/negative-01-missing-semicolon.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-02-undeclared-name",
+      "category": "negative",
+      "source": "negative/negative-02-undeclared-name.cpp",
+      "input": "inputs/negative-02-undeclared-name.in",
+      "expected": "expected/negative-02-undeclared-name.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-03-invalid-conversion",
+      "category": "negative",
+      "source": "negative/negative-03-invalid-conversion.cpp",
+      "input": "inputs/negative-03-invalid-conversion.in",
+      "expected": "expected/negative-03-invalid-conversion.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-04-unknown-type",
+      "category": "negative",
+      "source": "negative/negative-04-unknown-type.cpp",
+      "input": "inputs/negative-04-unknown-type.in",
+      "expected": "expected/negative-04-unknown-type.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-05-mismatched-brace",
+      "category": "negative",
+      "source": "negative/negative-05-mismatched-brace.cpp",
+      "input": "inputs/negative-05-mismatched-brace.in",
+      "expected": "expected/negative-05-mismatched-brace.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-06-no-main-link",
+      "category": "negative",
+      "source": "negative/negative-06-no-main-link.cpp",
+      "input": "inputs/negative-06-no-main-link.in",
+      "expected": "expected/negative-06-no-main-link.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-07-duplicate-definition",
+      "category": "negative",
+      "source": "negative/negative-07-duplicate-definition.cpp",
+      "input": "inputs/negative-07-duplicate-definition.in",
+      "expected": "expected/negative-07-duplicate-definition.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-08-bad-template",
+      "category": "negative",
+      "source": "negative/negative-08-bad-template.cpp",
+      "input": "inputs/negative-08-bad-template.in",
+      "expected": "expected/negative-08-bad-template.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-09-missing-member",
+      "category": "negative",
+      "source": "negative/negative-09-missing-member.cpp",
+      "input": "inputs/negative-09-missing-member.in",
+      "expected": "expected/negative-09-missing-member.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-10-invalid-structured-binding",
+      "category": "negative",
+      "source": "negative/negative-10-invalid-structured-binding.cpp",
+      "input": "inputs/negative-10-invalid-structured-binding.in",
+      "expected": "expected/negative-10-invalid-structured-binding.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-11-static-assert",
+      "category": "negative",
+      "source": "negative/negative-11-static-assert.cpp",
+      "input": "inputs/negative-11-static-assert.in",
+      "expected": "expected/negative-11-static-assert.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-12-ambiguous-overload",
+      "category": "negative",
+      "source": "negative/negative-12-ambiguous-overload.cpp",
+      "input": "inputs/negative-12-ambiguous-overload.in",
+      "expected": "expected/negative-12-ambiguous-overload.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-13-deleted-copy",
+      "category": "negative",
+      "source": "negative/negative-13-deleted-copy.cpp",
+      "input": "inputs/negative-13-deleted-copy.in",
+      "expected": "expected/negative-13-deleted-copy.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-14-invalid-range-for",
+      "category": "negative",
+      "source": "negative/negative-14-invalid-range-for.cpp",
+      "input": "inputs/negative-14-invalid-range-for.in",
+      "expected": "expected/negative-14-invalid-range-for.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "negative-15-bad-enum",
+      "category": "negative",
+      "source": "negative/negative-15-bad-enum.cpp",
+      "input": "inputs/negative-15-bad-enum.in",
+      "expected": "expected/negative-15-bad-enum.out",
+      "expectation": "compile",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "compile-error"
+      ]
+    },
+    {
+      "id": "warning-01-unused-variable",
+      "category": "warning",
+      "source": "warnings/warning-01-unused-variable.cpp",
+      "input": "inputs/warning-01-unused-variable.in",
+      "expected": "expected/warning-01-unused-variable.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-02-unused-parameter",
+      "category": "warning",
+      "source": "warnings/warning-02-unused-parameter.cpp",
+      "input": "inputs/warning-02-unused-parameter.in",
+      "expected": "expected/warning-02-unused-parameter.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-03-sign-compare",
+      "category": "warning",
+      "source": "warnings/warning-03-sign-compare.cpp",
+      "input": "inputs/warning-03-sign-compare.in",
+      "expected": "expected/warning-03-sign-compare.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-04-shadow",
+      "category": "warning",
+      "source": "warnings/warning-04-shadow.cpp",
+      "input": "inputs/warning-04-shadow.in",
+      "expected": "expected/warning-04-shadow.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra",
+        "-Wshadow"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-05-missing-field",
+      "category": "warning",
+      "source": "warnings/warning-05-missing-field.cpp",
+      "input": "inputs/warning-05-missing-field.in",
+      "expected": "expected/warning-05-missing-field.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-06-assignment-in-condition",
+      "category": "warning",
+      "source": "warnings/warning-06-assignment-in-condition.cpp",
+      "input": "inputs/warning-06-assignment-in-condition.in",
+      "expected": "expected/warning-06-assignment-in-condition.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-07-switch-enum",
+      "category": "warning",
+      "source": "warnings/warning-07-switch-enum.cpp",
+      "input": "inputs/warning-07-switch-enum.in",
+      "expected": "expected/warning-07-switch-enum.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-08-unused-function",
+      "category": "warning",
+      "source": "warnings/warning-08-unused-function.cpp",
+      "input": "inputs/warning-08-unused-function.in",
+      "expected": "expected/warning-08-unused-function.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-09-type-limits",
+      "category": "warning",
+      "source": "warnings/warning-09-type-limits.cpp",
+      "input": "inputs/warning-09-type-limits.in",
+      "expected": "expected/warning-09-type-limits.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "warning-10-reorder",
+      "category": "warning",
+      "source": "warnings/warning-10-reorder.cpp",
+      "input": "inputs/warning-10-reorder.in",
+      "expected": "expected/warning-10-reorder.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [
+        "-Wall",
+        "-Wextra"
+      ],
+      "tags": [
+        "diagnostic-probe"
+      ]
+    },
+    {
+      "id": "ub-01-signed-overflow",
+      "category": "ub",
+      "source": "ub/ub-01-signed-overflow.cpp",
+      "input": "inputs/ub-01-signed-overflow.in",
+      "expected": "expected/ub-01-signed-overflow.out",
+      "expectation": "ub",
+      "scoreable": false,
+      "extraFlags": [],
+      "tags": [
+        "implementation-sensitive",
+        "excluded-from-gate"
+      ]
+    },
+    {
+      "id": "ub-02-uninitialized-read",
+      "category": "ub",
+      "source": "ub/ub-02-uninitialized-read.cpp",
+      "input": "inputs/ub-02-uninitialized-read.in",
+      "expected": "expected/ub-02-uninitialized-read.out",
+      "expectation": "ub",
+      "scoreable": false,
+      "extraFlags": [],
+      "tags": [
+        "implementation-sensitive",
+        "excluded-from-gate"
+      ]
+    },
+    {
+      "id": "ub-03-vector-out-of-bounds",
+      "category": "ub",
+      "source": "ub/ub-03-vector-out-of-bounds.cpp",
+      "input": "inputs/ub-03-vector-out-of-bounds.in",
+      "expected": "expected/ub-03-vector-out-of-bounds.out",
+      "expectation": "ub",
+      "scoreable": false,
+      "extraFlags": [],
+      "tags": [
+        "implementation-sensitive",
+        "excluded-from-gate"
+      ]
+    },
+    {
+      "id": "ub-04-use-after-free",
+      "category": "ub",
+      "source": "ub/ub-04-use-after-free.cpp",
+      "input": "inputs/ub-04-use-after-free.in",
+      "expected": "expected/ub-04-use-after-free.out",
+      "expectation": "ub",
+      "scoreable": false,
+      "extraFlags": [],
+      "tags": [
+        "implementation-sensitive",
+        "excluded-from-gate"
+      ]
+    },
+    {
+      "id": "acm-43-spfa",
+      "category": "acm",
+      "source": "acm-corpus/acm-43-spfa.cpp",
+      "input": "inputs/acm-43-spfa.in",
+      "expected": "expected/acm-43-spfa.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "spfa",
+        "shortest-path",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-44-string-hash",
+      "category": "acm",
+      "source": "acm-corpus/acm-44-string-hash.cpp",
+      "input": "inputs/acm-44-string-hash.in",
+      "expected": "expected/acm-44-string-hash.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "rolling-hash",
+        "string-hash",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "acm-45-large-array",
+      "category": "acm",
+      "source": "acm-corpus/acm-45-large-array.cpp",
+      "input": "inputs/acm-45-large-array.in",
+      "expected": "expected/acm-45-large-array.out",
+      "expectation": "run",
+      "scoreable": true,
+      "extraFlags": [],
+      "tags": [
+        "large-array",
+        "numeric",
+        "deterministic"
+      ]
+    }
+  ]
+}

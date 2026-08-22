@@ -1,0 +1,11 @@
+{
+  "id": "12_complex_arithmetic",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "complex.h arithmetic",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

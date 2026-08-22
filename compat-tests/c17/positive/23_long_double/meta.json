@@ -1,0 +1,11 @@
+{
+  "id": "23_long_double",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "long double arithmetic with integer projection",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "17_function_pointer",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "function pointer",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

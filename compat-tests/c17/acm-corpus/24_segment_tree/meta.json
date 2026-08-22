@@ -1,0 +1,18 @@
+{
+  "id": "c17-acm-24_segment_tree",
+  "suite": "acm-corpus",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "PASS",
+  "oracle": "exact-stdout-trimmed",
+  "tags": [
+    "c17",
+    "acm",
+    "algorithm",
+    "portable"
+  ],
+  "notes": "segment tree range sum"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "c17-ub-01_signed_overflow",
+  "suite": "ub",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "UB",
+  "oracle": "not-counted",
+  "notCounted": true,
+  "tags": [
+    "c17",
+    "ub",
+    "not-counted"
+  ],
+  "ubKind": "signed-overflow",
+  "notes": "Signed integer overflow is undefined behavior; compile-only evidence."
+}

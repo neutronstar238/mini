@@ -1,0 +1,1703 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-22T01:34:13.271Z",
+  "baseUrl": "http://127.0.0.1:54278",
+  "problemUrl": "http://127.0.0.1:54278/contest/contests/53bca7ec-0df5-4b40-a77c-4a8b69bac19f/problems/febfb1ee-0173-4d79-baf3-a2a25befc3bf",
+  "policy": {
+    "totalRequests": 139,
+    "localRunNetworkRequestCount": 110,
+    "runtimeRequests": 110,
+    "allowedPolicy": "same-origin GET runtime assets only",
+    "inProcessBlobRequests": [
+      {
+        "at": 1787362395420,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/afcf5656-195f-464e-ab63-bf2845eba016",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362395566,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/a60a945e-c2a4-4623-91f7-5996d3976212",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362395846,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/f9179bce-5e38-4d02-a7a3-91346c93461e",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362395986,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/21f41676-73cb-4851-aa31-3042be28bf6f",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362397288,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/ef571337-58a8-4025-bb0a-9cd20a5b8d53",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362397474,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/0bbae2aa-64ed-446d-b2ea-cd0bcfc3dca2",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362397733,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/c90d54d3-30af-46ea-b71d-98f332bee16d",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362397930,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/d88436d4-e163-47ea-8b08-9b48194af27f",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362398272,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/c2b88040-fcb6-4812-a986-f9c0098e9bc5",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362398432,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/47ff74e7-74de-481f-9184-bd5d652ea6d7",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362404860,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/68dc093f-6b59-4554-b02d-d904c5dd01a4",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362405011,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/3d5417f2-9a1a-405b-a569-28686a22d9ba",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362405517,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/553c5bf7-8be9-4000-b8da-7cc04160c11b",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362405672,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/40fb4052-822d-4e32-8888-3e66b4eb97b5",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362411515,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/837af3bc-e847-4932-b9c3-bb9b06e26da9",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362411669,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/ebece654-ed21-4987-af73-ec961da597f9",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362416921,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/8a36e892-3e52-417c-a6a1-d77ae2b841f9",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362417077,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/957b6beb-c6c8-4435-9681-edd91fac86c9",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362417298,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/05145395-4e9f-42b4-8ed4-df49464a0b63",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362417486,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/0b5e0ac7-083b-4e8c-b44a-fb404bc98460",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362417797,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/b2ed3a93-4ff0-4b30-a3e4-befc5111b235",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362417960,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/16e1eb2b-625d-42f3-a845-e6e136d904cf",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362424314,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/f99d1479-0a44-4e03-aecb-927dcde1d52a",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362424470,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/d070db1a-a7bd-4982-8e25-c0e8a9fd935f",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362424895,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/b0a41501-7a7f-4b4b-a58b-825505b2a1a8",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362425044,
+        "method": "GET",
+        "url": "blob:http://127.0.0.1:54278/d5205514-0ade-4857-a67a-c84a52b0e604",
+        "resourceType": "script",
+        "bodyBytes": 0,
+        "bodySha256": null,
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      }
+    ],
+    "unrelatedBackgroundRequests": [
+      {
+        "at": 1787362411601,
+        "method": "POST",
+        "url": "http://127.0.0.1:54278/api/contest/devices/heartbeat",
+        "resourceType": "fetch",
+        "bodyBytes": 351,
+        "bodySha256": "16aa224401bad4599fd8821768e2d8921a194dce50bdd74cfa0491e35b205375",
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362431675,
+        "method": "POST",
+        "url": "http://127.0.0.1:54278/api/contest/devices/heartbeat",
+        "resourceType": "fetch",
+        "bodyBytes": 351,
+        "bodySha256": "16aa224401bad4599fd8821768e2d8921a194dce50bdd74cfa0491e35b205375",
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      },
+      {
+        "at": 1787362451698,
+        "method": "POST",
+        "url": "http://127.0.0.1:54278/api/contest/devices/heartbeat",
+        "resourceType": "fetch",
+        "bodyBytes": 351,
+        "bodySha256": "16aa224401bad4599fd8821768e2d8921a194dce50bdd74cfa0491e35b205375",
+        "bodyFields": [],
+        "hasSourceLikeBody": false
+      }
+    ],
+    "runtimeRequestViolations": [],
+    "sourceLikeRequests": [],
+    "submissionRequests": [],
+    "pass": true
+  },
+  "bootstrapRequestCount": 43,
+  "requests": [
+    {
+      "at": 1787362393311,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362393864,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.js",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362393919,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362393937,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394296,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/loader.mjs",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394341,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/bits/stdc++.h",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394362,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker-modern.js",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394379,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394398,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394415,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394425,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/runtime-manifest.json",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394435,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362394934,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395204,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.js",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395209,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395212,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395410,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/loader.mjs",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395413,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/bits/stdc++.h",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395420,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/afcf5656-195f-464e-ab63-bf2845eba016",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395566,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/a60a945e-c2a4-4623-91f7-5996d3976212",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395846,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/f9179bce-5e38-4d02-a7a3-91346c93461e",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362395986,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/21f41676-73cb-4851-aa31-3042be28bf6f",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397192,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397213,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397244,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397257,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397288,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/ef571337-58a8-4025-bb0a-9cd20a5b8d53",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397474,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/0bbae2aa-64ed-446d-b2ea-cd0bcfc3dca2",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397733,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/c90d54d3-30af-46ea-b71d-98f332bee16d",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362397930,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/d88436d4-e163-47ea-8b08-9b48194af27f",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362398230,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362398251,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362398272,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/c2b88040-fcb6-4812-a986-f9c0098e9bc5",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362398432,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/47ff74e7-74de-481f-9184-bd5d652ea6d7",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362398783,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362398799,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362404803,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362404831,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362404860,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/68dc093f-6b59-4554-b02d-d904c5dd01a4",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405011,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/3d5417f2-9a1a-405b-a569-28686a22d9ba",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405395,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405412,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405517,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/553c5bf7-8be9-4000-b8da-7cc04160c11b",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405672,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/40fb4052-822d-4e32-8888-3e66b4eb97b5",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405975,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362405990,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362411515,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/837af3bc-e847-4932-b9c3-bb9b06e26da9",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362411601,
+      "method": "POST",
+      "url": "http://127.0.0.1:54278/api/contest/devices/heartbeat",
+      "resourceType": "fetch",
+      "bodyBytes": 351,
+      "bodySha256": "16aa224401bad4599fd8821768e2d8921a194dce50bdd74cfa0491e35b205375",
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362411669,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/ebece654-ed21-4987-af73-ec961da597f9",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362416815,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362416833,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362416870,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362416886,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362416921,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/8a36e892-3e52-417c-a6a1-d77ae2b841f9",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417077,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/957b6beb-c6c8-4435-9681-edd91fac86c9",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417298,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/05145395-4e9f-42b4-8ed4-df49464a0b63",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417486,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/0b5e0ac7-083b-4e8c-b44a-fb404bc98460",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417755,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417773,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417797,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/b2ed3a93-4ff0-4b30-a3e4-befc5111b235",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362417960,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/16e1eb2b-625d-42f3-a845-e6e136d904cf",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362418244,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362418257,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424267,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424284,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424314,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/f99d1479-0a44-4e03-aecb-927dcde1d52a",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424470,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/d070db1a-a7bd-4982-8e25-c0e8a9fd935f",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424770,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424784,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362424895,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/b0a41501-7a7f-4b4b-a58b-825505b2a1a8",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362425044,
+      "method": "GET",
+      "url": "blob:http://127.0.0.1:54278/d5205514-0ade-4857-a67a-c84a52b0e604",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362425352,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362425370,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362431675,
+      "method": "POST",
+      "url": "http://127.0.0.1:54278/api/contest/devices/heartbeat",
+      "resourceType": "fetch",
+      "bodyBytes": 351,
+      "bodySha256": "16aa224401bad4599fd8821768e2d8921a194dce50bdd74cfa0491e35b205375",
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362431675,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362431695,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362432211,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362432224,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362432248,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362432260,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362432373,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362432385,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434439,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434455,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434484,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434498,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434621,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434635,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/runno/0.10.0-ojc4/runno-wasi.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434655,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-python-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434673,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/pyodide/0.26.4/pyodide.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434686,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/pyodide/0.26.4/python_stdlib.zip",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434686,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/pyodide/0.26.4/pyodide.asm.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434686,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/pyodide/0.26.4/pyodide-lock.json",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362434686,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/pyodide/0.26.4/pyodide.asm.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362437917,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-java-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362437930,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/loader.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362437938,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362437952,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/runtime-manifest.json",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362437960,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438006,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.data",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438252,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438255,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/LICENSE",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438263,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/THIRD_PARTY_NOTICES.md",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438269,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/LINKED_COMPONENTS.json",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438288,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438289,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438290,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438291,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438294,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.data",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362438294,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362439015,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362439051,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362439080,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362439115,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362439231,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362439278,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446718,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/js/contest/ide-java-worker.js",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446732,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/loader.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446736,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446741,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/runtime-manifest.json",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446746,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446768,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.data",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446989,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362446990,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/LICENSE",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447001,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/THIRD_PARTY_NOTICES.md",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447004,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/LINKED_COMPONENTS.json",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447018,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447019,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447020,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447022,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447026,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.data",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447026,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.wasm",
+      "resourceType": "fetch",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447596,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447627,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447649,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447675,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447752,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362447784,
+      "method": "GET",
+      "url": "http://127.0.0.1:54278/runtime/java21-browserjdk-compat-v2/browserjdk.mjs",
+      "resourceType": "script",
+      "bodyBytes": 0,
+      "bodySha256": null,
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    },
+    {
+      "at": 1787362451698,
+      "method": "POST",
+      "url": "http://127.0.0.1:54278/api/contest/devices/heartbeat",
+      "resourceType": "fetch",
+      "bodyBytes": 351,
+      "bodySha256": "16aa224401bad4599fd8821768e2d8921a194dce50bdd74cfa0491e35b205375",
+      "bodyFields": [],
+      "hasSourceLikeBody": false
+    }
+  ]
+}

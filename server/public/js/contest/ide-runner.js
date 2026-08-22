@@ -18,6 +18,7 @@
  * ============================================================ */
 import { fetchWASIFS } from '/runtime/runno/0.10.0-ojc4/runno-runtime.js';
 import { check as gcc11HeaderCheck } from '/js/contest/gcc11-header-check.js';
+import { check as gcc14HeaderCheck } from '/js/contest/gcc14-header-check.js';
 
 const RUNNO_VERSION = '0.10.0-ojc4';
 const ORIGIN = (typeof location !== 'undefined' && location.origin) || '';
@@ -33,8 +34,9 @@ const WORKER_URL = '/js/contest/ide-wasi-worker.js';
  */
 const PY_RUNTIME_ID = 'py312-cpython-compat-v1';
 const JAVA_RUNTIME_ID_PRIMARY = 'java21-browserjdk-compat-v2';
-const MODERN_ENGINE_ID = 'cpp-modern-engine-v1';
+const MODERN_ENGINE_ID = 'cpp-modern-engine-v2';
 const MODERN_WORKER_URL = '/js/contest/ide-wasi-worker-modern.js';
+const MODERN_EXECUTION_WORKER_URL = '/js/contest/ide-wasi-execution-worker-modern.js';
 const PY_WORKER_URL = '/js/contest/ide-python-worker.js';
 const PY_INIT_TIMEOUT_MS = 60000;  // 首次含 pyodide wasm 下载 + CPython 初始化兜底
 const PY_INTERRUPT_GRACE_MS = 800; // SAB interrupt 后等待 KeyboardInterrupt 生效窗口
@@ -72,8 +74,8 @@ function detectPythonInterruptCapability() {
 const runtimeIds = {
   cpp: 'cpp11-gcc11-compat-v4',
   c: 'c11-gcc11-compat-v3',
-  c17: 'c17-gcc14-compat-v1',
-  cpp17: 'cpp17-gcc14-compat-v1',
+  c17: 'c17-gcc14-compat-v2',
+  cpp17: 'cpp17-gcc14-compat-v2',
   modernEngine: MODERN_ENGINE_ID,
   python: PY_RUNTIME_ID,
   java: JAVA_RUNTIME_ID_PRIMARY
@@ -107,12 +109,14 @@ const LANG_PROFILES = {
     defaultLongDouble: true  // §6 A/B 评测：C long double %Lf 完整支持 + 无回退，默认启用
   },
   c17: {
-    extension: '.c', standard: 'c17', profileId: 'c17-gcc14-compat-v1',
-    pchPolicy: 'none', compatGuard: 'none', werror: false, defaultLongDouble: true
+    extension: '.c', standard: 'c17', profileId: 'c17-gcc14-compat-v2',
+    pchPolicy: 'none', compatGuard: 'none', werror: false, defaultLongDouble: true,
+    defaultOptimization: '-O2'
   },
   cpp17: {
-    extension: '.cpp', standard: 'c++17', profileId: 'cpp17-gcc14-compat-v1',
-    pchPolicy: 'none', compatGuard: 'none', werror: false, defaultLongDouble: false
+    extension: '.cpp', standard: 'c++17', profileId: 'cpp17-gcc14-compat-v2',
+    pchPolicy: 'none', compatGuard: 'none', werror: false, defaultLongDouble: false,
+    defaultOptimization: '-O2'
   }
   // python3: { extension: '.py', standard: 'python3', pchPolicy: 'none', compatGuard: 'none', werror: false }  // 预留
 };
@@ -304,7 +308,7 @@ function ensureModernWorker() {
         if (data.type === 'state' && data.state === 'RUNNING') armModernExecutionTimeout(data);
         return;
       }
-      if (data.type !== 'run-result' || data.requestId == null) return;
+      if (data.type !== 'compile-result' || data.requestId == null) return;
       const pending = modernPending.get(data.requestId);
       if (!pending) return;
       modernPending.delete(data.requestId);
@@ -348,31 +352,104 @@ function ensureModernWorker() {
 async function runModern(opts) {
   const requestedProfile = String(opts.profileId || '');
   const requestedLanguage = String(opts.language || opts.lang || '');
-  const lang = requestedProfile === 'c17-gcc14-compat-v1' || requestedLanguage === 'c17' ||
+  const lang = requestedProfile === 'c17-gcc14-compat-v1' || requestedProfile === 'c17-gcc14-compat-v2' || requestedLanguage === 'c17' ||
     (requestedLanguage === 'c' && opts.standard === 'c17') ? 'c17' : 'cpp17';
   const profile = LANG_PROFILES[lang];
   const source = opts.source != null ? opts.source : (opts.code || '');
   const sourceHash = await sha256Hex(source);
+  if (lang === 'cpp17') {
+    const guard = gcc14HeaderCheck(source);
+    if (!guard.ok) {
+      return {
+        language: 'cpp', runtimeId: MODERN_ENGINE_ID, profileId: profile.profileId,
+        sourceHash: sourceHash, compileStatus: 'CE', runStatus: 'CE', compileFailed: true,
+        stage: 'gcc14-header', failureLayer: 'precheck', exitCode: -1,
+        stdout: '', stderr: 'Local GCC14 compatibility CE: ' + guard.reason,
+        headerGuard: {policy: 'proven-mismatch-v1', missing: guard.missing},
+        cacheHit: false, timedOut: false, outputTruncated: false,
+        compileTime: 0, linkTime: 0, executionTime: 0,
+        timing: {optimizationLevel: profile.defaultOptimization, compileMs: 0, linkMs: 0,
+          executionMs: 0, cacheHit: false, headerGuard: 'ENABLED'}
+      };
+    }
+  }
   const ready = await ensureModernWorker();
   const requestId = ++modernRequestSeq;
-  const result = await new Promise(function (resolve, reject) {
+  const compileResult = await new Promise(function (resolve, reject) {
     const timer = setTimeout(function () {
       modernPending.delete(requestId);
-      disposeModernWorker('Modern compile/run 超时');
-      reject(new Error('Modern compile/run 超时'));
-    }, COMPILE_TIMEOUT_MS + EXEC_TIMEOUT_MS);
+      disposeModernWorker('Modern compile timeout');
+      reject(new Error('Modern compile timeout'));
+    }, COMPILE_TIMEOUT_MS);
     modernPending.set(requestId, {
       resolve: resolve, reject: reject, timer: timer,
       profileId: profile.profileId, sourceHash: sourceHash
     });
     ready.worker.postMessage({
-      type: 'run', requestId: requestId,
+      type: 'compile', requestId: requestId,
       source: source, sourceHash: sourceHash,
       profileId: profile.profileId,
       language: lang === 'c17' ? 'c' : 'cpp', standard: profile.standard,
-      stdin: opts.stdin || '', optLevel: VALID_OPTS[opts.optLevel] ? opts.optLevel : '-O0'
+      stdin: opts.stdin || '', optLevel: profile.defaultOptimization
     });
   });
+  let result = compileResult;
+  if (compileResult && compileResult.ok && compileResult.bytes) {
+    result = await new Promise(function (resolve) {
+      const executionWorker = new Worker(MODERN_EXECUTION_WORKER_URL, {type: 'module'});
+      const artifactBytes = compileResult.bytes.byteLength;
+      let settled = false;
+      let killFn = null;
+      const finish = function (value) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (killFn && Array.isArray(opts.killers)) {
+          const index = opts.killers.indexOf(killFn);
+          if (index >= 0) opts.killers.splice(index, 1);
+        }
+        try { executionWorker.terminate(); } catch (_) { /* disposable worker */ }
+        resolve(Object.assign({}, compileResult, value, {
+          bytes: undefined,
+          artifactBytes: artifactBytes,
+          compilerWorkerPreserved: modernWorker === ready.worker
+        }));
+      };
+      const timer = setTimeout(function () {
+        finish({
+          ok: false, compileStatus: 'PASS', runStatus: 'TLE', exitCode: -1,
+          stdout: '', stderr: '本地运行超时（6s）已终止。Local Timeout 仅用于调试保护，正式 TLE 以服务器 Judge 为准。',
+          executionMs: EXEC_TIMEOUT_MS, executionTime: EXEC_TIMEOUT_MS,
+          timedOut: true, aborted: true, failureLayer: 'execution'
+        });
+      }, EXEC_TIMEOUT_MS);
+      if (Array.isArray(opts.killers)) {
+        killFn = function () {
+          try { executionWorker.postMessage({type: 'cancel', requestId: requestId}); } catch (_) { /* terminate below */ }
+          finish({ok: false, compileStatus: 'PASS', runStatus: 'ABORTED', exitCode: -1,
+            stdout: '', stderr: '', aborted: true, timedOut: false, failureLayer: 'execution'});
+        };
+        opts.killers.push(killFn);
+      }
+      executionWorker.addEventListener('message', function (event) {
+        const data = event.data || {};
+        if (data.type === 'run-result' && data.requestId === requestId) finish(data.result || data);
+        else if (data.type === 'error' && data.requestId === requestId) finish({
+          ok: false, compileStatus: 'PASS', runStatus: 'ABORTED', exitCode: -1,
+          stdout: '', stderr: data.message || 'Execution Worker error', aborted: true,
+          timedOut: false, failureLayer: 'execution'
+        });
+      });
+      executionWorker.addEventListener('error', function (event) {
+        finish({ok: false, compileStatus: 'PASS', runStatus: 'ABORTED', exitCode: -1,
+          stdout: '', stderr: event.message || 'Execution Worker crash', aborted: true,
+          timedOut: false, failureLayer: 'execution'});
+      });
+      const artifact = compileResult.bytes;
+      executionWorker.postMessage({type: 'run', requestId: requestId, bytes: artifact,
+        stdin: opts.stdin || '', args: opts.args || ['program'], env: opts.env || {}}, [artifact.buffer]);
+    });
+  }
   const normalized = Object.assign({
     language: lang === 'c17' ? 'c' : 'cpp',
     runtimeId: result.runtimeId || MODERN_ENGINE_ID,
@@ -391,13 +468,36 @@ async function runModern(opts) {
     compileFailed: result.compileStatus === 'CE' || !!result.compileFailed
   }, result);
   normalized.timing = Object.assign({}, result.timing || {}, {
+    optimizationLevel: profile.defaultOptimization,
     compilerInitMs: result.compilerInitMs || (ready.init && ready.init.compilerInitMs) || 0,
     compileMs: result.compileMs || 0,
     linkMs: result.linkMs || 0,
     executionMs: result.executionMs || 0,
-    cacheHit: !!result.cacheHit
+    cacheHit: !!result.cacheHit,
+    artifactBytes: result.artifactBytes || 0
   });
   return normalized;
+}
+
+async function modernStats() {
+  const ready = await ensureModernWorker();
+  const requestId = ++modernRequestSeq;
+  return new Promise(function (resolve) {
+    const timer = setTimeout(function () { cleanup(); resolve({ready: false, timeout: true}); }, 2000);
+    const onMessage = function (event) {
+      const data = event.data || {};
+      if (data.type !== 'stats' || data.requestId !== requestId) return;
+      cleanup();
+      resolve(data);
+    };
+    function cleanup() {
+      clearTimeout(timer);
+      ready.worker.removeEventListener('message', onMessage);
+    }
+    ready.worker.addEventListener('message', onMessage);
+    try { ready.worker.postMessage({type: 'stats', requestId: requestId}); }
+    catch (_) { cleanup(); resolve({ready: false, sendFailed: true}); }
+  });
 }
 
 /* ---------------- Artifact Cache（bytes + WebAssembly.Module） ---------------- */
@@ -1198,10 +1298,11 @@ async function runCode(opts) {
   // Modern profiles are deliberately routed before the frozen C/C++ branch.
   // A missing/failed modern runtime is surfaced as an error; it must never fall back to Clang 8.
   if (lang === 'c17' || lang === 'cpp17' || opts.profileId === 'c17-gcc14-compat-v1' ||
-      opts.profileId === 'cpp17-gcc14-compat-v1') {
+      opts.profileId === 'cpp17-gcc14-compat-v1' || opts.profileId === 'c17-gcc14-compat-v2' ||
+      opts.profileId === 'cpp17-gcc14-compat-v2') {
     return runModern(opts);
   }
-  // Checkpoint 1 deliberately does not implement C++20/C++23.  Keep these
+  // Phase 8 Checkpoint 2 deliberately does not implement C++20/C++23. Keep these
   // profiles pending even when a caller bypasses the disabled selector; they
   // must never silently fall through to the frozen Clang 8 C++11 path.
   if (lang === 'cpp20' || lang === 'cpp23' || requestedProfile === 'cpp20-gcc14-compat-v1' ||
@@ -1211,7 +1312,7 @@ async function runCode(opts) {
       language: 'cpp', runtimeId: profileId, profileId,
       compileStatus: 'PENDING', compileTime: 0,
       runStatus: 'UNAVAILABLE', executionTime: 0,
-      stdout: '', stderr: 'C++20/C++23 remain PENDING in Checkpoint 1; Browser Local is not enabled.',
+      stdout: '', stderr: 'C++20/C++23 remain PENDING in Phase 8 Checkpoint 2; Browser Local is not enabled.',
       cacheHit: false, linkTime: 0, timedOut: false, aborted: false, exitCode: -1,
       outputTruncated: false, compileFailed: true, failureLayer: 'profile'
     };
@@ -1434,7 +1535,8 @@ window.__IDE_RUNNER__ = {
     return this.pythonInterruptStatus();
   },
   pythonStats: function () { return pythonStats(); },
-  javaStats: function () { return javaStats(); }
+  javaStats: function () { return javaStats(); },
+  modernStats: function () { return modernStats(); }
 };
 
 // 暴露 Worker 统计句柄给测试/诊断脚本

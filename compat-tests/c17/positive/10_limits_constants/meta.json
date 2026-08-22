@@ -1,0 +1,11 @@
+{
+  "id": "10_limits_constants",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "limits.h integer limits",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

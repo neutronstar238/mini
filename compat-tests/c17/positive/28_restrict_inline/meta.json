@@ -1,0 +1,11 @@
+{
+  "id": "28_restrict_inline",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "restrict and inline",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

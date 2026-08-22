@@ -1,0 +1,25 @@
+{
+  "id": "c17-warnings-07_incompatible_pointer",
+  "suite": "warnings",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "PASS_WITH_WARNINGS",
+  "oracle": "compile-warning",
+  "tags": [
+    "c17",
+    "warning",
+    "compile-diagnostic"
+  ],
+  "compileOnly": true,
+  "extraFlags": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wcast-qual"
+  ],
+  "minimumWarnings": 1,
+  "notes": "Discarding const qualification in a pointer cast is diagnosed by -Wcast-qual."
+}

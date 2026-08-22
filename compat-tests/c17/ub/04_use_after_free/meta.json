@@ -1,0 +1,19 @@
+{
+  "id": "c17-ub-04_use_after_free",
+  "suite": "ub",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "UB",
+  "oracle": "not-counted",
+  "notCounted": true,
+  "tags": [
+    "c17",
+    "ub",
+    "not-counted"
+  ],
+  "ubKind": "use-after-free",
+  "notes": "Reading through freed storage is undefined behavior."
+}

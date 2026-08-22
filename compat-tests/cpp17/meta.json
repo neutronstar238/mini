@@ -1,0 +1,36 @@
+{
+  "profileId": "cpp17-gcc14-compat-v2",
+  "language": "cpp17",
+  "standard": "c++17",
+  "status": "BETA",
+  "submissionEnabled": false,
+  "manifest": "matrix-manifest.json",
+  "counts": {
+    "features": 35,
+    "acm": 45,
+    "negative": 15,
+    "warnings": 10,
+    "ub": 4,
+    "scoreable": 105,
+    "total": 109
+  },
+  "browserCoverage": {
+    "mode": "real-chrome",
+    "covered": ["features", "acm", "negative", "warnings", "bits-shim"],
+    "pending": ["ub-evidence-only"]
+  },
+  "cases": [
+    {
+      "id": "cpp17-hello-world",
+      "source": "hello-world.cpp",
+      "stdin": "",
+      "expected": "CPP17_BROWSER_OK"
+    },
+    {
+      "id": "cpp17-a-plus-b",
+      "source": "a-plus-b.cpp",
+      "stdin": "input.txt",
+      "expected": "expected.txt"
+    }
+  ]
+}

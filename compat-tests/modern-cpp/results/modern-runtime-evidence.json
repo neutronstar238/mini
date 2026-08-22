@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "MODERN_CPP_PHASE8_RUNTIME_EVIDENCE_FIX",
+  "runtimeId": "cpp-modern-engine-v1",
+  "engineChanged": false,
+  "runtimeAssetHash": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c",
+  "manifestFileSha256": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c",
+  "runtimeAssetHashSemantics": {
+    "algorithm": "SHA-256",
+    "input": "final published v1 runtime-manifest.json raw bytes",
+    "canonicalization": "none; bytes are hashed exactly as read from the final disk file",
+    "manifestFieldPresent": false,
+    "declaredManifestField": null,
+    "selfReference": false,
+    "harnessReadsFinalDiskFile": true,
+    "note": "cpp-modern-engine-v1 has no runtimeAssetHash field in the manifest; the externally recorded runtimeAssetHash and separately named manifestFileSha256 intentionally have the same value for this legacy raw-manifest contract."
+  },
+  "counts": {
+    "publishedRuntimeManifestSet": 18,
+    "liveRuntimeSet": 6,
+    "buildReproducibilitySet": 20,
+    "physicalPublishedFiles": 20,
+    "nonInventoryFiles": [
+      "asset-index.json",
+      "runtime-manifest.json"
+    ]
+  },
+  "published": {
+    "path": "server/public/js/runtime/cpp-modern-engine-v1",
+    "manifestBytes": 6357,
+    "manifestFileSha256": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c",
+    "inventory": [
+      {
+        "bytes": 395,
+        "file": "LICENSE",
+        "sha256": "8da54a81b77b03b2d47653979fb0aa9a49b49fa0074ada3ad9dd29407e654181"
+      },
+      {
+        "bytes": 1226,
+        "file": "THIRD_PARTY_LICENSE_MATRIX.md",
+        "sha256": "f9bd285fa3921d1a3e0869c86b10a9a1754506efe2b7940d3f1175150d82dcee"
+      },
+      {
+        "bytes": 122559,
+        "file": "THIRD_PARTY_NOTICES.md",
+        "sha256": "73bf39df0f0dc6046822cf23e8e655c53a5b0453b7a090d54a74b18034c4a957"
+      },
+      {
+        "bytes": 78609,
+        "file": "clang.js",
+        "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160"
+      },
+      {
+        "bytes": 54726610,
+        "file": "clang.wasm",
+        "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60"
+      },
+      {
+        "bytes": 16708,
+        "file": "licenses/compiler-rt-LICENSE.TXT",
+        "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+      },
+      {
+        "bytes": 5093,
+        "file": "licenses/emscripten-LICENSE",
+        "sha256": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86"
+      },
+      {
+        "bytes": 16708,
+        "file": "licenses/emscripten-compiler-rt-LICENSE.TXT",
+        "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+      },
+      {
+        "bytes": 16703,
+        "file": "licenses/emscripten-libcxx-LICENSE.TXT",
+        "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+      },
+      {
+        "bytes": 16706,
+        "file": "licenses/emscripten-libcxxabi-LICENSE.TXT",
+        "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+      },
+      {
+        "bytes": 16703,
+        "file": "licenses/libcxx-LICENSE.TXT",
+        "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+      },
+      {
+        "bytes": 16706,
+        "file": "licenses/libcxxabi-LICENSE.TXT",
+        "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+      },
+      {
+        "bytes": 15141,
+        "file": "licenses/llvm-LICENSE.TXT",
+        "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee"
+      },
+      {
+        "bytes": 910,
+        "file": "licenses/wasi-libc-LICENSE",
+        "sha256": "2711a8b5a5cdfef0e639f96c1aca12ae23d7d64a02d0507f1bdf14d2b27bbc3a"
+      },
+      {
+        "bytes": 1454,
+        "file": "loader.mjs",
+        "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f"
+      },
+      {
+        "bytes": 21258240,
+        "file": "sysroot.tar",
+        "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d"
+      },
+      {
+        "bytes": 76348,
+        "file": "wasm-ld.js",
+        "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419"
+      },
+      {
+        "bytes": 29051596,
+        "file": "wasm-ld.wasm",
+        "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429"
+      }
+    ],
+    "liveAssets": [
+      {
+        "bytes": 54726610,
+        "file": "clang.wasm",
+        "kind": "compiler",
+        "path": "/runtime/cpp-modern-engine-v1/clang.wasm",
+        "role": "clang",
+        "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60"
+      },
+      {
+        "bytes": 29051596,
+        "file": "wasm-ld.wasm",
+        "kind": "linker",
+        "path": "/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+        "role": "wasm-ld",
+        "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429"
+      },
+      {
+        "bytes": 78609,
+        "file": "clang.js",
+        "kind": "compiler-glue",
+        "path": "/runtime/cpp-modern-engine-v1/clang.js",
+        "role": "emscripten-worker-glue",
+        "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160"
+      },
+      {
+        "bytes": 76348,
+        "file": "wasm-ld.js",
+        "kind": "linker-glue",
+        "path": "/runtime/cpp-modern-engine-v1/wasm-ld.js",
+        "role": "emscripten-worker-glue",
+        "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419"
+      },
+      {
+        "bytes": 21258240,
+        "file": "sysroot.tar",
+        "kind": "sysroot",
+        "path": "/runtime/cpp-modern-engine-v1/sysroot.tar",
+        "role": "wasi-libc+libc++",
+        "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d"
+      },
+      {
+        "bytes": 1454,
+        "file": "loader.mjs",
+        "kind": "loader",
+        "path": "/runtime/cpp-modern-engine-v1/loader.mjs",
+        "role": "asset-loader",
+        "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f"
+      }
+    ],
+    "files": [
+      {
+        "file": "asset-index.json",
+        "bytes": 2682,
+        "sha256": "ad11f16c04b5c3e6e3b5e890562318b0c8b34dd2ac6813699692ac2212e96fa9"
+      },
+      {
+        "file": "clang.js",
+        "bytes": 78609,
+        "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160"
+      },
+      {
+        "file": "clang.wasm",
+        "bytes": 54726610,
+        "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60"
+      },
+      {
+        "file": "LICENSE",
+        "bytes": 395,
+        "sha256": "8da54a81b77b03b2d47653979fb0aa9a49b49fa0074ada3ad9dd29407e654181"
+      },
+      {
+        "file": "licenses/compiler-rt-LICENSE.TXT",
+        "bytes": 16708,
+        "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+      },
+      {
+        "file": "licenses/emscripten-compiler-rt-LICENSE.TXT",
+        "bytes": 16708,
+        "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+      },
+      {
+        "file": "licenses/emscripten-libcxx-LICENSE.TXT",
+        "bytes": 16703,
+        "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+      },
+      {
+        "file": "licenses/emscripten-libcxxabi-LICENSE.TXT",
+        "bytes": 16706,
+        "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+      },
+      {
+        "file": "licenses/emscripten-LICENSE",
+        "bytes": 5093,
+        "sha256": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86"
+      },
+      {
+        "file": "licenses/libcxx-LICENSE.TXT",
+        "bytes": 16703,
+        "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+      },
+      {
+        "file": "licenses/libcxxabi-LICENSE.TXT",
+        "bytes": 16706,
+        "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+      },
+      {
+        "file": "licenses/llvm-LICENSE.TXT",
+        "bytes": 15141,
+        "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee"
+      },
+      {
+        "file": "licenses/wasi-libc-LICENSE",
+        "bytes": 910,
+        "sha256": "2711a8b5a5cdfef0e639f96c1aca12ae23d7d64a02d0507f1bdf14d2b27bbc3a"
+      },
+      {
+        "file": "loader.mjs",
+        "bytes": 1454,
+        "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f"
+      },
+      {
+        "file": "runtime-manifest.json",
+        "bytes": 6357,
+        "sha256": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c"
+      },
+      {
+        "file": "sysroot.tar",
+        "bytes": 21258240,
+        "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d"
+      },
+      {
+        "file": "THIRD_PARTY_LICENSE_MATRIX.md",
+        "bytes": 1226,
+        "sha256": "f9bd285fa3921d1a3e0869c86b10a9a1754506efe2b7940d3f1175150d82dcee"
+      },
+      {
+        "file": "THIRD_PARTY_NOTICES.md",
+        "bytes": 122559,
+        "sha256": "73bf39df0f0dc6046822cf23e8e655c53a5b0453b7a090d54a74b18034c4a957"
+      },
+      {
+        "file": "wasm-ld.js",
+        "bytes": 76348,
+        "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419"
+      },
+      {
+        "file": "wasm-ld.wasm",
+        "bytes": 29051596,
+        "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429"
+      }
+    ]
+  },
+  "reproducibility": {
+    "status": "PASS",
+    "roots": {
+      "repro-a": "modern-clang-oj/repro-a",
+      "repro-b": "modern-clang-oj/repro-b",
+      "public": "server/public/js/runtime/cpp-modern-engine-v1"
+    },
+    "fileCount": 20,
+    "allBytesAndSha256Identical": true,
+    "manifestComparisons": {
+      "repro-a": {
+        "byteIdentical": true,
+        "sha256": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c"
+      },
+      "repro-b": {
+        "byteIdentical": true,
+        "sha256": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c"
+      }
+    },
+    "fileComparisons": {
+      "repro-a": {
+        "byteIdentical": true,
+        "mismatchCount": 0,
+        "mismatches": []
+      },
+      "repro-b": {
+        "byteIdentical": true,
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    "files": [
+      {
+        "file": "asset-index.json",
+        "bytes": 2682,
+        "sha256": "ad11f16c04b5c3e6e3b5e890562318b0c8b34dd2ac6813699692ac2212e96fa9"
+      },
+      {
+        "file": "clang.js",
+        "bytes": 78609,
+        "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160"
+      },
+      {
+        "file": "clang.wasm",
+        "bytes": 54726610,
+        "sha256": "6c4cb1d7c07d4f6945d7cfae776df47b4484cc45f29f6947c01b27fe73e2de60"
+      },
+      {
+        "file": "LICENSE",
+        "bytes": 395,
+        "sha256": "8da54a81b77b03b2d47653979fb0aa9a49b49fa0074ada3ad9dd29407e654181"
+      },
+      {
+        "file": "licenses/compiler-rt-LICENSE.TXT",
+        "bytes": 16708,
+        "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+      },
+      {
+        "file": "licenses/emscripten-compiler-rt-LICENSE.TXT",
+        "bytes": 16708,
+        "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+      },
+      {
+        "file": "licenses/emscripten-libcxx-LICENSE.TXT",
+        "bytes": 16703,
+        "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+      },
+      {
+        "file": "licenses/emscripten-libcxxabi-LICENSE.TXT",
+        "bytes": 16706,
+        "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+      },
+      {
+        "file": "licenses/emscripten-LICENSE",
+        "bytes": 5093,
+        "sha256": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86"
+      },
+      {
+        "file": "licenses/libcxx-LICENSE.TXT",
+        "bytes": 16703,
+        "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+      },
+      {
+        "file": "licenses/libcxxabi-LICENSE.TXT",
+        "bytes": 16706,
+        "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+      },
+      {
+        "file": "licenses/llvm-LICENSE.TXT",
+        "bytes": 15141,
+        "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee"
+      },
+      {
+        "file": "licenses/wasi-libc-LICENSE",
+        "bytes": 910,
+        "sha256": "2711a8b5a5cdfef0e639f96c1aca12ae23d7d64a02d0507f1bdf14d2b27bbc3a"
+      },
+      {
+        "file": "loader.mjs",
+        "bytes": 1454,
+        "sha256": "3619a3e1eee6b94b778993cd829e56a03d97ff7feb72b5ed12376c791039016f"
+      },
+      {
+        "file": "runtime-manifest.json",
+        "bytes": 6357,
+        "sha256": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c"
+      },
+      {
+        "file": "sysroot.tar",
+        "bytes": 21258240,
+        "sha256": "29a6e2b0ff6a52539db02d42df05bf6488759d795fa3bc0fcb6586b3debd340d"
+      },
+      {
+        "file": "THIRD_PARTY_LICENSE_MATRIX.md",
+        "bytes": 1226,
+        "sha256": "f9bd285fa3921d1a3e0869c86b10a9a1754506efe2b7940d3f1175150d82dcee"
+      },
+      {
+        "file": "THIRD_PARTY_NOTICES.md",
+        "bytes": 122559,
+        "sha256": "73bf39df0f0dc6046822cf23e8e655c53a5b0453b7a090d54a74b18034c4a957"
+      },
+      {
+        "file": "wasm-ld.js",
+        "bytes": 76348,
+        "sha256": "302d625c255cb9b3df78390272e9e6bf88b4d89c0790fa2130024d370ae6f419"
+      },
+      {
+        "file": "wasm-ld.wasm",
+        "bytes": 29051596,
+        "sha256": "5c02391235687229abba6b181062f8efe7e5222d8957b8db7eba2ab10839f429"
+      }
+    ]
+  },
+  "llvm": {
+    "tag": "llvmorg-19.1.7",
+    "tagObjectSha": "f34bba6980332ba9447397fc8bd8a0951b224747",
+    "tagObjectType": "tag",
+    "peeledSourceCommit": "cd708029e0b2869e80abe31ddb175f7c35361f90",
+    "peeledObjectType": "commit",
+    "requestedCommit": "f34bba6980332ba9447397fc8bd8a0951b224747",
+    "manifestCommit": "f34bba6980332ba9447397fc8bd8a0951b224747",
+    "manifestResolvedCommit": "cd708029e0b2869e80abe31ddb175f7c35361f90",
+    "showRefContainsTagObject": true
+  },
+  "pins": {
+    "emscripten": {
+      "expected": {
+        "version": "5.0.2",
+        "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+        "image": "emscripten/emsdk:5.0.2",
+        "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d"
+      },
+      "manifest": {
+        "version": "5.0.2",
+        "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+        "image": "emscripten/emsdk:5.0.2",
+        "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d",
+        "imageId": "sha256:658ef57e349acb3f81bf27e55a1200a6c12ee0ded69f4c7cbf6d8651c9d04bec"
+      }
+    },
+    "wasiLibc": {
+      "expected": {
+        "tag": "main",
+        "commit": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+      },
+      "manifest": {
+        "commit": "574b88da481569b65a237cb80daf9a2d5aeaf82d",
+        "resolvedCommit": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+      }
+    },
+    "pinnedSourcesFile": "modern-clang-oj/PINNED_SOURCES.env"
+  },
+  "checks": {
+    "runtimeAssetHash": {
+      "status": "PASS",
+      "value": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c",
+      "bytes": 6357
+    },
+    "manifestFileSha256": {
+      "status": "PASS",
+      "value": "25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c"
+    },
+    "assetCounts": {
+      "status": "PASS",
+      "publishedRuntimeManifestSet": 18,
+      "liveRuntimeSet": 6,
+      "buildReproducibilitySet": 20,
+      "physicalPublishedFiles": 20,
+      "nonInventoryFiles": [
+        "asset-index.json",
+        "runtime-manifest.json"
+      ]
+    },
+    "assetBytesAndSha256": {
+      "status": "PASS",
+      "inventoryCount": 18
+    },
+    "reproducibleBuild": {
+      "status": "PASS",
+      "fileCount": 20
+    },
+    "llvmTagSourcePin": {
+      "status": "PASS",
+      "tag": "llvmorg-19.1.7",
+      "tagObjectSha": "f34bba6980332ba9447397fc8bd8a0951b224747",
+      "tagObjectType": "tag",
+      "peeledSourceCommit": "cd708029e0b2869e80abe31ddb175f7c35361f90",
+      "peeledObjectType": "commit",
+      "requestedCommit": "f34bba6980332ba9447397fc8bd8a0951b224747",
+      "manifestCommit": "f34bba6980332ba9447397fc8bd8a0951b224747",
+      "manifestResolvedCommit": "cd708029e0b2869e80abe31ddb175f7c35361f90",
+      "showRefContainsTagObject": true
+    },
+    "emscriptenPin": {
+      "status": "PASS",
+      "expected": {
+        "version": "5.0.2",
+        "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+        "image": "emscripten/emsdk:5.0.2",
+        "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d"
+      },
+      "manifest": {
+        "version": "5.0.2",
+        "commit": "c817c0ca4ba889ee24a185fd954cff7de1bd8afa",
+        "image": "emscripten/emsdk:5.0.2",
+        "imageDigest": "sha256:559781dfc5570c6670d74930a04dfe131cff611b4088761662493d537b87976d",
+        "imageId": "sha256:658ef57e349acb3f81bf27e55a1200a6c12ee0ded69f4c7cbf6d8651c9d04bec"
+      }
+    },
+    "wasiLibcPin": {
+      "status": "PASS",
+      "expected": {
+        "tag": "main",
+        "commit": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+      },
+      "manifest": {
+        "commit": "574b88da481569b65a237cb80daf9a2d5aeaf82d",
+        "resolvedCommit": "574b88da481569b65a237cb80daf9a2d5aeaf82d"
+      }
+    }
+  },
+  "evidenceConsistency": "PASS",
+  "issues": []
+}

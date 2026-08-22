@@ -1,0 +1,11 @@
+{
+  "id": "11_float_constants",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "float.h constants",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

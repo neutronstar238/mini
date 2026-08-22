@@ -1,0 +1,507 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-22T01:34:19.958Z",
+  "cacheModeNotes": {
+    "product": "normal Cache Storage and force-cache flow",
+    "evidenceHarness": "manifest evidence may use no-store; this run did not force no-store for product Local Run"
+  },
+  "resources": [
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/runtime-manifest.json",
+      "durationMs": 6.4,
+      "transferBytes": 9824,
+      "encodedBytes": 9524,
+      "decodedBytes": 9524,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.wasm",
+      "durationMs": 807.8,
+      "transferBytes": 54726910,
+      "encodedBytes": 54726610,
+      "decodedBytes": 54726610,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "durationMs": 243.7,
+      "transferBytes": 29051896,
+      "encodedBytes": 29051596,
+      "decodedBytes": 29051596,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.js",
+      "durationMs": 8,
+      "transferBytes": 78909,
+      "encodedBytes": 78609,
+      "decodedBytes": 78609,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "durationMs": 5,
+      "transferBytes": 76648,
+      "encodedBytes": 76348,
+      "decodedBytes": 76348,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "durationMs": 140.6,
+      "transferBytes": 21258540,
+      "encodedBytes": 21258240,
+      "decodedBytes": 21258240,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/loader.mjs",
+      "durationMs": 4.5,
+      "transferBytes": 1754,
+      "encodedBytes": 1454,
+      "decodedBytes": 1454,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/bits/stdc++.h",
+      "durationMs": 4.4,
+      "transferBytes": 1213,
+      "encodedBytes": 913,
+      "decodedBytes": 913,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker-modern.js",
+      "durationMs": 5.3,
+      "transferBytes": 56240,
+      "encodedBytes": 55940,
+      "decodedBytes": 55940,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": 4.2,
+      "transferBytes": 5247,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "fetch",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker-modern.js",
+      "durationMs": -8.3,
+      "transferBytes": 300,
+      "encodedBytes": 55940,
+      "decodedBytes": 55940,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -11.7,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -9.7,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -9.9,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -9.7,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -9.8,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -9.7,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -7.5,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -11.9,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -10.5,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -10.1,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -8.5,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -8.3,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -10.6,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -7.5,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -9.8,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "product-session"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/runtime-manifest.json",
+      "durationMs": 2.9,
+      "transferBytes": 9824,
+      "encodedBytes": 9524,
+      "decodedBytes": 9524,
+      "initiatorType": "fetch",
+      "phase": "cached-cold-page"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker-modern.js",
+      "durationMs": -6.8,
+      "transferBytes": 300,
+      "encodedBytes": 55940,
+      "decodedBytes": 55940,
+      "initiatorType": "other",
+      "phase": "cached-cold-page"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "durationMs": -8,
+      "transferBytes": 300,
+      "encodedBytes": 4947,
+      "decodedBytes": 4947,
+      "initiatorType": "other",
+      "phase": "cached-cold-page"
+    }
+  ],
+  "responseHeaders": [
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/runtime-manifest.json",
+      "contentLength": 9524,
+      "contentEncoding": "identity",
+      "contentType": "application/json; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.wasm",
+      "contentLength": 54726610,
+      "contentEncoding": "identity",
+      "contentType": "application/wasm"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.wasm",
+      "contentLength": 29051596,
+      "contentEncoding": "identity",
+      "contentType": "application/wasm"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/clang.js",
+      "contentLength": 78609,
+      "contentEncoding": "identity",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/wasm-ld.js",
+      "contentLength": 76348,
+      "contentEncoding": "identity",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/sysroot.tar",
+      "contentLength": 21258240,
+      "contentEncoding": "identity",
+      "contentType": "application/x-tar"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/loader.mjs",
+      "contentLength": 1454,
+      "contentEncoding": "identity",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v2/bits/stdc++.h",
+      "contentLength": 913,
+      "contentEncoding": "identity",
+      "contentType": "text/x-c; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-worker-modern.js",
+      "contentLength": 55940,
+      "contentEncoding": "identity",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/js/contest/ide-wasi-execution-worker-modern.js",
+      "contentLength": 4947,
+      "contentEncoding": "identity",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "http://127.0.0.1:54278/runtime/cpp-modern-engine-v1/THIRD_PARTY_NOTICES.md",
+      "contentLength": 122559,
+      "contentEncoding": "identity",
+      "contentType": "text/markdown; charset=UTF-8"
+    }
+  ],
+  "finalCompilerStats": {
+    "requestId": 2,
+    "type": "stats",
+    "runtimeId": "cpp-modern-engine-v2",
+    "engineRuntimeId": "cpp-modern-engine-v2",
+    "state": "READY",
+    "ready": true,
+    "runtimeAssetHash": "8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419",
+    "compilerGlueVerified": true,
+    "linkerGlueVerified": true,
+    "proxyFsMounted": true,
+    "proxyFs": {
+      "mountpoint": "/shared",
+      "root": "/",
+      "source": "clang.FS",
+      "target": "wasm-ld.FS",
+      "mounted": true
+    },
+    "cacheSize": 1,
+    "cacheCapacity": 8,
+    "memory": {
+      "compilerLinearMemoryBytes": null,
+      "linkerLinearMemoryBytes": null,
+      "cachedArtifactBytes": 705829
+    },
+    "counters": {
+      "initCount": 1,
+      "compileCount": 1,
+      "linkCount": 1,
+      "runCount": 0,
+      "cacheHits": 0,
+      "cacheMisses": 1,
+      "bytesCompiled": 705829,
+      "bytesExecuted": 0
+    }
+  },
+  "pageMemory": {
+    "jsHeapSizeLimit": 4395630592,
+    "totalJSHeapSize": 157836980,
+    "usedJSHeapSize": 148759244,
+    "scope": "whole Chrome page; not attributed solely to Modern Runtime"
+  },
+  "cachedCold": {
+    "runtimeId": "cpp-modern-engine-v2",
+    "profileId": "cpp17-gcc14-compat-v2",
+    "compileStatus": "PASS",
+    "runStatus": "PASS",
+    "exitCode": 0,
+    "stdout": {
+      "bytes": 3,
+      "sha256": "917df3320d778ddbaa5c5c7742bc4046bf803c36ed2b050f30844ed206783469",
+      "text": "10\n",
+      "evidenceTruncated": false
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": "",
+      "evidenceTruncated": false
+    },
+    "expected": "10",
+    "outputMatches": true,
+    "cacheHit": false,
+    "timedOut": false,
+    "aborted": false,
+    "outputTruncated": false,
+    "outputTruncatedFields": [],
+    "limitField": null,
+    "limitBytes": null,
+    "actualBytes": null,
+    "artifactBytes": 705829,
+    "stage": null,
+    "headerGuard": null,
+    "compilerWorkerPreserved": true,
+    "timing": {
+      "wasmCompileMs": 5.9,
+      "instantiateMs": 2.8,
+      "executionMs": 6.2,
+      "optimizationLevel": "-O2",
+      "compilerInitMs": 363,
+      "compileMs": 4075,
+      "linkMs": 126,
+      "cacheHit": false,
+      "artifactBytes": 705829
+    }
+  },
+  "totals": {
+    "transferBytes": 105282405,
+    "encodedBytes": 105464737,
+    "decodedBytes": 105464737
+  },
+  "runs": {
+    "c17": {
+      "cold": {
+        "wasmCompileMs": 3.3,
+        "instantiateMs": 0.8,
+        "executionMs": 5.1,
+        "optimizationLevel": "-O2",
+        "compilerInitMs": 369,
+        "compileMs": 871,
+        "linkMs": 103,
+        "cacheHit": false,
+        "artifactBytes": 55358
+      },
+      "warm": {
+        "wasmCompileMs": 1.5,
+        "instantiateMs": 1.6,
+        "executionMs": 5.3,
+        "optimizationLevel": "-O2",
+        "compilerInitMs": 1416,
+        "compileMs": 0,
+        "linkMs": 0,
+        "cacheHit": true,
+        "artifactBytes": 55358
+      },
+      "artifactBytes": 55358,
+      "cacheHit": true
+    },
+    "cpp17": {
+      "cold": {
+        "wasmCompileMs": 3.9,
+        "instantiateMs": 3.4,
+        "executionMs": 7.8,
+        "optimizationLevel": "-O2",
+        "compilerInitMs": 399,
+        "compileMs": 4813,
+        "linkMs": 85,
+        "cacheHit": false,
+        "artifactBytes": 705829
+      },
+      "warm": {
+        "wasmCompileMs": 3.8,
+        "instantiateMs": 3.2,
+        "executionMs": 7.4,
+        "optimizationLevel": "-O2",
+        "compilerInitMs": 1416,
+        "compileMs": 0,
+        "linkMs": 0,
+        "cacheHit": true,
+        "artifactBytes": 705829
+      },
+      "artifactBytes": 705829,
+      "cacheHit": true
+    }
+  },
+  "largeAssetReuse": [
+    {
+      "file": "clang.wasm",
+      "requestCount": 1,
+      "networkTransferCount": 1,
+      "transferBytes": 54726910,
+      "pass": true
+    },
+    {
+      "file": "wasm-ld.wasm",
+      "requestCount": 1,
+      "networkTransferCount": 1,
+      "transferBytes": 29051896,
+      "pass": true
+    },
+    {
+      "file": "sysroot.tar",
+      "requestCount": 1,
+      "networkTransferCount": 1,
+      "transferBytes": 21258540,
+      "pass": true
+    }
+  ]
+}

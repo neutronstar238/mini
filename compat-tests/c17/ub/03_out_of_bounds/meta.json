@@ -1,0 +1,19 @@
+{
+  "id": "c17-ub-03_out_of_bounds",
+  "suite": "ub",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "UB",
+  "oracle": "not-counted",
+  "notCounted": true,
+  "tags": [
+    "c17",
+    "ub",
+    "not-counted"
+  ],
+  "ubKind": "out-of-bounds",
+  "notes": "Indexing one past the end of an array is undefined behavior."
+}

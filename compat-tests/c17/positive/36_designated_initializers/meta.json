@@ -1,0 +1,11 @@
+{
+  "id": "36_designated_initializers",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "C99/C17 designated initializer",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}

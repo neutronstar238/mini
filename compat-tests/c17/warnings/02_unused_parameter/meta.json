@@ -1,0 +1,24 @@
+{
+  "id": "c17-warnings-02_unused_parameter",
+  "suite": "warnings",
+  "language": "c",
+  "standard": "c17",
+  "source": "main.c",
+  "input": "input.txt",
+  "expectedOutput": "expected.txt",
+  "expectedVerdict": "PASS_WITH_WARNINGS",
+  "oracle": "compile-warning",
+  "tags": [
+    "c17",
+    "warning",
+    "compile-diagnostic"
+  ],
+  "compileOnly": true,
+  "extraFlags": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic"
+  ],
+  "minimumWarnings": 1,
+  "notes": "-Wall/-Wextra should report the unused function parameter."
+}

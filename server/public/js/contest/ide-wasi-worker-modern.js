@@ -1,5 +1,5 @@
 /*
- * Modern C/C++ Browser Worker (Phase 8, Checkpoint 1).
+ * Modern C/C++ Browser Compiler Worker (Phase 8, Checkpoint 2).
  *
  * This worker is deliberately separate from ide-wasi-worker.js.  The latter is
  * the frozen Clang 8/C11/C++11 path; this file only accepts C17 and C++17 and
@@ -8,7 +8,6 @@
  * Protocol:
  *   init    -> inited
  *   compile -> compile-result (object bytes are returned on a cache miss)
- *   run     -> run-result {result}
  *   stats   -> stats
  *   dispose -> disposed
  *
@@ -19,8 +18,8 @@
  */
 import {WASI} from '/runtime/runno/0.10.0-ojc4/runno-wasi.js';
 
-const ENGINE_RUNTIME_ID = 'cpp-modern-engine-v1';
-const DEFAULT_MANIFEST_URL = '/runtime/cpp-modern-engine-v1/runtime-manifest.json';
+const ENGINE_RUNTIME_ID = 'cpp-modern-engine-v2';
+const DEFAULT_MANIFEST_URL = '/runtime/cpp-modern-engine-v2/runtime-manifest.json';
 const TARGET = 'wasm32-unknown-wasi';
 const MAX_SOURCE_BYTES = 1024 * 1024;
 const MAX_STDIN_BYTES = 4 * 1024 * 1024;
@@ -75,18 +74,18 @@ function manifestBase(manifestUrl) { return new URL('./', manifestUrl).href; }
 
 function normaliseProfile(input) {
   const value = String(input || '').toLowerCase();
-  if (value === 'c' || value === 'c17' || value === 'c17-gcc14-compat-v1') {
-    return {profileId: 'c17-gcc14-compat-v1', standard: 'c17', language: 'c'};
+  if (value === 'c' || value === 'c17' || value === 'c17-gcc14-compat-v1' || value === 'c17-gcc14-compat-v2') {
+    return {profileId: 'c17-gcc14-compat-v2', standard: 'c17', language: 'c'};
   }
   if (value === 'cpp' || value === 'c++' || value === 'cpp17' || value === 'c++17'
-      || value === 'cpp17-gcc14-compat-v1') {
-    return {profileId: 'cpp17-gcc14-compat-v1', standard: 'c++17', language: 'cpp'};
+      || value === 'cpp17-gcc14-compat-v1' || value === 'cpp17-gcc14-compat-v2') {
+    return {profileId: 'cpp17-gcc14-compat-v2', standard: 'c++17', language: 'cpp'};
   }
   if (value === 'cpp20' || value === 'c++20' || value === 'cpp23' || value === 'c++23'
       || value === 'cpp20-gcc14-compat-v1' || value === 'cpp23-gcc14-compat-v1') {
     return {unsupported: true, profileId: value, standard: value, language: 'cpp'};
   }
-  return {profileId: value || 'cpp17-gcc14-compat-v1', standard: 'c++17', language: 'cpp'};
+  return {profileId: value || 'cpp17-gcc14-compat-v2', standard: 'c++17', language: 'cpp'};
 }
 function sourceOf(message) { return String(message.source != null ? message.source : (message.code != null ? message.code : '')); }
 function flagsOf(message) {
@@ -97,7 +96,7 @@ function flagsOf(message) {
 function canonicalFlags(flags) { return flags.map(String).join(' '); }
 function optLevelOf(message) {
   const value = String(message && message.optLevel || '');
-  return /^-O[0-2s]$/.test(value) ? value : '-O0';
+  return /^-O[0-2s]$/.test(value) ? value : '-O2';
 }
 function makeCacheKey(profileId, standard, flags, runtimeAssetHash, sourceHash) {
   // stdin intentionally does not participate in the artifact key.
@@ -325,6 +324,7 @@ function assetKind(asset) {
   if (/libc\+\+abi|libcxxabi/.test(text)) return 'libcxxabi';
   if (/libc\+\+|libcxx/.test(text)) return 'libcxx';
   if (/loader/.test(text)) return 'loader';
+  if (/header-shim|bits\/stdc\+\+\.h/.test(text)) return 'header-shim';
   if (/clang\.wasm|compiler|clang/.test(text)) return 'compiler';
   return 'other';
 }
@@ -349,15 +349,30 @@ function pickAsset(assets, kinds, patterns) {
   }
   return null;
 }
-function manifestAssetHash(manifest, rawManifestHash) {
-  // The cache contract deliberately hashes the exact manifest bytes.  A
-  // declared alias is accepted only as corroborating evidence; it must not
-  // replace the immutable raw-byte digest used in cache keys.
+function canonicalValue(value) {
+  if (Array.isArray(value)) return value.map(canonicalValue);
+  if (!value || typeof value !== 'object') return value;
+  const output = {};
+  for (const key of Object.keys(value).sort()) output[key] = canonicalValue(value[key]);
+  return output;
+}
+async function manifestAssetHash(manifest, rawManifestHash) {
   const declared = asHex(manifest.runtimeAssetHash || manifest.assetHash || manifest.assetsHash);
+  if (manifest.runtimeHashAlgorithm === 'canonical-runtime-identity-v1') {
+    if (!declared || !manifest.runtimeIdentity) {
+      throw manifestFailure('manifest', 'canonical runtime identity/hash is missing');
+    }
+    const canonical = JSON.stringify(canonicalValue(manifest.runtimeIdentity));
+    const computed = await sha256Hex(new TextEncoder().encode(canonical));
+    if (computed !== declared) {
+      throw manifestFailure('manifest', 'runtimeAssetHash does not match canonical runtime identity', {
+        declaredRuntimeAssetHash: declared, computedRuntimeAssetHash: computed
+      });
+    }
+    return declared;
+  }
   if (declared && declared !== rawManifestHash) {
-    throw manifestFailure('manifest', 'runtimeAssetHash does not match raw runtime-manifest.json bytes', {
-      declaredRuntimeAssetHash: declared, rawManifestHash
-    });
+    throw manifestFailure('manifest', 'legacy runtimeAssetHash does not match raw runtime-manifest.json bytes');
   }
   return rawManifestHash;
 }
@@ -409,7 +424,7 @@ function replaceTemplate(value, replacements) {
 function templateArgs(value, replacements) { return Array.isArray(value) ? value.map(item => replaceTemplate(item, replacements)) : null; }
 
 function compileArgs(profile, message, manifest, fs) {
-  const optLevel = /^-O[0-2s]$/.test(String(message.optLevel || '')) ? String(message.optLevel) : '-O0';
+  const optLevel = /^-O[0-2s]$/.test(String(message.optLevel || '')) ? String(message.optLevel) : '-O2';
   const flags = flagsOf(message).filter(flag => !/^-std=/.test(flag) && !/^-O[0-3s]$/.test(flag));
   const resourceDir = findResourceDir(fs, manifest);
   if (profile.language === 'cpp') {
@@ -450,7 +465,7 @@ function linkerArgs(profile, message, manifest, fs, sharedRoot) {
   if (fromManifest) return fromManifest;
   const crt = manifest.crt1 || manifest.startupObject
     || findFsFile(fs, ['/sys/lib/wasm32-wasi/crt1-command.o', '/sys/lib/wasm32-wasi/crt1.o']);
-  const args = ['wasm-ld', '--export-dynamic', '-z', 'stack-size=1048576', '-L' + root + '/sys/lib/wasm32-wasi'];
+  const args = ['wasm-ld', '--export-dynamic', '--undefined=main', '-z', 'stack-size=1048576', '-L' + root + '/sys/lib/wasm32-wasi'];
   if (crt) args.push(sharedPath(crt));
   const libraryDirs = new Set([root + '/sys/lib/wasm32-wasi']);
   for (const suffix of ['/libc++.a', '/libc++abi.a', '/libclang_rt.builtins-wasm32.a']) {
@@ -463,6 +478,7 @@ function linkerArgs(profile, message, manifest, fs, sharedRoot) {
   }
   args.push(root + '/program.o');
   if (profile.language === 'cpp') args.push('-lc++', '-lc++abi');
+  if (profile.language === 'c') args.push('-lc-printscan-long-double');
   args.push('-lc');
   const builtins = findFsFile(fs, ['/libclang_rt.builtins-wasm32.a']);
   if (builtins) {
@@ -538,7 +554,7 @@ async function runWasiCommand(module, args, fs, options) {
 async function loadRuntime(message) {
   const initStarted = now();
   const loaded = await loadManifest(message && message.manifestUrl); const manifest = loaded.manifest;
-  const runtimeAssetHash = manifestAssetHash(manifest, loaded.rawHash);
+  const runtimeAssetHash = await manifestAssetHash(manifest, loaded.rawHash);
   if (manifest.runtimeId && manifest.runtimeId !== ENGINE_RUNTIME_ID) {
     throw manifestFailure('manifest', 'unexpected runtimeId: ' + manifest.runtimeId);
   }
@@ -593,6 +609,11 @@ async function loadRuntime(message) {
   try { fs = mountSysroot(await unpackSysroot(sysroot.bytes)); }
   catch (error) { throw manifestFailure('filesystem', 'sysroot mount failed: ' + errorMessage(error)); }
   for (const asset of downloaded.values()) {
+    if (asset.kind === 'header-shim') {
+      const path = asset.mountPath || '/sys/include/c++/v1/bits/stdc++.h';
+      fs[path] = fileEntry(path, asset.bytes);
+      continue;
+    }
     if (!['libcxx', 'libcxxabi', 'compiler-rt'].includes(asset.kind)) continue;
     const path = asset.mountPath || (asset.kind === 'libcxx' ? '/sys/lib/wasm32-wasi/libc++.a'
       : asset.kind === 'libcxxabi' ? '/sys/lib/wasm32-wasi/libc++abi.a'
@@ -680,13 +701,14 @@ async function compile(message) {
   const flags = flagsOf(message || {}); const flagsText = canonicalFlags(flags.concat([optLevelOf(message || {})])); const sourceBytes = new TextEncoder().encode(source);
   if (profile.unsupported) return {ok: false, runtimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId, sourceHash: null,
     cacheHit: false, compileStatus: 'PENDING', runStatus: 'UNAVAILABLE', exitCode: -1, failureLayer: 'profile',
-    error: 'Only C17 and C++17 are enabled in Checkpoint 1'};
+    error: 'Only C17 and C++17 are enabled in Phase 8 Checkpoint 2'};
   if (!runtime || workerState !== STATE.READY) return {ok: false, runtimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId,
     sourceHash: null, cacheHit: false, compileStatus: 'NOT_READY', runStatus: 'UNAVAILABLE', exitCode: -1,
     failureLayer: 'runtime', error: 'Modern Clang runtime is not READY (state=' + workerState + ')'};
   if (sourceBytes.byteLength > MAX_SOURCE_BYTES) return {ok: false, runtimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId,
     sourceHash: null, cacheHit: false, compileStatus: 'CE', runStatus: 'CE', exitCode: -1, failureLayer: 'frontend',
-    error: 'source exceeds 1 MiB local limit'};
+    error: 'source exceeds 1 MiB local limit', stderr: 'source exceeds 1 MiB local limit',
+    limitField: 'source', limitBytes: MAX_SOURCE_BYTES, actualBytes: sourceBytes.byteLength};
   const sourceHash = await sha256Hex(sourceBytes);
   const key = makeCacheKey(profile.profileId, profile.standard, flagsText, runtime.runtimeAssetHash, sourceHash);
   const cached = cacheGet(key);
@@ -837,7 +859,7 @@ async function executeArtifact(bytes, message, profile, compileResult) {
 async function run(message) {
   const profile = normaliseProfile((message && (message.profileId || message.language || message.lang)) || 'cpp17');
   if (profile.unsupported) return {ok: false, runtimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId, compileStatus: 'PENDING', runStatus: 'UNAVAILABLE', exitCode: -1,
-    cacheHit: false, stdout: '', stderr: '', failureLayer: 'profile', error: 'Only C17 and C++17 are enabled in Checkpoint 1'};
+    cacheHit: false, stdout: '', stderr: '', failureLayer: 'profile', error: 'Only C17 and C++17 are enabled in Phase 8 Checkpoint 2'};
   if (workerState !== STATE.READY || !runtime) return {ok: false, runtimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId, compileStatus: 'NOT_READY', runStatus: 'UNAVAILABLE', exitCode: -1,
     cacheHit: false, stdout: '', stderr: '', failureLayer: 'runtime', error: 'Modern Clang runtime is not READY (state=' + workerState + ')'};
   const compileResult = message.bytes ? {ok: true, bytes: message.bytes instanceof Uint8Array ? message.bytes : new Uint8Array(message.bytes), sourceHash: message.sourceHash || null, cacheHit: !!message.cacheHit, compilerInitMs: 0, compileMs: 0, linkMs: 0} : await compile(message);
@@ -851,15 +873,24 @@ async function run(message) {
     compileMs: compileResult.compileMs || 0, linkMs: compileResult.linkMs || 0
   });
   const result = await executeArtifact(compileResult.bytes, message || {}, profile, compileResult);
+  result.artifactBytes = compileResult.bytes && compileResult.bytes.byteLength || 0;
   setState(STATE.READY, {profileId: profile.profileId, sourceHash: compileResult.sourceHash}); return Object.assign({compileFailed: false}, result);
 }
 function stats() {
+  const cachedArtifactBytes = Array.from(artifactCache.values()).reduce((sum, entry) =>
+    sum + (entry && entry.bytes ? entry.bytes.byteLength : 0), 0);
   return {type: 'stats', runtimeId: ENGINE_RUNTIME_ID, engineRuntimeId: ENGINE_RUNTIME_ID, state: workerState, ready: workerState === STATE.READY,
     runtimeAssetHash: runtime && runtime.runtimeAssetHash || null,
     compilerGlueVerified: !!runtime?.compilerHandle?.factoryVerified,
     linkerGlueVerified: !!runtime?.linkerHandle?.factoryVerified,
     proxyFsMounted: !!runtime?.proxyFs?.mounted, proxyFs: runtime?.proxyFs || null,
-    cacheSize: artifactCache.size, cacheCapacity: ARTIFACT_CACHE_CAPACITY, counters: {...counters}};
+    cacheSize: artifactCache.size, cacheCapacity: ARTIFACT_CACHE_CAPACITY,
+    memory: {
+      compilerLinearMemoryBytes: runtime?.compilerHandle?.module?.HEAPU8?.buffer?.byteLength || null,
+      linkerLinearMemoryBytes: runtime?.linkerHandle?.module?.HEAPU8?.buffer?.byteLength || null,
+      cachedArtifactBytes
+    },
+    counters: {...counters}};
 }
 function dispose() { artifactCache.clear(); runtime = null; initPromise = null; setState(STATE.DISPOSED); post({type: 'disposed', runtimeId: ENGINE_RUNTIME_ID}); }
 
@@ -868,10 +899,14 @@ self.addEventListener('message', async event => {
   try {
     if (message.type === 'init') { post(Object.assign({requestId}, await init(message))); return; }
     if (message.type === 'compile') {
-      const response = await compile(message); const transfer = response && response.bytes instanceof Uint8Array ? [response.bytes.buffer] : [];
-      post(Object.assign({type: 'compile-result', requestId}, response), transfer); return;
+      const response = await compile(message);
+      // Never transfer the cache-owned buffer: detaching it would turn a cache
+      // hit into an empty artifact after the first disposable execution.
+      const result = response && response.bytes instanceof Uint8Array
+        ? Object.assign({}, response, {bytes: response.bytes.slice()}) : response;
+      const transfer = result && result.bytes instanceof Uint8Array ? [result.bytes.buffer] : [];
+      post(Object.assign({type: 'compile-result', requestId}, result), transfer); return;
     }
-    if (message.type === 'run') { post({type: 'run-result', requestId, result: await run(message)}); return; }
     if (message.type === 'stats') { post(Object.assign({requestId}, stats())); return; }
     if (message.type === 'dispose') { dispose(); return; }
     post({type: 'error', requestId, runtimeId: ENGINE_RUNTIME_ID, failureLayer: 'protocol', message: 'unknown worker message type'});

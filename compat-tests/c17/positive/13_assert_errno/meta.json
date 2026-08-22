@@ -1,0 +1,11 @@
+{
+  "id": "13_assert_errno",
+  "suite": "positive",
+  "category": "feature",
+  "standard": "c17",
+  "expectedVerdict": "PASS",
+  "description": "assert and errno",
+  "source": "main.c",
+  "stdin": "input.txt",
+  "expected": "expected.txt"
+}
