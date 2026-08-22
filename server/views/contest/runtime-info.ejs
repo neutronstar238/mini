@@ -23,7 +23,7 @@
         Clang 本身主要使用 C++ 实现，但浏览器内运行的并非 Clang 源码，而是预先编译好的 <code>clang.wasm</code>。
         本项目选择 Clang 是基于 WebAssembly 工程实现：LLVM/Clang 模块化程度高，Frontend/Linker/Target Backend 容易拆分，
         且 WebAssembly/WASI 工具链生态成熟，能构建 Browser-hosted Compiler。
-        Official Judge 无沙箱约束故使用 GCC/G++ + Linux。
+        Official Judge 在受控 systemd 沙箱中使用 GCC/G++ + Linux。
         两者通过 Compatibility Matrix 做行为验证。
       </div>
     </div>

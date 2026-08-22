@@ -108,7 +108,11 @@ async function runJudge(submission) {
   console.log('[judge:verdict]', JSON.stringify({
     submissionId: finished.id, userId: finished.userId, problemId: finished.problemId,
     language: finished.language, verdict: finished.verdict, status: SUB_STATUS.FINISHED,
-    judgeDurationMs: durationMs, executionTimeMs: finished.executionTimeMs, memoryKb: finished.memoryKb
+    judgeDurationMs: durationMs, executionTimeMs: finished.executionTimeMs, memoryKb: finished.memoryKb,
+    compilerPath: result.compilerEvidence ? result.compilerEvidence.compilerPath : null,
+    compilerVersion: result.compilerEvidence ? result.compilerEvidence.compilerVersion : null,
+    compilerStandard: result.compilerEvidence ? result.compilerEvidence.standard : null,
+    compilerOptimization: result.compilerEvidence ? result.compilerEvidence.optimization : null
   }));
 
   // Phase 5：Submission FINISHED → 从 SQLite 重算该选手榜单状态 → 10s batch → SSE delta。
@@ -126,6 +130,8 @@ function dispatch(submission) {
     submissionId: submission.id, userId: submission.userId, problemId: submission.problemId,
     language: submission.language, status: submission.status, receivedAt: submission.serverReceivedAt
   }));
+  // 已经打开“我的提交”页面的浏览器可通过 SSE 看到完整 QUEUED → JUDGING → FINISHED 链路。
+  emitSubmission(submission);
   enqueue(() => runJudge(submission));
 }
 

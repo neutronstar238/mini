@@ -17,6 +17,7 @@ const { authOptional } = require('./middleware/auth');
 const seedIfEmpty = require('./seed');
 
 const app = express();
+let startupReady = false;
 const publicDir = path.join(__dirname, '..', 'public');
 const immutableRuntimeOptions = {
   maxAge: '1y',
@@ -51,7 +52,8 @@ app.use((req, res, next) => {
   // HTML 页面响应不缓存，避免开发期更新后浏览器仍显示旧页面
   // 仅页面导航响应禁用缓存。WASM/module fetch 常用 Accept: */*，不能据此把
   // 带扩展名的 Runtime 静态资产误判为 HTML 并覆盖其版本化 immutable 缓存。
-  if (!path.extname(req.path) && req.accepts('html')) {
+  const acceptsHtml = /(?:^|,)\s*text\/html(?:\s*;[^,]*)?(?:,|$)/i.test(req.get('accept') || '');
+  if (!path.extname(req.path) && acceptsHtml) {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
@@ -68,6 +70,7 @@ app.use('/runtime/java21-browserjdk-compat-v1', express.static(path.join(publicD
 app.use('/runtime/java21-browserjdk-compat-v2', express.static(path.join(publicDir, 'js', 'runtime', 'java21-browserjdk-compat-v2'), immutableRuntimeOptions));
 // Phase 8 — self-built Modern Clang 19.1.7 browser engine.
 app.use('/runtime/cpp-modern-engine-v1', express.static(path.join(publicDir, 'js', 'runtime', 'cpp-modern-engine-v1'), immutableRuntimeOptions));
+app.use('/runtime/cpp-modern-engine-v2', express.static(path.join(publicDir, 'js', 'runtime', 'cpp-modern-engine-v2'), immutableRuntimeOptions));
 
 app.use(express.static(publicDir, {
   setHeaders: function (res, filePath) {
@@ -96,6 +99,14 @@ function entry(req, res, next) {
   next();
 }
 app.use(entry);
+
+// Process liveness and post-startup readiness probes. Initialization below is
+// synchronous, so readiness becomes true only after both SQLite stores and the
+// contest services have completed their existing startup path.
+app.get('/healthz', (_req, res) => res.json({ status: 'ok' }));
+app.get('/readyz', (_req, res) => {
+  res.status(startupReady ? 200 : 503).json({ status: startupReady ? 'ready' : 'starting' });
+});
 
 // ---------- 评测协议（Worker）----------（仅 contest 入口暴露，供 Worker 连接）
 if (config.entry === 'all' || config.entry === 'contest') {
@@ -140,7 +151,13 @@ if (config.entry === 'all' || config.entry === 'contest') {
   app.get('/contest/contests/:id', guardPage('/contest/login'), (req, res) => res.redirect('/contest/contests/' + req.params.id + '/problems'));
   // 比赛内页面
   app.get('/contest/contests/:cid/problems', guardPage('/contest/login'), (req, res) => res.render('contest/problems', { user: req.user || null, contestId: req.params.cid }));
-  app.get('/contest/contests/:cid/problems/:pid', guardPage('/contest/login'), (req, res) => res.render('contest/problem-detail', { user: req.user || null, contestId: req.params.cid, problemId: req.params.pid }));
+  app.get('/contest/contests/:cid/problems/:pid', guardPage('/contest/login'), (req, res) => res.render('contest/problem-detail', {
+    user: req.user || null,
+    contestId: req.params.cid,
+    problemId: req.params.pid,
+    modernFormalSubmitAllowed: config.formalSubmitCanaryContestIds.length === 0 ||
+      config.formalSubmitCanaryContestIds.includes(req.params.cid)
+  }));
   app.get('/contest/contests/:cid/submissions', guardPage('/contest/login'), (req, res) => res.render('contest/submissions', { user: req.user || null, contestId: req.params.cid }));
   app.get('/contest/contests/:cid/rank', guardPage('/contest/login'), (req, res) => res.render('contest/rank', { user: req.user || null, contestId: req.params.cid }));
   // Runtime Enhancement Phase：Runtime Info / FAQ 页（公开，无 guard；只展示 sanitized 数据）
@@ -192,6 +209,7 @@ if (config.entry === 'all' || config.entry === 'contest') {
   require('./services/scoreboard').recomputeFromDb();
   require('./services/client-device-service').start();
 }
+startupReady = true;
 app.listen(config.port, config.host, () => {
   console.log('┌──────────────────────────────────────────────────────┐');
   console.log('│  Mini-OJ · 浏览器本地预检 + 服务器权威判题          │');

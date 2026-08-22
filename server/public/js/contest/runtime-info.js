@@ -21,6 +21,23 @@ function kvCard(title, data) {
   return '<h5>' + escapeHtml(title) + '</h5><div class="oj-drawer-kv">' + rows.join('') + '</div>';
 }
 
+function browserSupportLabel(profile) {
+  var local = profile.localRuntime || {};
+  return local.supported && local.enabled ? '支持' : '不支持';
+}
+
+function officialCompilerLabel(profile) {
+  var labels = {
+    c11: 'GCC 11',
+    cpp11: 'G++ 11',
+    c17: 'GCC 14',
+    cpp17: 'G++ 14',
+    python3: 'CPython 3.12',
+    java21: 'OpenJDK 21'
+  };
+  return labels[profile.id] || (profile.officialJudge || {}).compiler || '未配置';
+}
+
 function renderRuntimeInfo() {
   var container = document.getElementById('runtime-info-list');
   if (!container) return;
@@ -31,52 +48,11 @@ function renderRuntimeInfo() {
       return;
     }
     container.innerHTML = profiles.map(function (p) {
-      var local = p.localRuntime || {};
-      var off = p.officialJudge || {};
-      var statusDot = !local.supported ? 'unavailable'
-        : (local.status === 'READY' || local.status === 'BETA_FROZEN') ? 'ready'
-        : (local.status === 'PENDING' || local.status === 'EXPERIMENTAL' || local.status === 'LOCAL_PREVIEW') ? 'beta' : 'loading';
-      var statusLabel = local.supported ? (local.status || 'PENDING') : 'UNAVAILABLE';
-      if (statusLabel === 'BETA_FROZEN') statusLabel = 'BETA FROZEN';
-      if (local.enabled && statusLabel === 'LOCAL_PREVIEW') statusLabel = 'ENABLED / LOCAL_PREVIEW';
-
-      var localData = {
-        'Browser Local': statusLabel,
-        'Runtime ID': local.runtimeId,
-        'Compiler': local.compiler,
-        'Compiler Version': local.compilerVersion,
-        'Language Standard': local.standard,
-        'Target Triple': local.target,
-        'Sysroot': local.sysrootVersion,
-        'Runtime Asset Hash': local.assetHash,
-        'PCH Policy': local.pchPolicy,
-        'Status': statusLabel,
-        'Mode': local.preview ? 'LOCAL PREVIEW' : null,
-        'Technical Validation': local.technicalValidated ? 'PASS' : null,
-        'Engineering Redistribution': local.engineeringRedistributionReady ? 'READY' : null,
-        'Legal Redistribution': local.legalReviewRequired ? 'PENDING REVIEW' : null,
-        'Redistributable': local.legalReviewRequired ? String(!!local.redistributable) : null
-      };
-      var offData = {
-        'Official Judge': off.referenceStatus,
-        'OS': off.os,
-        'Compiler': off.compiler,
-        'Compiler Version': off.compilerVersion,
-        'Language Standard': off.standard,
-        'Compile Flags': off.compileFlags,
-        'Run Flags': off.runFlags,
-        'Time Adjustment': off.timeAdjustment,
-        'Memory Adjustment': off.memoryAdjustment,
-        'Reference Status': off.referenceStatus,
-        'Formal Submit': p.submissionEnabled ? 'ENABLED' : 'DISABLED'
-      };
-
       return '<div class="oj-rtinfo-section">' +
-        '<h3>' + escapeHtml(p.displayName) + ' <span class="oj-runtime-dot ' + statusDot + '"></span><span style="font-size:13px;color:#6b7280">' + statusLabel + '</span></h3>' +
-        '<div class="sub">Profile ID: <code>' + escapeHtml(p.id) + '</code></div>' +
+        '<h3>' + escapeHtml(p.displayName) + '</h3>' +
         '<div class="oj-rtinfo-grid">' +
-          '<div class="oj-rtinfo-card local">' + kvCard('Browser Local', localData) + '</div>' +
-          '<div class="oj-rtinfo-card official">' + kvCard('Official Judge', offData) + '</div>' +
+          '<div class="oj-rtinfo-card local">' + kvCard('Browser Local', { '浏览器本地运行': browserSupportLabel(p) }) + '</div>' +
+          '<div class="oj-rtinfo-card official">' + kvCard('Official Judge', { '正式评测': officialCompilerLabel(p) }) + '</div>' +
         '</div>' +
       '</div>';
     }).join('');

@@ -8,6 +8,8 @@ const ENTRY = process.env.APP_ENTRY || 'all';
 
 // 各入口独立监听端口（避开服务器已占用的 3000）
 const ENTRY_PORTS = { contest: 3001, admin: 3002 };
+const FORMAL_SUBMIT_CANARY_CONTEST_IDS = String(process.env.FORMAL_SUBMIT_CANARY_CONTEST_IDS || '')
+  .split(',').map((id) => id.trim()).filter(Boolean);
 
 const config = {
   entry: ENTRY,
@@ -69,6 +71,9 @@ const config = {
   // 覆盖 c11/c17/cpp11/cpp17/cpp20/cpp23/python3/java21；仅含允许正式提交且 official supported 的状态）
   languages: require('./language-profiles').enabledOfficialLanguages(),
   languageProfiles: require('./language-profiles').legacyLanguageProfiles(),
+  // 正式提交启用前的生产 canary：非空时仅允许列出的测试比赛使用 C17/C++17。
+  // 最终验收通过后生产环境清空该变量，即开放所有比赛。
+  formalSubmitCanaryContestIds: FORMAL_SUBMIT_CANARY_CONTEST_IDS,
   maxCodeLength: 256 * 1024, // 256KB 正式提交上限
   sourceMaxUtf8: true,
   // 正式提交限速：同用户 1 次 / 秒（防双击 / 脚本狂刷；Local Run 不限速，根本不请求 Server）

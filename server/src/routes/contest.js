@@ -301,9 +301,8 @@ router.get('/submissions/:id/events', requireLogin, (req, res) => {
     return res.status(403).json({ error: { code: 'FORBIDDEN', message: '无权查看他人提交' } });
   }
   // 立即推送当前状态，之后由 hub 广播 submission_update
-  res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive', 'X-Accel-Buffering': 'no' });
-  res.write(`event: submission_update\ndata: ${JSON.stringify({ id: s.id, status: s.status, verdict: s.verdict || null })} \n\n`);
   hub.join('page', res);
+  res.write(`event: submission_update\ndata: ${JSON.stringify({ id: s.id, status: s.status, verdict: s.verdict || null })} \n\n`);
 });
 
 /* ================= 诊断：SQLite Query 计数（Phase 5 负载观测用） ================= */

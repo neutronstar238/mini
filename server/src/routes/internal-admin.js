@@ -435,7 +435,7 @@ router.post('/spotcheck/:submissionId', (req, res) => {
 const languageProfiles = require('../language-profiles');
 
 router.get('/languages', (_req, res) => {
-  const ids = Object.keys(languageProfiles.PROFILES);
+  const ids = languageProfiles.PROFILE_ORDER;
   res.json({
     languages: ids.map((id) => ({
       id,
@@ -444,7 +444,8 @@ router.get('/languages', (_req, res) => {
       defaultStatus: languageProfiles.PROFILES[id].status,
       officialSupported: languageProfiles.PROFILES[id].officialJudge.supported,
       localSupported: languageProfiles.PROFILES[id].localRuntime.supported,
-      officialEnabled: languageProfiles.isOfficialEnabled(id)
+      officialEnabled: languageProfiles.isOfficialEnabled(id),
+      formalSubmit: languageProfiles.isOfficialEnabled(id)
     }))
   });
 });

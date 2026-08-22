@@ -59,14 +59,59 @@ async function loadProblem() {
  * 页面需 COOP/COEP 头（cross-origin isolated）以启用 SharedArrayBuffer。
  */
 var RUNNO_VERSION = '0.10.0';
+var PUBLIC_API_BASE = '/api/public';
+var cachedProfiles = null; // 缓存 /api/public/runtime-profiles，避免每次切换重复请求
+var runtimeUiState = {
+  runno: 'idle',
+  modernStage: 'IDLE',
+  pythonText: '',
+  javaText: ''
+};
+
+function renderSelectedRuntimeStatus() {
+  var select = $('ide-lang');
+  var label = $('runtime-status');
+  if (!select || !label) return;
+  var lang = select.value;
+  if (lang === 'c' || lang === 'cpp') {
+    var legacyName = lang === 'c' ? 'C11' : 'C++11';
+    var legacyState = runtimeUiState.runno === 'ready' ? 'Ready'
+      : runtimeUiState.runno === 'error' ? '加载失败'
+      : '按需加载';
+    label.textContent = legacyName + ' Browser Runtime: ' + legacyState + ' (Runno ' + RUNNO_VERSION + ')';
+    return;
+  }
+  if (lang === 'c17' || lang === 'cpp17') {
+    var modernName = lang === 'c17' ? 'C17' : 'C++17';
+    var modernState = runtimeUiState.modernStage === 'READY' ? 'Ready'
+      : runtimeUiState.modernStage === 'ERROR' ? '加载失败'
+      : runtimeUiState.modernStage === 'IDLE' ? '按需加载'
+      : 'Loading (' + runtimeUiState.modernStage + ')';
+    label.textContent = modernName + ' Browser Runtime: ' + modernState + ' (Modern C/C++ Engine v2 · Clang/LLD 19.1.7)';
+    return;
+  }
+  if (lang === 'python') {
+    label.textContent = runtimeUiState.pythonText || 'Python 3.12 Runtime: 按需加载';
+    return;
+  }
+  if (lang === 'java') {
+    label.textContent = runtimeUiState.javaText || 'Java 21 Runtime: 按需加载 (OpenJDK 21.0.10+7 (Zero))';
+    return;
+  }
+  label.textContent = '';
+}
 
 // 等待 ES Module 加载器就绪（window.__RUNNO__ 可用）
 function ensureRunno() {
-  if (window.__RUNNO__) return Promise.resolve();
+  if (window.__RUNNO__) {
+    runtimeUiState.runno = 'ready';
+    renderSelectedRuntimeStatus();
+    return Promise.resolve();
+  }
   return new Promise(function (resolve, reject) {
     var done = false;
-    function ok() { if (done) return; done = true; window.removeEventListener('runno-ready', ok); $('runtime-status').textContent = '浏览器运行时就绪 (Runno ' + RUNNO_VERSION + ')'; resolve(); }
-    function fail(e) { if (done) return; done = true; window.removeEventListener('runno-ready', ok); $('runtime-status').textContent = '运行时加载失败'; reject(e); }
+    function ok() { if (done) return; done = true; window.removeEventListener('runno-ready', ok); runtimeUiState.runno = 'ready'; renderSelectedRuntimeStatus(); resolve(); }
+    function fail(e) { if (done) return; done = true; window.removeEventListener('runno-ready', ok); runtimeUiState.runno = 'error'; renderSelectedRuntimeStatus(); reject(e); }
     window.addEventListener('runno-ready', ok);
     // 兜底：若 module 已加载但事件丢失
     if (window.__RUNNO__) { ok(); return; }
@@ -93,8 +138,10 @@ function ensureIdeRunner() {
   });
 }
 
-// 当前编译模式（本地运行默认 -O0 快速编译；性能估算模式 -O2）
+// Modern profile 的默认优化等级由 Language Profile 唯一决定，调用方不可覆盖。
 function getOptLevel() {
+  var lang = document.getElementById('ide-lang');
+  if (lang && (lang.value === 'c17' || lang.value === 'cpp17')) return '-O2';
   var el = document.getElementById('ide-opt');
   var v = el ? el.value : '-O0';
   return (v === '-O1' || v === '-O2') ? v : '-O0';
@@ -114,8 +161,8 @@ function ideLanguageLabel(lang) {
   if (lang === 'python') return 'Python 3';
   if (lang === 'c') return 'C11';
   if (lang === 'cpp') return 'C++11';
-  if (lang === 'c17') return 'C17 🧪 Local Preview';
-  if (lang === 'cpp17') return 'C++17 🧪 Local Preview';
+  if (lang === 'c17') return 'C17';
+  if (lang === 'cpp17') return 'C++17';
   return lang || 'Unknown';
 }
 
@@ -132,6 +179,7 @@ function formatCompileInfo(r) {
   if (r.compileFailed) return ''; // 编译失败时输出区已显示错误
   if (t.cacheHit) return '✓ 使用已编译缓存（未重新编译）';
   var parts = [];
+  if (t.optimizationLevel) parts.push(t.optimizationLevel);
   if (t.pchMs) parts.push('PCH 生成 ' + t.pchMs + 'ms（一次性）');
   if (t.frontendMs != null || t.backendMs != null) {
     if (t.frontendMs != null) parts.push('解析与检查 ' + t.frontendMs + 'ms');
@@ -237,7 +285,7 @@ async function runIde(code, lang, stdin, opts) {
 
   // —— ide-runner 管线结果（Execution Time 与 Compile Time 严格分离） ——
   if (result && result.timing) {
-    if (result.aborted) return { __aborted: true, stdout: '', stderr: '', exitCode: -1, timeMs: 0, terminated: false, timeout: false };
+    if (result.aborted && !result.timedOut) return { __aborted: true, stdout: '', stderr: '', exitCode: -1, timeMs: 0, terminated: false, timeout: false };
     logProfile('profile', result.timing);
     var rt = {
       stdout: result.stdout || '',
@@ -437,9 +485,6 @@ document.getElementById('submit-btn').addEventListener('click', async function (
   var code = $('ide-code').value;
   var frontendLang = $('ide-lang').value;
   var language = officialLanguage(frontendLang);
-  if (frontendLang === 'c17' || frontendLang === 'cpp17') {
-    return toast('C17/C++17 正式提交尚未启用，当前正在进行 GCC14 对齐与兼容性验证。本地运行结果仅供调试参考。', 'warn');
-  }
   if (!code.trim()) return toast('代码不能为空', 'err');
   var btn = $('submit-btn');
   btn.disabled = true; btn.textContent = '提交中…';
@@ -552,14 +597,40 @@ function saveDraft() {
 }
 function updateSubmitPreviewGate() {
   var lang = $('ide-lang').value;
-  var preview = lang === 'c17' || lang === 'cpp17';
+  var profileId = frontendLangToProfileId(lang);
+  var modernCanaryDenied = (lang === 'c17' || lang === 'cpp17') && window.__MODERN_FORMAL_SUBMIT_ALLOWED__ === false;
   var btn = $('submit-btn');
   var note = $('submit-preview-note');
-  if (btn) {
-    btn.disabled = preview;
-    btn.title = preview ? 'Formal Submit 尚未启用；当前仅限 Browser Local Preview' : '';
+  function applyGate(p) {
+    if ($('ide-lang').value !== lang) return;
+    var enabled = !modernCanaryDenied && !!p && (p.formalSubmit === true || p.submissionEnabled === true);
+    if (btn) {
+      btn.disabled = !enabled;
+      btn.title = enabled ? '' : '当前该语言暂不支持正式提交。';
+    }
+    if (note) note.style.display = enabled ? 'none' : '';
   }
-  if (note) note.style.display = preview ? '' : 'none';
+  // Keep the selector usable while the public profile request is in flight;
+  // the server remains the final authority for the formal-submit gate.
+  if (btn) btn.disabled = modernCanaryDenied;
+  if (note) note.style.display = modernCanaryDenied ? '' : 'none';
+  fetchProfiles().then(function (profiles) {
+    applyGate(profiles.find(function (p) { return p.id === profileId; }));
+  });
+}
+function updateModernControls() {
+  var modern = $('ide-lang').value === 'c17' || $('ide-lang').value === 'cpp17';
+  var pch = $('ide-pch');
+  var opt = $('ide-opt');
+  if (pch) {
+    pch.disabled = modern;
+    if (modern) pch.checked = false;
+    pch.title = modern ? 'Modern C/C++ Profile 固定禁用 PCH' : '';
+  }
+  if (opt) {
+    opt.disabled = modern;
+    if (modern) opt.value = '-O2';
+  }
 }
 $('ide-code').addEventListener('input', saveDraft);
 $('ide-input').addEventListener('input', saveDraft);
@@ -576,10 +647,14 @@ $('ide-lang').addEventListener('change', function () {
   this._lastLang = this.value;
   if (window.__IDE_RUNNER__) window.__IDE_RUNNER__.prewarm(this.value);
   updateSubmitPreviewGate();
+  updateModernControls();
+  renderSelectedRuntimeStatus();
 });
 $('ide-lang')._lastLang = $('ide-lang').value;
 loadDraft();
 updateSubmitPreviewGate();
+updateModernControls();
+renderSelectedRuntimeStatus();
 
 $('ide-run').addEventListener('click', onRun);
 $('ide-run-samples').addEventListener('click', onRunSamples);
@@ -594,11 +669,12 @@ ensureIdeRunner().then(function (ok) {
       // Python Interrupt 能力（Environment Check）：READY（SAB）或 FALLBACK（terminate）
       var int = (typeof runner.pythonInterruptStatus === 'function') ? runner.pythonInterruptStatus() : null;
       var intLabel = int ? (' · Interrupt ' + (int.capability === 'READY' ? 'READY' : 'FALLBACK')) : '';
-      if (s === 'loading') label.textContent = 'Python Runtime: Loading…';
-      else if (s === 'preparing') label.textContent = 'Python Runtime: Preparing…' + intLabel;
-      else if (s === 'ready') label.textContent = 'Python Runtime: Ready (' + (runner.pythonProfile ? runner.pythonProfile.pythonVersion : '3.12') + ')' + intLabel;
-      else if (s === 'error') label.textContent = 'Python Runtime: 加载失败，请刷新重试' + intLabel;
-      else label.textContent = intLabel;
+      if (s === 'loading') runtimeUiState.pythonText = 'Python Runtime: Loading…';
+      else if (s === 'preparing') runtimeUiState.pythonText = 'Python Runtime: Preparing…' + intLabel;
+      else if (s === 'ready') runtimeUiState.pythonText = 'Python Runtime: Ready (' + (runner.pythonProfile ? runner.pythonProfile.pythonVersion : '3.12') + ')' + intLabel;
+      else if (s === 'error') runtimeUiState.pythonText = 'Python Runtime: 加载失败，请刷新重试' + intLabel;
+      else runtimeUiState.pythonText = intLabel;
+      if ($('ide-lang').value === 'python') label.textContent = runtimeUiState.pythonText;
     });
   }
   // Phase 6 — Java 21 Runtime 状态标签（懒加载 Persistent Worker）：Loading → Preparing → Ready
@@ -609,11 +685,12 @@ ensureIdeRunner().then(function (ok) {
       var intLabel = int ? (' · Interrupt ' + (int.capability === 'READY' ? 'READY' : 'FALLBACK')) : '';
       var prof = runner.javaProfile || {};
       var sourceNote = prof.status === 'DISTRIBUTION_BLOCKED' ? '（SCAFFOLD：self-built pending，详见 docs/java-runtime-license-audit.md）' : '';
-      if (s === 'loading') label.textContent = 'Java 21 Runtime: Loading…';
-      else if (s === 'preparing') label.textContent = 'Java 21 Runtime: Preparing… ' + intLabel;
-      else if (s === 'ready') label.textContent = 'Java 21 Runtime: Ready (' + (prof.javaVersion || 'OpenJDK 21u') + ') ' + sourceNote + intLabel;
-      else if (s === 'error') label.textContent = 'Java 21 Runtime: 加载失败，点击「运行代码」重试 ' + intLabel + sourceNote;
-      else label.textContent = intLabel;
+      if (s === 'loading') runtimeUiState.javaText = 'Java 21 Runtime: Loading…';
+      else if (s === 'preparing') runtimeUiState.javaText = 'Java 21 Runtime: Preparing… ' + intLabel;
+      else if (s === 'ready') runtimeUiState.javaText = 'Java 21 Runtime: Ready (' + (prof.javaVersion || 'OpenJDK 21u') + ') ' + sourceNote + intLabel;
+      else if (s === 'error') runtimeUiState.javaText = 'Java 21 Runtime: 加载失败，点击「运行代码」重试 ' + intLabel + sourceNote;
+      else runtimeUiState.javaText = intLabel;
+      if ($('ide-lang').value === 'java') label.textContent = runtimeUiState.javaText;
     });
   }
 });
@@ -646,9 +723,6 @@ $('ide-code').addEventListener('keydown', function (e) {
  *  - Runtime Diagnostics
  *  - 错误分类（Runtime Loading Error vs CE vs RE vs TLE）
  * ============================================================ */
-var PUBLIC_API_BASE = '/api/public';
-var cachedProfiles = null; // 缓存 /api/public/runtime-profiles，避免每次 hover 都请求
-
 function fmtBytes(n) {
   if (n == null || isNaN(n)) return '-';
   if (n < 1024) return n + ' B';
@@ -681,12 +755,8 @@ function statusDotAndText(p) {
   if (!p) return { dot: 'unavailable', text: 'UNAVAILABLE' };
   var local = p.localRuntime || {};
   if (!local.supported) return { dot: 'unavailable', text: 'UNAVAILABLE' };
-  if (local.status === 'PENDING') return { dot: 'beta', text: 'PENDING' };
-  if (local.status === 'EXPERIMENTAL') return { dot: 'beta', text: 'Local Preview' };
-  if (local.status === 'LOCAL_PREVIEW') return { dot: 'beta', text: 'Local Preview' };
-  if (local.status === 'BETA_FROZEN') return { dot: 'ready', text: 'BETA FROZEN' };
-  if (local.status === 'READY') return { dot: 'ready', text: '● Ready' };
-  return { dot: 'loading', text: local.status || 'LOADING' };
+  if (!local.enabled) return { dot: 'unavailable', text: 'UNAVAILABLE' };
+  return { dot: 'ready', text: 'SUPPORTED' };
 }
 
 /* 渲染语言 Selector 内联状态（option 标签内追加 dot+文本） */
@@ -702,12 +772,12 @@ function renderLangSelectorStatus() {
       python: profiles.find(function (p) { return p.id === 'python3'; }),
       java: profiles.find(function (p) { return p.id === 'java21'; })
     };
-    var LABEL = { cpp: 'C++11', c: 'C11', cpp17: 'C++17 🧪', c17: 'C17 🧪', python: 'Python 3.12', java: 'Java 21' };
+    var LABEL = { cpp: 'C++11', c: 'C11', cpp17: 'C++17', c17: 'C17', python: 'Python 3.12', java: 'Java 21' };
     Array.from(sel.options).forEach(function (opt) {
       var p = byFrontend[opt.value];
       if (!p) return;
       var s = statusDotAndText(p);
-      opt.textContent = (LABEL[opt.value] || opt.value) + ' ' + s.text;
+      opt.textContent = LABEL[opt.value] || opt.value;
       opt.dataset.profileId = p.id;
       opt.dataset.status = s.dot;
       if (opt.value === 'c17' || opt.value === 'cpp17') opt.disabled = !(p.localRuntime && p.localRuntime.enabled);
@@ -725,7 +795,7 @@ function renderLangTooltip(frontendLang) {
     if (!p) { el.innerHTML = '<span style="color:#6b7280">未找到 profile 信息</span>'; return; }
     var local = p.localRuntime;
     var off = p.officialJudge;
-    var cacheBadge = local.supported ? ('<span class="oj-runtime-dot ' + statusDotAndText(p).dot + '"></span> ' + (local.status || 'PENDING')) : '本地不支持';
+    var cacheBadge = local.supported && local.enabled ? '浏览器本地运行：支持' : '浏览器本地运行：不支持';
     el.innerHTML =
       '<div class="oj-tt-grid">' +
         '<div class="oj-tt-col">' +
@@ -734,6 +804,7 @@ function renderLangTooltip(frontendLang) {
           '<p>' + (local.compilerVersion || '-') + '</p>' +
           '<p>标准：' + (local.standard || '-') + '</p>' +
           '<p>Target：' + (local.target || '-') + '</p>' +
+          '<p>Flags：' + ((local.compileFlags || []).join(' ') || '-') + '</p>' +
           '<p>Runtime ID：<span style="font-family:monospace;font-size:11px">' + (local.runtimeId || '-') + '</span></p>' +
           '<p>' + cacheBadge + '</p>' +
         '</div>' +
@@ -770,11 +841,12 @@ function renderRuntimeDrawer() {
       kv('Compiler Version', local.compilerVersion || '-'),
       kv('Language Standard', local.standard || '-'),
       kv('Target Triple', local.target || '-'),
+      kv('Compile Flags', (local.compileFlags || []).join(' ') || '-'),
+      kv('Optimization', local.optimizationLevel || '-'),
+      kv('Optimization Mismatch', local.optimizationMismatch ? 'true' : 'false'),
       kv('PCH Policy', local.pchPolicy || 'none'),
-      kv('Status', '<span class="oj-runtime-dot ' + statusDotAndText(p).dot + '"></span>' +
-        (local.enabled && local.status === 'LOCAL_PREVIEW' ? 'ENABLED / LOCAL_PREVIEW' : (local.status || '-'))),
-      kv('Mode', local.preview ? 'LOCAL PREVIEW' : 'STANDARD'),
-      kv('Enabled', local.enabled ? 'true' : 'false')
+      kv('Header Guard', local.headerGuard || 'none'),
+      kv('Browser Local', local.supported && local.enabled ? '支持' : '不支持')
     ].join('');
     var offBody = [
       kv('OS', off.os || '-'),
@@ -785,13 +857,12 @@ function renderRuntimeDrawer() {
       kv('Run Flags', (off.runFlags || []).join(' ') || '-'),
       kv('Time Adjustment', off.timeAdjustment),
       kv('Memory Adjustment', off.memoryAdjustment),
-      kv('Reference Status', off.referenceStatus || '-'),
-      kv('Formal Submit', p.submissionEnabled ? 'ENABLED' : 'DISABLED')
+      kv('Formal Submit', p.submissionEnabled ? '可用' : '不可用')
     ].join('');
     body.innerHTML =
       '<div class="oj-drawer-section">' +
         '<h4>Browser Local Runtime</h4>' +
-        (local.supported ? '<div class="oj-drawer-kv">' + localBody + '</div>' : '<div class="oj-drawer-empty">本地浏览器运行时暂不可用（PoC 待完成或已 Experimental）</div>') +
+        (local.supported ? '<div class="oj-drawer-kv">' + localBody + '</div>' : '<div class="oj-drawer-empty">本地浏览器运行时暂不可用</div>') +
       '</div>' +
       '<div class="oj-drawer-section">' +
         '<h4>Official Judge</h4>' +
@@ -833,6 +904,7 @@ function renderCompileDetail(r) {
   lines.push('<div class="row"><span class="k">language</span><span class="v">' + (r.language || '-') + '</span></div>');
   lines.push('<div class="row"><span class="k">runtimeId</span><span class="v">' + (r.runtimeId || '-') + '</span></div>');
   if (t.hash) lines.push('<div class="row"><span class="k">sourceHash</span><span class="v">' + t.hash + '</span></div>');
+  if (t.optimizationLevel) lines.push('<div class="row"><span class="k">optimization</span><span class="v">' + t.optimizationLevel + '</span></div>');
   lines.push('<div class="row"><span class="k">cacheHit</span><span class="v">' + (r.cacheHit ? 'YES' : 'NO') + '</span></div>');
   if (t.compileMs != null) lines.push('<div class="row"><span class="k">compile</span><span class="v">' + t.compileMs + ' ms</span></div>');
   if (t.linkMs != null) lines.push('<div class="row"><span class="k">link</span><span class="v">' + t.linkMs + ' ms</span></div>');
@@ -982,7 +1054,8 @@ renderLangSelectorStatus();
 renderLangTooltip($('ide-lang').value);
 
 /* 订阅现代 Runtime 进度（冻结 Runtime 不上报；保持旧管线） */
-if (window.__IDE_RUNNER__ && window.__IDE_RUNNER__.onRuntimeProgress) {
+function subscribeRuntimeProgress() {
+  if (!window.__IDE_RUNNER__ || !window.__IDE_RUNNER__.onRuntimeProgress) return false;
   window.__IDE_RUNNER__.onRuntimeProgress(function (snaps) {
     // 渲染当前语言对应的进度；其他语言的进度不抢占
     var currentLang = $('ide-lang').value;
@@ -992,11 +1065,19 @@ if (window.__IDE_RUNNER__ && window.__IDE_RUNNER__.onRuntimeProgress) {
         : profileId === 'cpp11' ? 'cpp11-gcc11-compat-v4'
         : profileId === 'python3' ? 'py312-cpython-compat-v1'
         : profileId === 'java21' ? 'java21-browserjdk-compat-v2'
-        : (profileId === 'c17' || profileId === 'cpp17') ? 'cpp-modern-engine-v1'
+        : (profileId === 'c17' || profileId === 'cpp17') ? 'cpp-modern-engine-v2'
         : '');
     });
     if (snap) renderProgressBar(snap);
+    if (snap && snap.runtimeId === 'cpp-modern-engine-v2') {
+      runtimeUiState.modernStage = snap.stage || 'IDLE';
+      if (currentLang === 'c17' || currentLang === 'cpp17') renderSelectedRuntimeStatus();
+    }
   });
+  return true;
+}
+if (!subscribeRuntimeProgress()) {
+  window.addEventListener('ide-runner-ready', subscribeRuntimeProgress, {once: true});
 }
 
 /* Retry 按钮（点击进度条内的"重试"） */

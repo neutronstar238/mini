@@ -27,13 +27,17 @@ function profile(opts) {
   const status = opts.status || 'ENABLED';
   const local = opts.localRuntime || {};
   const off = opts.officialJudge || {};
+  const submissionEnabled = opts.submissionEnabled === true ||
+    (opts.submissionEnabled !== false && ['ENABLED', 'BETA', 'BETA_FROZEN', 'STABLE', 'FROZEN', 'FINAL_FROZEN'].includes(status));
   return {
     id,
     language,
     displayName,
     status,
-    submissionEnabled: opts.submissionEnabled === true ||
-      (opts.submissionEnabled !== false && ['ENABLED', 'BETA', 'BETA_FROZEN', 'STABLE', 'FROZEN'].includes(status)),
+    submissionEnabled,
+    // Keep the explicit feature flag alongside the legacy field used by the
+    // submission service.  Both flags intentionally describe the same gate.
+    formalSubmit: opts.formalSubmit === true || submissionEnabled,
     localRuntime: {
       supported: !!local.supported,
       enabled: local.enabled !== false && !!local.supported,
@@ -44,12 +48,17 @@ function profile(opts) {
       redistributable: local.redistributable === true,
       runtimeId: local.runtimeId || null,
       compiler: local.compiler || null,
+      engineRuntimeId: local.engineRuntimeId || null,
       compilerVersion: local.compilerVersion || null,
       standard: local.standard || null,
       target: local.target || null,
       sysrootVersion: local.sysrootVersion || null,
       assetHash: local.assetHash || null,
       pchPolicy: local.pchPolicy || 'none',
+      headerGuard: local.headerGuard || 'none',
+      optimizationLevel: local.optimizationLevel || null,
+      optimizationMismatch: local.optimizationMismatch === true,
+      compileFlags: sanitizeCommand(local.compileFlags),
       // 前端加载/缓存/运行元数据（供 Runtime Manager）
       assets: local.assets || null,
       workerUrl: local.workerUrl || null,
@@ -83,7 +92,7 @@ function sanitizeCommand(cmds) {
 const c11 = profile({
   id: 'c11',
   displayName: 'C11',
-  status: 'ENABLED',
+  status: 'FINAL_FROZEN',
   localRuntime: {
     supported: true,
     runtimeId: 'c11-gcc11-compat-v3',
@@ -94,7 +103,7 @@ const c11 = profile({
     sysrootVersion: 'clang-fs.tar.gz (WASI libc, musl-based)',
     assetHash: 'B2E4B0F28A2C56B80CA43B61DC1CA2B62B8263B582735504E6C376FED4B1F363',
     pchPolicy: 'none',
-    status: 'READY',
+    status: 'FINAL_FROZEN',
     preloadDefault: false
   },
   officialJudge: {
@@ -114,7 +123,7 @@ const c11 = profile({
 const cpp11 = profile({
   id: 'cpp11',
   displayName: 'C++11',
-  status: 'ENABLED',
+  status: 'FINAL_FROZEN',
   localRuntime: {
     supported: true,
     runtimeId: 'cpp11-gcc11-compat-v4',
@@ -125,7 +134,7 @@ const cpp11 = profile({
     sysrootVersion: 'clang-fs.tar.gz (WASI libc + libc++)',
     assetHash: 'B2E4B0F28A2C56B80CA43B61DC1CA2B62B8263B582735504E6C376FED4B1F363',
     pchPolicy: 'explicit-bits-only',
-    status: 'READY',
+    status: 'FINAL_FROZEN',
     preloadDefault: false
   },
   officialJudge: {
@@ -145,7 +154,7 @@ const cpp11 = profile({
 const python3 = profile({
   id: 'python3',
   displayName: 'Python 3.12',
-  status: 'ENABLED',
+  status: 'FINAL_FROZEN',
   localRuntime: {
     supported: true,
     runtimeId: 'py312-cpython-compat-v1',
@@ -156,7 +165,7 @@ const python3 = profile({
     sysrootVersion: 'python_stdlib.zip',
     assetHash: '17E09D0EF8C89EF403F8DB7F34AACFE323A271D624F6CF1C4C9D1CB43B38922B',
     pchPolicy: 'none',
-    status: 'READY',
+    status: 'FINAL_FROZEN',
     preloadDefault: false
   },
   officialJudge: {
@@ -174,33 +183,39 @@ const python3 = profile({
 
 /* ==================== 现代新增 Profile（独立 Runtime ID，不覆盖冻结） ==================== */
 
-/* ---------------- c17-gcc14-compat-v1 ---------------- */
+/* ---------------- c17-gcc14-compat-v2 ---------------- */
 const c17 = profile({
   id: 'c17',
-  displayName: 'C17 🧪 Local Preview',
-  status: 'EXPERIMENTAL',
-  submissionEnabled: false,
+  displayName: 'C17',
+  status: 'BETA',
+  submissionEnabled: true,
+  formalSubmit: true,
   localRuntime: {
     supported: true,
     enabled: true,
-    preview: true,
-    runtimeId: 'c17-gcc14-compat-v1',
+    preview: false,
+    runtimeId: 'c17-gcc14-compat-v2',
+    engineRuntimeId: 'cpp-modern-engine-v2',
     compiler: 'Clang',
     compilerVersion: 'Clang 19.1.7 (browser WASM)',
     standard: 'c17',
     target: 'wasm32-unknown-wasi',
-    sysrootVersion: 'cpp-modern-engine-v1 sysroot',
-    assetHash: '25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c',
+    sysrootVersion: 'cpp-modern-engine-v2 overlay (immutable v1 sysroot)',
+    assetHash: '8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419',
     pchPolicy: 'none',
-    status: 'LOCAL_PREVIEW'
+    headerGuard: 'none',
+    optimizationLevel: '-O2',
+    optimizationMismatch: false,
+    compileFlags: ['-std=c17', '-O2'],
+    status: 'BETA'
   },
   officialJudge: {
     supported: true,
     referenceStatus: 'GCC14_REFERENCE_READY',
     compiler: 'GCC (gcc-14)',
-    compilerVersion: 'GCC 14.2.0 reference (Formal Submit disabled)',
+    compilerVersion: 'GCC 14.2.0 reference',
     standard: 'c17',
-    compileCommand: ['gcc-14', '-O2', '-std=c17', '<src>', '-lm', '-o', '<out>'],
+    compileCommand: ['gcc-14', '-std=c17', '-O2', '-Wall', '-Wextra', '-DONLINE_JUDGE', '<src>', '-lm', '-o', '<out>'],
     runCommand: ['<out>', '<', '<in>'],
     timeAdjustment: 1.0,
     memoryAdjustment: 1.0,
@@ -208,34 +223,40 @@ const c17 = profile({
   }
 });
 
-/* ---------------- cpp17-gcc14-compat-v1 ---------------- */
+/* ---------------- cpp17-gcc14-compat-v2 ---------------- */
 const cpp17 = profile({
   id: 'cpp17',
-  displayName: 'C++17 🧪 Local Preview',
-  status: 'EXPERIMENTAL',
-  submissionEnabled: false,
+  displayName: 'C++17',
+  status: 'BETA',
+  submissionEnabled: true,
+  formalSubmit: true,
   localRuntime: {
     supported: true,
     enabled: true,
-    preview: true,
-    runtimeId: 'cpp17-gcc14-compat-v1',
+    preview: false,
+    runtimeId: 'cpp17-gcc14-compat-v2',
+    engineRuntimeId: 'cpp-modern-engine-v2',
     compiler: 'Clang',
     compilerVersion: 'Clang 19.1.7 (browser WASM)',
     standard: 'c++17',
     target: 'wasm32-unknown-wasi',
-    sysrootVersion: 'cpp-modern-engine-v1 sysroot',
-    assetHash: '25433ade343cb3e2e3a3255c5a26ffc600b659d26d296749c33ac34d1afaff3c',
+    sysrootVersion: 'cpp-modern-engine-v2 overlay (immutable v1 sysroot)',
+    assetHash: '8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419',
     pchPolicy: 'none',
-    status: 'LOCAL_PREVIEW',
+    headerGuard: 'proven-mismatch-v1',
+    optimizationLevel: '-O2',
+    optimizationMismatch: false,
+    compileFlags: ['-std=c++17', '-O2'],
+    status: 'BETA',
     preloadDefault: false
   },
   officialJudge: {
     supported: true,
     referenceStatus: 'GCC14_REFERENCE_READY',
     compiler: 'G++ (g++-14)',
-    compilerVersion: 'GCC 14.2.0 reference (Formal Submit disabled)',
+    compilerVersion: 'GCC 14.2.0 reference',
     standard: 'c++17',
-    compileCommand: ['g++-14', '-O2', '-std=c++17', '<src>', '-o', '<out>'],
+    compileCommand: ['g++-14', '-std=c++17', '-O2', '-Wall', '-Wextra', '-DONLINE_JUDGE', '<src>', '-o', '<out>'],
     runCommand: ['<out>', '<', '<in>'],
     timeAdjustment: 1.0,
     memoryAdjustment: 1.0,
@@ -318,7 +339,7 @@ const java21 = profile({
   localRuntime: {
     supported: true,                       // Phase 6 Worker 已实现
     runtimeId: 'java21-browserjdk-compat-v2',
-    compiler: 'OpenJDK 21u (Zero interpreter, WASM via Emscripten)',
+    compiler: 'BrowserJDK / OpenJDK 21 compatible',
     compilerVersion: 'OpenJDK 21.0.10+7 / browserjdk-oj self-built',
     standard: 'java21',
     target: 'wasm32 (OpenJDK-WASM)',
@@ -364,17 +385,17 @@ const PROFILES = {
 };
 
 /** 顺序列表（UI / API 展示顺序） */
-const PROFILE_ORDER = ['c11', 'c17', 'cpp11', 'cpp17', 'cpp20', 'cpp23', 'python3', 'java21'];
+const PROFILE_ORDER = ['c11', 'cpp11', 'c17', 'cpp17', 'python3', 'java21'];
 
 function stateAllowsSubmission(status) {
-  return ['ENABLED', 'BETA', 'BETA_FROZEN', 'STABLE', 'FROZEN'].includes(status);
+  return ['ENABLED', 'BETA', 'BETA_FROZEN', 'STABLE', 'FROZEN', 'FINAL_FROZEN'].includes(status);
 }
 
 /** 派生的正式语言 allowlist。PENDING/EXPERIMENTAL/DISABLED 永不进入正式提交 allowlist。 */
 const enabledOfficialLanguages = () =>
   PROFILE_ORDER.filter((id) => {
     const p = PROFILES[id];
-    if (!p || !p.officialJudge.supported || !p.submissionEnabled) return false;
+    if (!p || !p.officialJudge.supported || !p.formalSubmit) return false;
     return stateAllowsSubmission(getEffectiveStatus(id));
   });
 
@@ -399,16 +420,19 @@ function legacyLanguageProfiles() {
  * 只含公开信息，不含 hidden test / db path / secret / cookie / session。
  */
 function sanitizedPublicProfile(id) {
+  if (!PROFILE_ORDER.includes(id)) return null;
   const p = PROFILES[id];
   if (!p) return null;
   const effectiveStatus = getEffectiveStatus(id);
   const localStatus = overrideStatus.has(id) ? effectiveStatus : p.localRuntime.status;
+  const effectiveFormalSubmit = p.formalSubmit && stateAllowsSubmission(effectiveStatus);
   return {
     id: p.id,
     language: p.language,
     displayName: p.displayName,
     status: effectiveStatus,
-    submissionEnabled: p.submissionEnabled,
+    submissionEnabled: effectiveFormalSubmit,
+    formalSubmit: effectiveFormalSubmit,
     localRuntime: {
       supported: p.localRuntime.supported,
       enabled: p.localRuntime.enabled,
@@ -419,12 +443,17 @@ function sanitizedPublicProfile(id) {
       redistributable: p.localRuntime.redistributable,
       runtimeId: p.localRuntime.runtimeId,
       compiler: p.localRuntime.compiler,
+      engineRuntimeId: p.localRuntime.engineRuntimeId,
       compilerVersion: p.localRuntime.compilerVersion,
       standard: p.localRuntime.standard,
       target: p.localRuntime.target,
       sysrootVersion: p.localRuntime.sysrootVersion,
       assetHash: p.localRuntime.assetHash,
       pchPolicy: p.localRuntime.pchPolicy,
+      headerGuard: p.localRuntime.headerGuard,
+      optimizationLevel: p.localRuntime.optimizationLevel,
+      optimizationMismatch: p.localRuntime.optimizationMismatch,
+      compileFlags: p.localRuntime.compileFlags,
       status: localStatus
     },
     officialJudge: {
@@ -453,8 +482,8 @@ function allSanitizedPublicProfiles() {
 const overrideStatus = new Map();
 
 function setStatus(id, status) {
-  if (!PROFILES[id]) return false;
-  if (!['PENDING', 'EXPERIMENTAL', 'LOCAL_PREVIEW', 'BETA', 'BETA_FROZEN', 'STABLE', 'FROZEN', 'ENABLED', 'DISABLED'].includes(status)) return false;
+  if (!PROFILE_ORDER.includes(id) || !PROFILES[id]) return false;
+  if (!['PENDING', 'EXPERIMENTAL', 'LOCAL_PREVIEW', 'BETA', 'BETA_FROZEN', 'STABLE', 'FROZEN', 'FINAL_FROZEN', 'ENABLED', 'DISABLED'].includes(status)) return false;
   overrideStatus.set(id, status);
   return true;
 }
@@ -464,7 +493,7 @@ function getEffectiveStatus(id) {
 function isOfficialEnabled(id) {
   const p = PROFILES[id];
   if (!p) return false;
-  return stateAllowsSubmission(getEffectiveStatus(id)) && p.officialJudge.supported && p.submissionEnabled;
+  return stateAllowsSubmission(getEffectiveStatus(id)) && p.officialJudge.supported && p.formalSubmit;
 }
 
 module.exports = {

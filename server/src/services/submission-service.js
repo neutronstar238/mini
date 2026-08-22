@@ -79,6 +79,11 @@ function submit(payload, userId) {
     }
     throw new ApiError(400, 'INVALID_LANGUAGE', '不支持的语言类型');
   }
+  if ((language === 'c17' || language === 'cpp17') &&
+      config.formalSubmitCanaryContestIds.length > 0 &&
+      !config.formalSubmitCanaryContestIds.includes(contestId)) {
+    throw new ApiError(403, 'FORMAL_SUBMIT_CANARY_ONLY', '该语言正式提交正在测试比赛中进行最终验收');
+  }
 
   // 5. source 校验
   const sourceText = String(source || '');

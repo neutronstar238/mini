@@ -3,6 +3,12 @@
 var cid = window.__CONTEST_ID__ || (new URLSearchParams(location.search).get('contest')) || '';
 if (!cid) location.href = '/contest/contests';
 var state = { page: 1, status: 'all' };
+var submissionSseHistory = [];
+function recordSubmissionSse(d) {
+  submissionSseHistory.push({ id: d.id, status: d.status, verdict: d.verdict || null });
+  if (submissionSseHistory.length > 100) submissionSseHistory.shift();
+  document.documentElement.dataset.submissionSseHistory = JSON.stringify(submissionSseHistory);
+}
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -93,6 +99,7 @@ document.getElementById('next-page').addEventListener('click', function () { sta
 // SSE：监听个人 submission_update（含 status+verdict）
 sseConnect('/api/contest/events/stream', {
   submission_update: function (d) {
+    recordSubmissionSse(d);
     // d 至少含 id + status（可能含 verdict）；刷新整页列表（关系库权威）
     if (d.contestId && d.contestId !== cid) return;
     var row = document.querySelector('tr[data-id="' + d.id + '"]');

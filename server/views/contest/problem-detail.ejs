@@ -31,10 +31,10 @@
         <div class="form-group" style="margin-bottom:10px">
           <span class="oj-tt-wrap" id="ide-lang-tt">
             <select class="form-control" id="ide-lang" style="display:inline-block;width:170px">
-              <option value="cpp">C++11</option>
               <option value="c">C11</option>
-              <option value="cpp17">C++17 🧪 Local Preview</option>
-              <option value="c17">C17 🧪 Local Preview</option>
+              <option value="cpp">C++11</option>
+              <option value="c17">C17</option>
+              <option value="cpp17">C++17</option>
               <option value="python">Python 3.12</option>
               <option value="java">Java 21</option>
             </select>
@@ -124,7 +124,7 @@ int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
           <button class="btn btn-primary" id="submit-btn">正式提交</button>
         </div>
         <div id="submit-preview-note" class="text-muted" style="display:none;margin-top:8px;font-size:12px">
-          C17/C++17 正式提交尚未启用，当前正在进行 GCC14 对齐与兼容性验证。本地运行结果仅供调试参考。
+          当前该语言暂不支持正式提交。
         </div>
         <div id="submit-result" class="mt-16" style="display:none">
           <div class="alert-oj alert-info-oj">
@@ -155,8 +155,12 @@ int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
       <div class="panel-body" style="font-size:13px;line-height:1.9">
         「运行代码」与「运行样例」均在<b>你的浏览器（WebAssembly）</b>内本地执行，<b>不安装任何软件、不接触隐藏测试点</b>。<br>
         <span style="color:#6b7280">首次使用可能从服务器下载并缓存静态运行环境；Runtime Ready 后，本地运行过程中源码、自定义输入及本地执行结果不发送至判题服务器。</span><br>
-        · C / C++：Runno · WASI Clang 编译器<br>
-        · Python：Runno · Pyodide<br>
+        · C11：浏览器本地运行；正式评测：GCC 11<br>
+        · C++11：浏览器本地运行；正式评测：G++ 11<br>
+        · C17：浏览器本地运行；正式评测：GCC 14<br>
+        · C++17：浏览器本地运行；正式评测：G++ 14<br>
+        · Python 3.12：浏览器本地运行；正式评测：CPython 3.12<br>
+        · Java 21：浏览器本地运行；正式评测：OpenJDK 21<br>
         本地运行结果仅供自测参考，正式评测由<b>服务器</b>执行。
       </div>
     </div>
@@ -167,6 +171,7 @@ int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
 window.__CONTEST_ID__ = <%- JSON.stringify(cid) %>;
 window.__PROBLEM_ID__ = <%- JSON.stringify(pid) %>;
 window.__USER_ID__ = <%- JSON.stringify(user && user.id ? user.id : '') %>;
+window.__MODERN_FORMAL_SUBMIT_ALLOWED__ = <%- JSON.stringify(typeof modernFormalSubmitAllowed === 'undefined' ? true : modernFormalSubmitAllowed) %>;
 </script>
 
 <!-- 浏览器运行时（Runno）：ES Module 加载，需 COOP/COEP 头 -->
