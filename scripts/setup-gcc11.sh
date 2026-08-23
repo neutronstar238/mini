@@ -2,7 +2,7 @@
 # ============================================================
 # scripts/setup-gcc11.sh
 #
-# 冻结真正的 GCC 11 参考环境（在 yqzl 服务器 / 或 WSL Ubuntu 内）。
+# 冻结真正的 GCC 11 参考环境（在部署者的 Linux 服务器或 WSL Ubuntu 内）。
 # 用途：Browser C++ Runtime 兼容性测试的正式 Reference 编译环境。
 #   g++-11 / gcc-11  （-std=c++11 / -std=c11）
 #
@@ -10,9 +10,9 @@
 #   宿主机默认只有 MinGW GCC 15.x，不能作为 GCC11 的近似替代。
 #   本项目兼容性对照必须以「真正 GCC 11」为准（详见 compat-tests/reference.json）。
 #
-# 当前已用于 yqzl 服务器（Ubuntu 24.04.4 LTS），通过 SSH 调用：
-#   ssh yqzl-server "sudo bash -s < scripts/setup-gcc11.sh"
-#   # 服务器 apt 网络畅通，无需换镜像；版本已实测 11.5.0-1ubuntu1~24.04.1
+# 远程安装示例：
+#   ssh <your-ssh-host> "sudo bash -s" < scripts/setup-gcc11.sh
+#   # 版本基线为 Ubuntu 24.04 的 GCC 11.5.0。
 #
 # 若需在 WSL 内复现：
 #   wsl -d Ubuntu-24.04 -u root -- bash -c "$(cat scripts/setup-gcc11.sh)"

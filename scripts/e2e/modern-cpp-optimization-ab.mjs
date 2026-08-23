@@ -10,7 +10,8 @@ import {
 
 const ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const OUT = join(ROOT, 'compat-tests', 'modern-cpp', 'results', 'modern-cpp-optimization.json');
-const HOST = process.env.GCC14_REFERENCE_HOST || 'yqzl-server';
+const HOST = process.env.GCC14_REFERENCE_HOST || '';
+if (!HOST) throw new Error('Set GCC14_REFERENCE_HOST to your GCC 14 reference server');
 const REPETITIONS = Number(process.env.MODERN_CPP_AB_REPETITIONS || 2);
 
 function text(path) { return readFileSync(join(ROOT, path), 'utf8'); }

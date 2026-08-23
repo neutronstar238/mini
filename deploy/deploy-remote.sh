@@ -3,26 +3,27 @@
 # Mini-OJ 服务器端部署脚本（在服务器上执行）
 # 覆盖：npm install → pm2 启动 → nginx 配置 → Let's Encrypt 证书 → reload
 #
-# 使用前必改：
-#   1) 将下方 DOMAIN_CONTEST / DOMAIN_ADMIN 改为真实域名
-#   2) 将 server/src/config.js 中 DOMAIN_CONTEST/DOMAIN_ADMIN 注入为同一真实域名
-#   3) 将 NODE 路径指向服务器上实际的 node 安装目录
-# 仓库内不保留真实域名与备案号，请勿将真实域名提交到仓库。
+# 使用时通过环境变量传入 DOMAIN_CONTEST、DOMAIN_ADMIN 和可选 NODE_BIN_DIR。
+# 仓库内不保留任何部署者的真实域名、服务器别名或绝对路径。
 # ============================================================
-set -e
+set -euo pipefail
 
-NODE=/www/server/nodejs/v24.14.1/bin
+NODE=${NODE_BIN_DIR:-/usr/local/bin}
 export PATH=$NODE:/usr/bin:/bin
 
-# ====== 部署参数（部署时替换为真实域名） ======
-DOMAIN_CONTEST=contest.mini.nstarzx.cn
-DOMAIN_ADMIN=admin.mini.nstarzx.cn
-# ==============================================
+: "${DOMAIN_CONTEST:?Set DOMAIN_CONTEST, for example contest.example.com}"
+: "${DOMAIN_ADMIN:?Set DOMAIN_ADMIN, for example admin.example.com}"
+: "${JWT_SECRET:?Set a random JWT_SECRET}"
+: "${HMAC_SECRET:?Set a random HMAC_SECRET}"
+: "${INTERNAL_API_SECRET:?Set a random INTERNAL_API_SECRET}"
 
-CONTEST=/www/wwwroot/$DOMAIN_CONTEST
-ADMIN=/www/wwwroot/$DOMAIN_ADMIN
+WEB_ROOT=${WEB_ROOT:-/var/www/mini-oj}
+CONTEST=$WEB_ROOT/$DOMAIN_CONTEST
+ADMIN=$WEB_ROOT/$DOMAIN_ADMIN
 SHARED_DB=$CONTEST/data/mini-oj.db
-NGINX_VHOST=/www/server/panel/vhost/nginx
+NGINX_VHOST=${NGINX_VHOST:-/etc/nginx/conf.d}
+NGINX_LOG_DIR=${NGINX_LOG_DIR:-/var/log/nginx}
+NGINX_BIN=${NGINX_BIN:-nginx}
 
 echo '==> 1/6 安装依赖'
 cd $CONTEST && npm install --registry=https://registry.npmmirror.com --omit=dev 2>&1 | tail -3
@@ -30,11 +31,15 @@ cd $ADMIN   && npm install --registry=https://registry.npmmirror.com --omit=dev 
 
 echo '==> 2/6 pm2 启动'
 cd $CONTEST && pm2 delete mini-oj-contest 2>/dev/null || true
-APP_ENTRY=contest PORT=3001 DB_FILE=$SHARED_DB C_COMPILER=gcc-11 CPP_COMPILER=g++-11 \
+NODE_ENV=production APP_ENTRY=contest PORT=3001 DB_FILE=$SHARED_DB C_COMPILER=/usr/bin/gcc-11 CPP_COMPILER=/usr/bin/g++-11 \
+  JAVA_JAVAC_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/javac JAVA_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/java \
+  JUDGE_SANDBOX_MODE=systemd JUDGE_SANDBOX_REQUIRED=1 \
+  JWT_SECRET=$JWT_SECRET HMAC_SECRET=$HMAC_SECRET INTERNAL_API_SECRET=$INTERNAL_API_SECRET \
   DOMAIN_CONTEST=$DOMAIN_CONTEST DOMAIN_ADMIN=$DOMAIN_ADMIN \
   pm2 start src/app.js --name mini-oj-contest
 cd $ADMIN && pm2 delete mini-oj-admin 2>/dev/null || true
-APP_ENTRY=admin PORT=3002 DB_FILE=$SHARED_DB \
+NODE_ENV=production APP_ENTRY=admin PORT=3002 DB_FILE=$SHARED_DB CORE_BASE_URL=http://127.0.0.1:3001 \
+  JWT_SECRET=$JWT_SECRET HMAC_SECRET=$HMAC_SECRET INTERNAL_API_SECRET=$INTERNAL_API_SECRET \
   DOMAIN_CONTEST=$DOMAIN_CONTEST DOMAIN_ADMIN=$DOMAIN_ADMIN \
   pm2 start src/app.js --name mini-oj-admin
 pm2 save
@@ -51,8 +56,8 @@ server {
         default_type text/plain;
     }
     location / { return 301 https://\$host\$request_uri; }
-    access_log  /www/wwwlogs/${DOMAIN_CONTEST}_80.log;
-    error_log   /www/wwwlogs/${DOMAIN_CONTEST}_80.error.log;
+    access_log  $NGINX_LOG_DIR/${DOMAIN_CONTEST}_80.log;
+    error_log   $NGINX_LOG_DIR/${DOMAIN_CONTEST}_80.error.log;
 }
 EOF
 cat > $NGINX_VHOST/${DOMAIN_ADMIN}_80.conf << EOF
@@ -66,8 +71,8 @@ server {
         default_type text/plain;
     }
     location / { return 301 https://\$host\$request_uri; }
-    access_log  /www/wwwlogs/${DOMAIN_ADMIN}_80.log;
-    error_log   /www/wwwlogs/${DOMAIN_ADMIN}_80.error.log;
+    access_log  $NGINX_LOG_DIR/${DOMAIN_ADMIN}_80.log;
+    error_log   $NGINX_LOG_DIR/${DOMAIN_ADMIN}_80.error.log;
 }
 EOF
 
@@ -109,8 +114,8 @@ server {
         proxy_read_timeout 600s;
         proxy_buffering off;
     }
-    access_log /www/wwwlogs/${DOMAIN_CONTEST}_443.log;
-    error_log  /www/wwwlogs/${DOMAIN_CONTEST}_443.error.log;
+    access_log $NGINX_LOG_DIR/${DOMAIN_CONTEST}_443.log;
+    error_log  $NGINX_LOG_DIR/${DOMAIN_CONTEST}_443.error.log;
 }
 EOF
 cat > $NGINX_VHOST/${DOMAIN_ADMIN}_443.conf << EOF
@@ -139,12 +144,12 @@ server {
         proxy_read_timeout 600s;
         proxy_buffering off;
     }
-    access_log /www/wwwlogs/${DOMAIN_ADMIN}_443.log;
-    error_log  /www/wwwlogs/${DOMAIN_ADMIN}_443.error.log;
+    access_log $NGINX_LOG_DIR/${DOMAIN_ADMIN}_443.log;
+    error_log  $NGINX_LOG_DIR/${DOMAIN_ADMIN}_443.error.log;
 }
 EOF
 
 echo '==> 6/6 reload nginx'
-$NODE/nginx -t 2>&1 | tail -3
-/etc/init.d/nginx reload 2>&1 | tail -2
+$NGINX_BIN -t
+systemctl reload nginx
 echo 'DEPLOY OK'

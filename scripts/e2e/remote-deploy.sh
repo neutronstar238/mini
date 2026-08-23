@@ -1,5 +1,5 @@
 #!/bin/bash
-# Phase 4 参考评测环境部署脚本（在 yqzl-server 上执行）
+# Phase 4 参考评测环境部署脚本（仅在隔离测试服务器上执行）
 set -e
 export PATH=/www/server/nodejs/v24.14.1/bin:/usr/bin:/bin
 cd /www/wwwroot/phase4-e2e/server

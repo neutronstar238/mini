@@ -5,7 +5,8 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const HOST = process.env.CPP17_SSH_HOST || 'yqzl-server';
+const HOST = process.env.CPP17_SSH_HOST || '';
+if (!HOST) throw new Error('Set CPP17_SSH_HOST to your GCC 14 reference server');
 const OUT = join(ROOT, 'compat-tests', 'cpp17', 'bits', 'gcc14-reference-headers.json');
 const SHIM = join(ROOT, 'compat-tests', 'cpp17', 'bits', 'include', 'bits', 'stdc++.h');
 const remote = [

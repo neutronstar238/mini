@@ -31,7 +31,7 @@ import path from 'node:path';
 
 dns.setDefaultResultOrder('ipv4first');
 
-const BASE_URL = (process.env.P9_BASE_URL || 'https://contest.mini.nstarzx.cn').replace(/\/$/, '');
+const BASE_URL = (process.env.P9_BASE_URL || 'http://127.0.0.1:3001').replace(/\/$/, '');
 const USERNAME = process.env.P9_USERNAME || '';
 const PASSWORD = process.env.P9_PASSWORD || '';
 const CONTEST_TITLE = process.env.P9_TEST_CONTEST_TITLE || 'Browser OJ E2E Test';
@@ -205,7 +205,7 @@ Execute real submissions (only after profiles report submissionEnabled=true):
   P9_USERNAME=user1 P9_PASSWORD=user123 node scripts/e2e/c17-cpp17-formal-submit.mjs --execute
 
 Environment:
-  P9_BASE_URL                 default: https://contest.mini.nstarzx.cn
+  P9_BASE_URL                 default: http://127.0.0.1:3001
   P9_USERNAME / P9_PASSWORD  required for API calls
   P9_TEST_CONTEST_TITLE       default: Browser OJ E2E Test
   P9_TEST_PROBLEM_TITLE       default: A + B
