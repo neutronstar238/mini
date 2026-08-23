@@ -28,6 +28,18 @@
         "url": "/js/contest/ide-wasi-execution-worker-modern.js"
       },
       {
+        "bytes": 7838,
+        "file": "ext/pb_ds/assoc_container.hpp",
+        "sha256": "8aab1be98a09a333c30a161f894a88aebae4ab5613ed2c73b8b85b43567ae9bb",
+        "url": "/runtime/cpp-modern-engine-v2/ext/pb_ds/assoc_container.hpp"
+      },
+      {
+        "bytes": 196,
+        "file": "ext/pb_ds/tree_policy.hpp",
+        "sha256": "e3138de0bfd1a5c2f0a39ff82553f6f4f82032c9d58e468fa3df83d474006c8e",
+        "url": "/runtime/cpp-modern-engine-v2/ext/pb_ds/tree_policy.hpp"
+      },
+      {
         "bytes": 78609,
         "file": "shared/clang.js",
         "sha256": "5e520da4e6d036ea0b9c1153fe12cac3f009a85941ba14f16a8891789dad3160",
@@ -81,7 +93,7 @@
     },
     "target": "wasm32-unknown-wasi"
   },
-  "runtimeAssetHash": "8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419",
+  "runtimeAssetHash": "c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987",
   "inheritedBinaryRuntimeId": "cpp-modern-engine-v1",
   "llvm": {
     "tag": "llvmorg-19.1.7",
@@ -196,6 +208,24 @@
       "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
     },
     {
+      "file": "ext/pb_ds/assoc_container.hpp",
+      "url": "/runtime/cpp-modern-engine-v2/ext/pb_ds/assoc_container.hpp",
+      "kind": "header-shim",
+      "role": "gnu-pbds-assoc-container-compatibility",
+      "mountPath": "/sys/include/c++/v1/ext/pb_ds/assoc_container.hpp",
+      "bytes": 7838,
+      "sha256": "8aab1be98a09a333c30a161f894a88aebae4ab5613ed2c73b8b85b43567ae9bb"
+    },
+    {
+      "file": "ext/pb_ds/tree_policy.hpp",
+      "url": "/runtime/cpp-modern-engine-v2/ext/pb_ds/tree_policy.hpp",
+      "kind": "header-shim",
+      "role": "gnu-pbds-tree-policy-compatibility",
+      "mountPath": "/sys/include/c++/v1/ext/pb_ds/tree_policy.hpp",
+      "bytes": 196,
+      "sha256": "e3138de0bfd1a5c2f0a39ff82553f6f4f82032c9d58e468fa3df83d474006c8e"
+    },
+    {
       "file": "code/controller.mjs",
       "url": "/js/contest/ide-wasi-worker-modern.js",
       "kind": "metadata",
@@ -230,6 +260,18 @@
       "url": "/js/contest/ide-wasi-execution-worker-modern.js",
       "bytes": 4947,
       "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166"
+    },
+    {
+      "file": "ext/pb_ds/assoc_container.hpp",
+      "url": "/runtime/cpp-modern-engine-v2/ext/pb_ds/assoc_container.hpp",
+      "bytes": 7838,
+      "sha256": "8aab1be98a09a333c30a161f894a88aebae4ab5613ed2c73b8b85b43567ae9bb"
+    },
+    {
+      "file": "ext/pb_ds/tree_policy.hpp",
+      "url": "/runtime/cpp-modern-engine-v2/ext/pb_ds/tree_policy.hpp",
+      "bytes": 196,
+      "sha256": "e3138de0bfd1a5c2f0a39ff82553f6f4f82032c9d58e468fa3df83d474006c8e"
     },
     {
       "file": "shared/clang.js",

@@ -108,7 +108,7 @@ async function firstProblem(page) {
     });
 
     assert(result.runtimeVersion === '0.10.0-ojc4', '加载版本化 Browser Runtime ojc4');
-    assert(result.cppRuntimeId === 'cpp11-gcc11-compat-v4', 'C++ Runtime ID 已升级到 v4');
+    assert(result.cppRuntimeId === 'cpp11-gcc11-compat-v5', 'C++ Runtime ID 已升级到 v5');
     assert(result.cpp14Rejected, 'C++11 模式拒绝 C++14 泛型 lambda');
     assert(result.inputBytesObserved === 10000, 'C/C++ stdin 10000 字节完整传输');
     assert(result.cppOutputTruncated && result.cppOutputLength <= 1024 * 1024,

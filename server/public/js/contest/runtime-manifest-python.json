@@ -30,9 +30,9 @@
     "implementation": "CPython",
     "pythonVersion": "3.12.3",
     "pythonVersionDetail": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
-    "distro": "Ubuntu 24.04 LTS (yqzl-server, SSH host alias 'yqzl-server')",
+    "distro": "Ubuntu 24.04 LTS reference environment",
     "runCommand": "python3 <src>.py < <in>",
-    "invokeHint": "ssh yqzl-server \"cd /tmp && python3 <src>.py < <in>\"",
+    "invokeHint": "ssh <reference-host> \"cd /tmp && python3 <src>.py < <in>\"",
     "env": "PYTHONHASHSEED 未固定（两端默认随机），非确定性输出单独分类；不加 Browser 没有的自定义 monkey patch",
     "comparePolicy": "match Server CPython run 结果；Traceback 文字无需逐字一致，Syntax vs Runtime Error 大类必须一致"
   },

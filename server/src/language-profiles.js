@@ -119,14 +119,14 @@ const c11 = profile({
   }
 });
 
-/* ---------------- cpp11-gcc11-compat-v4 (FROZEN) ---------------- */
+/* ---------------- cpp11-gcc11-compat-v5 (FROZEN) ---------------- */
 const cpp11 = profile({
   id: 'cpp11',
   displayName: 'C++11',
   status: 'FINAL_FROZEN',
   localRuntime: {
     supported: true,
-    runtimeId: 'cpp11-gcc11-compat-v4',
+    runtimeId: 'cpp11-gcc11-compat-v5',
     compiler: 'Clang',
     compilerVersion: 'Clang 8.0.1',
     standard: 'c++11',
@@ -201,7 +201,7 @@ const c17 = profile({
     standard: 'c17',
     target: 'wasm32-unknown-wasi',
     sysrootVersion: 'cpp-modern-engine-v2 overlay (immutable v1 sysroot)',
-    assetHash: '8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419',
+    assetHash: 'c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987',
     pchPolicy: 'none',
     headerGuard: 'none',
     optimizationLevel: '-O2',
@@ -241,7 +241,7 @@ const cpp17 = profile({
     standard: 'c++17',
     target: 'wasm32-unknown-wasi',
     sysrootVersion: 'cpp-modern-engine-v2 overlay (immutable v1 sysroot)',
-    assetHash: '8abec83e8375d5bd985f9c6fef62b2a3b3799bc7be52a89133c2689a19908419',
+    assetHash: 'c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987',
     pchPolicy: 'none',
     headerGuard: 'proven-mismatch-v1',
     optimizationLevel: '-O2',

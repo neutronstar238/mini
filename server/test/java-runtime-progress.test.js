@@ -33,3 +33,9 @@ test('running status and output header identify Java instead of Python', () => {
   assert.match(page, /if \(!useRunner\) await ensureRunno\(\)/);
   assert.doesNotMatch(page, /\(isCpp \? 'C\/C\+\+' : 'Python'\)/);
 });
+
+test('Java Zero uses a dedicated execution timeout and forwards it to the worker', () => {
+  assert.match(runner, /const JAVA_EXEC_TIMEOUT_MS = 15000/);
+  assert.match(runner, /timeoutMs: JAVA_EXEC_TIMEOUT_MS/);
+  assert.match(runner, /\}, JAVA_EXEC_TIMEOUT_MS\);/);
+});

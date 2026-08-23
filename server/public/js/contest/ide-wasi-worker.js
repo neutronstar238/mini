@@ -49,6 +49,91 @@ function post(msg, transfer) {
   postMessage(msg, transfer || []);
 }
 
+/* ---------------- GCC/MSVC 风格整数格式兼容 ----------------
+ * Codeforces 上的 GNU C++ 历史提交经常使用 MSVC 的 %I64d（及同族）格式。
+ * WASI libc 不实现 I64 length modifier：Clang 即使允许 warning 通过，运行时
+ * 也可能静默产生空输出。仅在 C++ 字符串字面量内做等价的 C99 归一化，避免
+ * 修改注释、字符字面量或用户实际的非格式文本；%I64[d/i/o/u/x/X] → %ll…。
+ */
+function normalizeMsvcInt64FormatStrings(source) {
+  const text = String(source == null ? '' : source);
+  let out = '';
+  let inString = false;
+  let quote = '';
+  let escaped = false;
+  let inLineComment = false;
+  let inBlockComment = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+    if (inLineComment) {
+      out += ch;
+      if (ch === '\n') inLineComment = false;
+      continue;
+    }
+    if (inBlockComment) {
+      out += ch;
+      if (ch === '*' && next === '/') {
+        out += next;
+        i++;
+        inBlockComment = false;
+      }
+      continue;
+    }
+    if (!inString) {
+      if (ch === '/' && next === '/') {
+        out += '//';
+        i++;
+        inLineComment = true;
+        continue;
+      }
+      if (ch === '/' && next === '*') {
+        out += '/*';
+        i++;
+        inBlockComment = true;
+        continue;
+      }
+      out += ch;
+      if (ch === '"' || ch === "'") {
+        inString = true;
+        quote = ch;
+      }
+      continue;
+    }
+    if (escaped) {
+      out += ch;
+      escaped = false;
+      continue;
+    }
+    if (ch === '\\') {
+      out += ch;
+      escaped = true;
+      continue;
+    }
+    if (ch === quote) {
+      out += ch;
+      inString = false;
+      quote = '';
+      continue;
+    }
+    if (quote === '"' && ch === '%') {
+      // An even number of immediately preceding '%' characters means this is
+      // a conversion marker; an odd number means it is part of a literal %%.
+      let precedingPercentCount = 0;
+      for (let j = i - 1; j >= 0 && text[j] === '%'; j--) precedingPercentCount++;
+      const conversion = text[i + 4];
+      if (precedingPercentCount % 2 === 0 && text.slice(i + 1, i + 4) === 'I64'
+        && 'diouxX'.indexOf(conversion) >= 0) {
+        out += '%ll' + conversion;
+        i += 4;
+        continue;
+      }
+    }
+    out += ch;
+  }
+  return out;
+}
+
 /* ---------------- 编译参数（与 Runno 内建 clang/clangpp runtime 一致，-ftime-report 供前后端拆分） ---------------- */
 function cc1Args(lang, optLevel, pchLevel) {
   // wasm32 target features：matomics 使 Clang 后端能 codegen 原子指令（std::atomic/shared_ptr 引用计数/regex 内部原子依赖）。
@@ -65,8 +150,11 @@ function cc1Args(lang, optLevel, pchLevel) {
       '-internal-isystem', '/sys/lib/clang/8.0.1/include',
       optLevel, '-emit-obj', '-o', '/program.o', '/program']);
   }
-  // C++11 profile（冻结）：保留 -Werror。
-  const args = ['clang', '-cc1'].concat(base, ['-std=c++11', '-Werror',
+  // C++11 profile（v5）：warning 不得阻断 GCC11 可编译源码。
+  // Clang 8 对常见 Codeforces 代码（如 %I64d、移位优先级）会发出
+  // warning；G++11 默认仍以 exit code 判定编译成功，不能把这些 warning
+  // 升级成 Browser CE。真正的语法/语义错误仍会使 clang 以非零退出。
+  const args = ['clang', '-cc1'].concat(base, ['-std=c++11',
     '-emit-obj', '-disable-free',
     '-internal-isystem', '/sys/include/c++/v1',
     '-internal-isystem', '/sys/include',
@@ -204,8 +292,9 @@ async function doCompile(msg) {
   // 清理上一次的中间产物，避免误读
   delete vfs['/program.o'];
   delete vfs['/program.wasm'];
+  const source = lang === 'cpp' ? normalizeMsvcInt64FormatStrings(msg.code) : msg.code;
   vfs['/program'] = {
-    path: 'program', content: msg.code, mode: 'string',
+    path: 'program', content: source, mode: 'string',
     timestamps: { access: new Date(), modification: new Date(), change: new Date() }
   };
 

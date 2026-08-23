@@ -146,8 +146,8 @@ function main() {
 
     const expectedInventory = inventory(v2Assets);
     check('assetInventoryMatchesAssets', sameJson(inventory(v2Inventory), expectedInventory) &&
-      v2Inventory.length === 9, {
-      message: 'v2 assetInventory does not exactly describe the nine overlay assets',
+      v2Inventory.length === 11, {
+      message: 'v2 assetInventory does not exactly describe the eleven overlay assets',
       inventoryCount: v2Inventory.length,
       assetsCount: v2Assets.length
     });
@@ -208,6 +208,28 @@ function main() {
           kind: 'header-shim',
           role: 'gcc14-compatible-standard-header-aggregate',
           mountPath: '/sys/include/c++/v1/bits/stdc++.h'
+        }
+      },
+      {
+        id: 'pbdsAssocContainer',
+        assetFile: 'ext/pb_ds/assoc_container.hpp',
+        localPath: path.join(V2_DIR, 'ext', 'pb_ds', 'assoc_container.hpp'),
+        expected: {
+          url: '/runtime/cpp-modern-engine-v2/ext/pb_ds/assoc_container.hpp',
+          kind: 'header-shim',
+          role: 'gnu-pbds-assoc-container-compatibility',
+          mountPath: '/sys/include/c++/v1/ext/pb_ds/assoc_container.hpp'
+        }
+      },
+      {
+        id: 'pbdsTreePolicy',
+        assetFile: 'ext/pb_ds/tree_policy.hpp',
+        localPath: path.join(V2_DIR, 'ext', 'pb_ds', 'tree_policy.hpp'),
+        expected: {
+          url: '/runtime/cpp-modern-engine-v2/ext/pb_ds/tree_policy.hpp',
+          kind: 'header-shim',
+          role: 'gnu-pbds-tree-policy-compatibility',
+          mountPath: '/sys/include/c++/v1/ext/pb_ds/tree_policy.hpp'
         }
       },
       {

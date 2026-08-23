@@ -1069,7 +1069,7 @@ function subscribeRuntimeProgress() {
     var profileId = frontendLangToProfileId(currentLang);
     var snap = snaps.find(function (s) {
       return s.runtimeId === (profileId === 'c11' ? 'c11-gcc11-compat-v3'
-        : profileId === 'cpp11' ? 'cpp11-gcc11-compat-v4'
+        : profileId === 'cpp11' ? 'cpp11-gcc11-compat-v5'
         : profileId === 'python3' ? 'py312-cpython-compat-v1'
         : profileId === 'java21' ? 'java21-browserjdk-compat-v2'
         : (profileId === 'c17' || profileId === 'cpp17') ? 'cpp-modern-engine-v2'

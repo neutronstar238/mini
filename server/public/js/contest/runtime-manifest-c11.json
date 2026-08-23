@@ -14,7 +14,7 @@
     "compilerVersion": "Clang 8.0.1",
     "languageStandard": "-std=c11",
     "compilerFlagsC": "-std=c11 -O0 -fno-common -isysroot /sys -fcolor-diagnostics -ftime-report",
-    "compilerFlagsCpp": "-std=c++11 -O0 -Werror -isysroot /sys -fcolor-diagnostics -ftime-report",
+    "compilerFlagsCpp": "-std=c++11 -O0 -isysroot /sys -fcolor-diagnostics -ftime-report",
     "stdlib": "WASI libc (musl-based, sys/include)",
     "shim": "（C 无 shim；不修改 libc，不补声明；不复制 C++ Header Ownership Table）",
     "clangFixesForC": [
@@ -37,7 +37,7 @@
     },
     "languageProfiles": {
       "c11": { "extension": ".c", "standard": "c11", "pchPolicy": "none", "compatGuard": "none-unless-proven-needed", "werror": false, "defaultLongDouble": true, "mathLibrary": "libc-builtin" },
-      "cpp11": { "extension": ".cpp", "standard": "c++11", "pchPolicy": "explicit-bits-only", "compatGuard": "gcc11-cpp-header-check", "werror": true, "defaultLongDouble": false, "frozen": "cpp11-gcc11-compat-v4" }
+      "cpp11": { "extension": ".cpp", "standard": "c++11", "pchPolicy": "explicit-bits-only", "compatGuard": "gcc11-cpp-header-check", "werror": false, "defaultLongDouble": false, "formatCompatibility": "%I64[d/i/o/u/x/X] → %ll[d/i/o/u/x/X] in string literals", "frozen": "cpp11-gcc11-compat-v5" }
     },
     "persistent": { "compilerWorker": true, "vfsSysroot": true, "runtimePreload": true, "artifactCacheMax": 8 },
     "artifactCacheKey": "RUNNO_VERSION | lang | optLevel | pchLevel | longDouble | codeHash（含 lang=c11 与 cpp11 区分）",
@@ -49,9 +49,9 @@
     "compiler": "GCC 11 (gcc-11)",
     "compilerVersion": "Ubuntu 11.5.0-1ubuntu1~24.04.1",
     "languageStandard": "-std=c11",
-    "distro": "Ubuntu 24.04.4 LTS (yqzl-server, SSH host alias 'yqzl-server')",
+    "distro": "Ubuntu 24.04 LTS reference environment",
     "compileCommand": "gcc-11 -std=c11 <src> -lm -o <out>",
-    "invokeHint": "ssh yqzl-server \"gcc-11 -std=c11 <src> -lm -o <out> && <out> < <in>\"",
+    "invokeHint": "ssh <reference-host> \"gcc-11 -std=c11 <src> -lm -o <out> && <out> < <in>\"",
     "comparePolicy": "match Server Compile Result（GCC11 实际 exit code）；不臆断 CE；implicit declaration / incompatible pointer 无 -Werror 下为 warning+PASS"
   },
 
@@ -63,7 +63,7 @@
   "verified": {
     "positiveCompileMatch": "100%（67/67 = features 23 + math-runtime 7 + acm-corpus 37，含 37 个真实 ACM corpus）",
     "negativeCeMatch": "100% (10/10, 按 GCC11 实际 exit code 判定)",
-    "warningNoCeMatch": "100% (5/5, GCC11 warning+PASS → Browser PASS, -Werror 不误杀)",
+    "warningNoCeMatch": "100% (5/5, GCC11 warning+PASS → Browser PASS；C++11 v5 warning 非致命)",
     "compatibilityRuntimeOutputMatch": "100%（Browser==Server，70/70）",
     "correctnessDeterministicOutputMatch": "100%（Browser==Server==expectedStdout，48/48）",
     "runtimeMathMatch": "100%（features/math-runtime 7 例计入 positive，运行时输入，双端与 expected 一致）",

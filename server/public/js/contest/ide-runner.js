@@ -72,7 +72,7 @@ function detectPythonInterruptCapability() {
 
 /* Runtime ID 注册表：冻结 C/C++/Python 不变；Java 21 v2 为 BETA_FROZEN；Modern 使用独立 engine。 */
 const runtimeIds = {
-  cpp: 'cpp11-gcc11-compat-v4',
+  cpp: 'cpp11-gcc11-compat-v5',
   c: 'c11-gcc11-compat-v3',
   c17: 'c17-gcc14-compat-v2',
   cpp17: 'cpp17-gcc14-compat-v2',
@@ -563,25 +563,41 @@ async function checkGcc11Headers(opts) {
 }
 
 /* ---------------- stdin SAB 推送（与 Runno WASIWorkerHost 相同协议） ---------------- */
-async function pushStdin(sab, bytes) {
+function stdinBufferByteLength(inputByteLength) {
+  // The first four bytes are the Atomics/DataView length word. The complete
+  // SharedArrayBuffer must also be Int32-aligned because both sides create an
+  // Int32Array view over the whole buffer.
+  const required = Math.max(8 * 1024, inputByteLength + 4);
+  return Math.ceil(required / Int32Array.BYTES_PER_ELEMENT) * Int32Array.BYTES_PER_ELEMENT;
+}
+
+async function waitForStdinSlot(sab, shouldAbort) {
   const dv = new DataView(sab);
-  while (dv.getInt32(0) !== 0) await new Promise(function (r) { setTimeout(r, 0); });
+  while (dv.getInt32(0) !== 0) {
+    if (shouldAbort && shouldAbort()) throw new Error('stdin worker stopped');
+    await new Promise(function (r) { setTimeout(r, 0); });
+  }
+  if (shouldAbort && shouldAbort()) throw new Error('stdin worker stopped');
+  return dv;
+}
+async function pushStdin(sab, bytes, shouldAbort) {
+  const dv = await waitForStdinSlot(sab, shouldAbort);
   new Uint8Array(sab, 4).set(bytes);
   dv.setInt32(0, bytes.byteLength);
   Atomics.notify(new Int32Array(sab), 0);
 }
-async function pushEOF(sab) {
-  const dv = new DataView(sab);
-  while (dv.getInt32(0) !== 0) await new Promise(function (r) { setTimeout(r, 0); });
+async function pushEOF(sab, shouldAbort) {
+  const dv = await waitForStdinSlot(sab, shouldAbort);
   dv.setInt32(0, -1);
   Atomics.notify(new Int32Array(sab), 0);
 }
 
 /* ---------------- 干净 Exec Worker 执行 artifact ----------------
- * 返回 { stdout, stderr, exitCode, timedOut, aborted, wasmCompileMs, instantiateMs, executionMs }
+ * 返回 { stdout, stderr, exitCode, timedOut, aborted, runtimeError, runStatus,
+ *        wasmCompileMs, instantiateMs, executionMs }
  */
 function execArtifact(opts) {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function (resolve) {
     const worker = new Worker(WORKER_URL, { type: 'module' });
     const stdinBytes = new TextEncoder().encode(opts.stdin || '');
     if (stdinBytes.byteLength > MAX_STDIN_BYTES) {
@@ -593,11 +609,10 @@ function execArtifact(opts) {
       });
       return;
     }
-    // 输入缓冲按 UTF-8 实际字节数分配，避免旧固定 8KB 缓冲静默截断大输入。
-    const sab = new SharedArrayBuffer(Math.max(8 * 1024, stdinBytes.byteLength + 4));
+    // 输入缓冲按 UTF-8 实际字节数分配，避免旧固定 8KB 缓冲静默截断大输入；
+    // 长度同时向上取整到 Int32 的倍数，保证 Worker 侧 Int32Array 构造合法。
+    const sab = new SharedArrayBuffer(stdinBufferByteLength(stdinBytes.byteLength));
     let settled = false;
-    let timedOut = false;
-    let aborted = false;
 
     function finish(res) {
       if (settled) return;
@@ -607,13 +622,11 @@ function execArtifact(opts) {
       resolve(res);
     }
     const timer = setTimeout(function () {
-      timedOut = true;
       finish({ stdout: '', stderr: '', exitCode: -1, timedOut: true, aborted: false, executionMs: 0, instantiateMs: 0, wasmCompileMs: 0 });
     }, opts.timeoutMs || EXEC_TIMEOUT_MS);
 
     if (opts.killers) {
       opts.killers.push(function () {
-        aborted = true;
         finish({ stdout: '', stderr: '', exitCode: -1, timedOut: false, aborted: true, executionMs: 0, instantiateMs: 0, wasmCompileMs: 0 });
       });
     }
@@ -621,26 +634,53 @@ function execArtifact(opts) {
     worker.addEventListener('message', function (e) {
       const d = e.data;
       if (!d || d.type !== 'run-result') return;
+      const exitCode = d.exitCode == null ? -1 : d.exitCode;
+      const runtimeError = d.ok === false || exitCode !== 0;
+      const errorMessage = d.error && d.error.message ? d.error.message : '';
+      const timing = d.timing || {};
       finish({
-        stdout: d.stdout || '', stderr: d.stderr || (d.error ? d.error.message : ''),
-        exitCode: d.exitCode, timedOut: false, aborted: false,
+        ok: !runtimeError, stdout: d.stdout || '', stderr: d.stderr || errorMessage,
+        exitCode: exitCode, timedOut: false, aborted: false,
+        runtimeError: runtimeError, runStatus: runtimeError ? 'RE' : 'PASS',
+        failureLayer: runtimeError ? 'execution' : null,
         outputTruncated: !!d.outputTruncated,
-        wasmCompileMs: d.timing.wasmCompileMs, instantiateMs: d.timing.instantiateMs,
-        executionMs: d.timing.executionMs
+        wasmCompileMs: timing.wasmCompileMs || 0, instantiateMs: timing.instantiateMs || 0,
+        executionMs: timing.executionMs || 0
       });
     });
     worker.addEventListener('error', function (e) {
       if (settled) return;
-      reject(new Error('执行 Worker 异常: ' + (e.message || 'unknown')));
+      finish({ ok: false, stdout: '', stderr: '执行 Worker 异常: ' + (e.message || 'unknown'),
+        exitCode: -1, timedOut: false, aborted: false, runtimeError: true,
+        runStatus: 'RE', failureLayer: 'execution', executionMs: 0,
+        instantiateMs: 0, wasmCompileMs: 0 });
     });
 
-    worker.postMessage({
-      type: 'run', module: opts.module || null, bytes: opts.bytes || null,
-      args: opts.args || ['program'], env: {}, fs: opts.fs || {}, stdinBuffer: sab
+    try {
+      worker.postMessage({
+        type: 'run', module: opts.module || null, bytes: opts.bytes || null,
+        args: opts.args || ['program'], env: {}, fs: opts.fs || {}, stdinBuffer: sab
+      });
+    } catch (error) {
+      finish({ ok: false, stdout: '', stderr: '执行 Worker 发送失败: ' + String(error && error.message || error),
+        exitCode: -1, timedOut: false, aborted: false, runtimeError: true,
+        runStatus: 'RE', failureLayer: 'execution', executionMs: 0,
+        instantiateMs: 0, wasmCompileMs: 0 });
+      return;
+    }
+    // stdin 推送必须串行：先数据后 EOF。任何推送失败都要显式作为 RE，
+    // 不能被 catch 忽略后让上层把空 stdout 误判成 PASS。
+    const shouldAbort = function () { return settled; };
+    const stdinPush = stdinBytes.byteLength
+      ? pushStdin(sab, stdinBytes, shouldAbort)
+      : Promise.resolve();
+    stdinPush.then(function () { return pushEOF(sab, shouldAbort); }).catch(function (error) {
+      if (settled) return;
+      finish({ ok: false, stdout: '', stderr: 'stdin 推送失败: ' + String(error && error.message || error),
+        exitCode: -1, timedOut: false, aborted: false, runtimeError: true,
+        runStatus: 'RE', failureLayer: 'stdin', executionMs: 0,
+        instantiateMs: 0, wasmCompileMs: 0 });
     });
-    // stdin 推送（先数据后 EOF，后台自旋等待消费 —— 与 Runno 相同次序）
-    if (stdinBytes.byteLength) pushStdin(sab, stdinBytes).catch(function () { /* ignore */ });
-    pushEOF(sab).catch(function () { /* ignore */ });
   });
 }
 
@@ -750,6 +790,7 @@ async function runC(opts) {
   return {
     stdout: r.stdout, stderr: r.stderr, exitCode: r.exitCode,
     timedOut: r.timedOut, aborted: r.aborted,
+    runtimeError: !!r.runtimeError, runStatus: r.runStatus || null,
     outputTruncated: !!r.outputTruncated,
     executionMs: r.executionMs, timeMs: timing.totalMs, timing: timing
   };
@@ -761,7 +802,7 @@ async function runC(opts) {
  *   - 懒加载：首次选择 Java 或 prewarm('java') 时创建 Worker + 初始化 JVM + CompileServer。
  *   - Compile Once, Run Many：runtimeId + SHA-256(source) → immutable bytecode LRU（cap=8）。
  *   - Run Isolation：每次 Run 走 fresh MemoryClassLoader、swap System.in/out/err 缓冲、reset 协议 stdin。
- *   - 超时保护：EXEC_TIMEOUT_MS（6s）后置 SAB interrupt → CompileServer bytecode 边界抛
+ *   - 超时保护：JAVA_EXEC_TIMEOUT_MS（15s）后置 SAB interrupt → CompileServer bytecode 边界抛
  *     InternalInterrupt；宽限期仍无响应 → terminate + 重建 Worker，绝不卡死主 UI。
  *   - Java 与 C/C++/Python 语义不同：Persistent JVM 内部 CompileServer 同时承担 compile + run。
  *     self-built CompileServer 返回 compile/run 分离语义；cache hit 仍用 fresh MemoryClassLoader 执行。
@@ -773,8 +814,9 @@ const JAVA_RUNTIME_BASE_URL = '/runtime/' + JAVA_RUNTIME_ID_PRIMARY + '/';
 const JAVA_RUNTIME_MANIFEST_URL = JAVA_RUNTIME_BASE_URL + 'runtime-manifest.json';
 const JAVA_INIT_TIMEOUT_MS = 120000;      // 首次含 wasm 下载 + JVM/CompileServer 初始化
 const JAVA_ASSET_TIMEOUT_MS = 180000;     // 移动网络下载约 30 MiB 冻结资产的总超时
+const JAVA_EXEC_TIMEOUT_MS = 15000;       // Zero 解释器显著慢于 JIT Runtime，使用 Java 专用本地保护
 const JAVA_INTERRUPT_GRACE_MS = 800;      // SAB interrupt 后等待 bytecode 边界生效窗口
-const JAVA_FALLBACK_TIMEOUT_MS = 6000;     // 无 SAB 时 Local Timeout 兜底
+const JAVA_FALLBACK_TIMEOUT_MS = JAVA_EXEC_TIMEOUT_MS; // 无 SAB 时使用相同 Java 本地保护
 
 let javaWorker = null;
 let javaReadyPromise = null;
@@ -1087,8 +1129,8 @@ async function runJava(opts) {
           disposeJavaWorker();
           finish({
             status: 'timeout', compileStatus: 'PASS', runStatus: 'TLE',
-            stdout: '', stderr: '本地运行超时（' + EXEC_TIMEOUT_MS + 'ms）已终止。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
-            exitCode: -1, compileTime: 0, executionTime: EXEC_TIMEOUT_MS, cacheHit: false, timedOut: true
+            stdout: '', stderr: '本地运行超时（' + JAVA_EXEC_TIMEOUT_MS + 'ms）已终止。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
+            exitCode: -1, compileTime: 0, executionTime: JAVA_EXEC_TIMEOUT_MS, cacheHit: false, timedOut: true
           });
         }, JAVA_INTERRUPT_GRACE_MS);
       } else {
@@ -1100,10 +1142,11 @@ async function runJava(opts) {
           exitCode: -1, compileTime: 0, executionTime: JAVA_FALLBACK_TIMEOUT_MS, cacheHit: false, timedOut: true
         });
       }
-    }, EXEC_TIMEOUT_MS);
+    }, JAVA_EXEC_TIMEOUT_MS);
 
     try {
-      worker.postMessage({ type: 'run', requestId: requestId, source: source, sourceHash: codeHash, stdin: opts.stdin || '' });
+      worker.postMessage({ type: 'run', requestId: requestId, source: source, sourceHash: codeHash,
+        stdin: opts.stdin || '', timeoutMs: JAVA_EXEC_TIMEOUT_MS });
     } catch (e) {
       finish({
         status: 'crash', compileStatus: 'SKIP', runStatus: 'ABORTED',
@@ -1474,12 +1517,12 @@ async function runCode(opts) {
     language: isC ? 'c' : 'cpp', runtimeId: runtimeIds[isC ? 'c' : 'cpp'],
     compileStatus: r.compileFailed ? 'CE' : 'PASS',
     compileTime: (r.timing && r.timing.compileMs) || 0,
-    runStatus: r.timedOut ? 'TLE' : (r.aborted ? 'ABORTED' : (r.compileFailed ? 'CE' : 'PASS')),
+    runStatus: r.timedOut ? 'TLE' : (r.aborted ? 'ABORTED' : (r.compileFailed ? 'CE' : (r.runStatus || (r.runtimeError ? 'RE' : 'PASS')))),
     executionTime: r.executionMs != null ? r.executionMs : 0,
     stdout: r.stdout || '', stderr: r.stderr || '',
     cacheHit: !!(r.timing && r.timing.cacheHit),
     linkTime: (r.timing && r.timing.linkMs != null) ? r.timing.linkMs : 0,
-    timedOut: !!r.timedOut, aborted: !!r.aborted, exitCode: r.exitCode,
+    timedOut: !!r.timedOut, aborted: !!r.aborted, runtimeError: !!r.runtimeError, exitCode: r.exitCode,
     outputTruncated: !!r.outputTruncated,
     timing: r.timing, executionMs: r.executionMs, timeMs: r.timeMs, compileFailed: r.compileFailed
   };

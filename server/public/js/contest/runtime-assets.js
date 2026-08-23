@@ -198,7 +198,7 @@ const RUNTIME_ASSETS_MANIFEST = {
       { url: '/runtime/runno/0.10.0-ojc4/langs/wasm-ld.wasm', bytes: null, cacheKey: 'runno-wasm-ld' }
     ]
   },
-  'cpp11-gcc11-compat-v4': {
+  'cpp11-gcc11-compat-v5': {
     // 复用 c11 资产（同 Clang 8 sysroot/wasm-ld），仅 PCH 与 flags 不同
     reuseFrom: 'c11-gcc11-compat-v3'
   },
@@ -396,7 +396,7 @@ function prewarmRuntime(runtimeId, options) {
   const promise = (async function () {
     try {
       // 冻结 Runtime：保持旧管线，本模块只观察
-      const frozenSet = new Set(['c11-gcc11-compat-v3', 'cpp11-gcc11-compat-v4', 'py312-cpython-compat-v1']);
+      const frozenSet = new Set(['c11-gcc11-compat-v3', 'cpp11-gcc11-compat-v5', 'py312-cpython-compat-v1']);
       if (frozenSet.has(runtimeId)) {
         const status = await runtimeCacheStatus(runtimeId);
         state.setStage(PROGRESS_STAGES.CHECK_CACHE, { message: '检查缓存（冻结 Runtime）' });

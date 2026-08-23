@@ -23,6 +23,19 @@ function localAsset(file, url, kind, role, mountPath) {
   return {file, url: '/' + url.replace(/^\//, ''), kind, role, bytes: body.byteLength, sha256: sha256(body), ...(mountPath ? {mountPath} : {})};
 }
 
+function overlayAsset(file, role, mountPath) {
+  const body = readFileSync(join(V2_DIR, ...file.split('/')));
+  return {
+    file,
+    url: '/runtime/cpp-modern-engine-v2/' + file,
+    kind: 'header-shim',
+    role,
+    mountPath,
+    bytes: body.byteLength,
+    sha256: sha256(body)
+  };
+}
+
 function buildManifest() {
   const v1 = JSON.parse(readFileSync(join(V1_DIR, 'runtime-manifest.json'), 'utf8'));
   const shared = v1.assets.map(asset => ({
@@ -31,19 +44,21 @@ function buildManifest() {
     url: '/runtime/cpp-modern-engine-v1/' + asset.file,
     inheritedFrom: 'cpp-modern-engine-v1'
   }));
-  const shimBody = readFileSync(join(V2_DIR, 'bits', 'stdc++.h'));
-  const shim = {
-    file: 'bits/stdc++.h', url: '/runtime/cpp-modern-engine-v2/bits/stdc++.h',
-    kind: 'header-shim', role: 'gcc14-compatible-standard-header-aggregate',
-    mountPath: '/sys/include/c++/v1/bits/stdc++.h', bytes: shimBody.byteLength, sha256: sha256(shimBody)
-  };
+  const shims = [
+    overlayAsset('bits/stdc++.h', 'gcc14-compatible-standard-header-aggregate',
+      '/sys/include/c++/v1/bits/stdc++.h'),
+    overlayAsset('ext/pb_ds/assoc_container.hpp', 'gnu-pbds-assoc-container-compatibility',
+      '/sys/include/c++/v1/ext/pb_ds/assoc_container.hpp'),
+    overlayAsset('ext/pb_ds/tree_policy.hpp', 'gnu-pbds-tree-policy-compatibility',
+      '/sys/include/c++/v1/ext/pb_ds/tree_policy.hpp')
+  ];
   const controllerBody = readFileSync(join(ROOT, 'server', 'public', 'js', 'contest', 'ide-wasi-worker-modern.js'));
   const executorBody = readFileSync(join(ROOT, 'server', 'public', 'js', 'contest', 'ide-wasi-execution-worker-modern.js'));
   const codeAssets = [
     {file: 'code/controller.mjs', url: '/js/contest/ide-wasi-worker-modern.js', kind: 'metadata', role: 'control-code', bytes: controllerBody.byteLength, sha256: sha256(controllerBody)},
     {file: 'code/executor.mjs', url: '/js/contest/ide-wasi-execution-worker-modern.js', kind: 'metadata', role: 'execution-code', bytes: executorBody.byteLength, sha256: sha256(executorBody)}
   ];
-  const assets = [...shared, shim, ...codeAssets];
+  const assets = [...shared, ...shims, ...codeAssets];
   const orderedAssets = assets.map(({file, url, bytes, sha256: hash}) => ({file, url, bytes, sha256: hash}))
     .sort((a, b) => a.file.localeCompare(b.file));
   const runtimeIdentity = canonical({
