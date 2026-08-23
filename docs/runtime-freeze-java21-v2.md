@@ -88,7 +88,7 @@ foreach ($a in $m.assets) {
 
 ### Timeout and output
 
-- Local timeout policy 由 worker 的 `timeoutMs` 控制；冻结回归使用 6,000 ms。
+- Local timeout policy 由 worker 的 `timeoutMs` 控制；冻结恢复回归使用 6,000 ms，Problem Page 针对 Zero 解释器使用 15,000 ms。
 - 超时返回 `status=timeout`、`runStatus=TLE`、`timedOut=true`，并通过 interrupt；interrupt 无效时 terminate + recreate。
 - stdout/stderr 单项上限为 1 MiB，超限返回 `outputTruncated=true`。
 

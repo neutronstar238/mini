@@ -4,13 +4,13 @@
 
 结论：Java 16/16 PASS。
 
-覆盖 Problem Page、Java 21 selector、`NOT_LOADED`、custom stdin、`READY`、DOWNLOAD/BOOT_JVM/INITIALIZE_COMPILER/READY progress、same-source cache hit、Sample Run、`Local Sample Passed != Accepted`、CE、RE、6 s Local Timeout、timeout recovery、1 MiB output cap、Formal Submit 与模拟 runtime-loading error。加载失败被归类为 runtime unavailable，而不是 Compile Error。
+覆盖 Problem Page、Java 21 selector、`NOT_LOADED`、custom stdin、`READY`、DOWNLOAD/BOOT_JVM/INITIALIZE_COMPILER/READY progress、same-source cache hit、Sample Run、`Local Sample Passed != Accepted`、CE、RE、timeout recovery、1 MiB output cap、Formal Submit 与模拟 runtime-loading error。冻结恢复回归使用 6 s timeout；当前 Problem Page 针对 Zero 解释器使用 15 s。加载失败被归类为 runtime unavailable，而不是 Compile Error。
 
 共享层冻结回归也在同一真实 Chrome 流程中通过：
 
 | Runtime | A+B / Sample / Cache / CE / RE / ExecutionTime |
 |---|---:|
-| `cpp11-gcc11-compat-v4` | 6/6 |
+| `cpp11-gcc11-compat-v5` | 6/6 |
 | `c11-gcc11-compat-v3` | 6/6 |
 | `py312-cpython-compat-v1` | 6/6 |
 

@@ -47,7 +47,7 @@ Web IDE 的浏览器内 C/C++ 运行时依赖 3 个 WASI 语言资产，合计�
 
 ## 版本绑定（重要）
 
-Runtime 版本绑定 `cpp11-gcc11-compat-v4`，即：
+Runtime 版本绑定 `cpp11-gcc11-compat-v5`，即：
 **编译器 clang 8.0.1 + 语言 c++11 + sysroot + PCH + shim 版本** 共同进入 artifact/runtime hash。
 
 ⚠️ 若更换 clang 版本（升级 Runno 或换编译器），必须：

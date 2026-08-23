@@ -53,7 +53,7 @@ Browser Local 的 stdout、耗时、Sample Passed 全部不可信，仅供选手
 
 | 语言 | Runtime ID | 浏览器实现 |
 |---|---|---|
-| C++11 | `cpp11-gcc11-compat-v4` | Clang 8.0.1 + wasm-ld + WASI libc++，显式 `-std=c++11` |
+| C++11 | `cpp11-gcc11-compat-v5` | Clang 8.0.1 + wasm-ld + WASI libc++，显式 `-std=c++11` |
 | C11 | `c11-gcc11-compat-v3` | Clang 8.0.1 + wasm-ld + WASI libc，显式 `-std=c11` |
 | Python 3 | `py312-cpython-compat-v1` | Pyodide 0.26.4 / CPython 3.12.1 |
 

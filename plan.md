@@ -67,7 +67,7 @@
 
 | 语言 | 浏览器实现 | 冻结版本 | 正式参考 |
 |---|---|---|---|
-| C++11 | 自托管 Clang 8.0.1 + wasm-ld + WASI libc++ | `cpp11-gcc11-compat-v4`，显式 `-std=c++11` | `g++-11 -std=c++11` |
+| C++11 | 自托管 Clang 8.0.1 + wasm-ld + WASI libc++ | `cpp11-gcc11-compat-v5`，显式 `-std=c++11` | `g++-11 -std=c++11` |
 | C11 | 自托管 Clang 8.0.1 + wasm-ld + WASI libc | `c11-gcc11-compat-v3`，显式 `-std=c11` | `gcc-11 -std=c11 -lm` |
 | Python 3 | Pyodide 0.26.4 / CPython 3.12.1 | `py312-cpython-compat-v1` | CPython 3.12 |
 

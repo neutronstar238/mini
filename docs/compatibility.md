@@ -1,6 +1,6 @@
 # Browser C++ 运行时 vs GCC 11 兼容性说明
 
-> **Browser C++11 Runtime：`P0 FROZEN`（`cpp11-gcc11-compat-v4`，冻结于 2026-08-20）**
+> **Browser C++11 Runtime：`P0 FROZEN`（`cpp11-gcc11-compat-v5`，冻结于 2026-08-23）**
 > 后续开发默认不得修改该 Runtime 核心逻辑。冻结基线见
 > [docs/runtime-freeze-cpp11.md](./runtime-freeze-cpp11.md)，
 > Known Divergences 见 `compat-tests/KNOWN_DIVERGENCES.md`，
@@ -17,7 +17,7 @@
 - **GCC11 参照机**：yqzl 服务器（Ubuntu 24.04.4 LTS）
 - **编译器**：`gcc-11` / `g++-11` = `11.5.0-1ubuntu1~24.04.1`
 - **编译标准**：`-std=c++11`（C）`-std=c11`
-- **Browser 侧**：`cpp11-gcc11-compat-v4`（Clang 8.0.1 + WASI libc++ + v3 shim + `bits/stdc++.h` PCH）
+- **Browser 侧**：`cpp11-gcc11-compat-v5`（Clang 8.0.1 + WASI libc++ + v3 shim + `bits/stdc++.h` PCH）
 - 说明：禁止用宿主 GCC 15 的编译结果近似声称 "GCC 11 兼容"。所有兼容性结论均以
   `reference.json` 记录的冻结 GCC11 环境为基准。
 

@@ -1,6 +1,6 @@
 # Browser C++11 Runtime P0 冻结报告
 
-> **状态：`P0 FROZEN`**　冻结日期：2026-08-20
+> **状态：`P0 FROZEN`**　冻结日期：2026-08-23
 > 本文件是当前 Browser C++11 Runtime 的正式冻结基线。后续开发（C11 / Python / Web IDE / Contest Integration）
 > 默认不得修改本 Runtime 核心逻辑；若需变更，必须按 §17 版本升级规则生成新版本。
 
@@ -8,10 +8,13 @@
 
 ## 1. Runtime ID
 
-**`cpp11-gcc11-compat-v4`**
+**`cpp11-gcc11-compat-v5`**
 
-v4 在 v3 兼容 shim 与能力矩阵之上补齐 Clang `-cc1` 和 PCH 生成阶段的显式
-`-std=c++11`，并将运行时资产切换到内容版本化 URL；C++14 泛型 lambda 边界回归必须 CE。
+v5 在 v4 的显式 `-std=c++11` 与内容版本化资产基础上，移除 C++11 源码编译的
+`-Werror`。Clang warning 只作为诊断保留，不得把 GCC11 可编译代码升级为 Browser CE；
+C++14 泛型 lambda 等真正语法/语义错误仍必须 CE。针对 Codeforces 历史 GNU C++
+代码，Worker 还会将字符串字面量中的 `%I64[d/i/o/u/x/X]` 归一化为 `%ll…`，
+避免 WASI libc 对 MSVC 风格 length modifier 静默空输出。
 
 冻结目标**不是**"完整替代 GCC11"，而是：
 > 为标准单线程 ACM/OJ C++11 代码提供稳定、零安装、浏览器本地编译运行与样例调试能力。
@@ -25,7 +28,9 @@ v4 在 v3 兼容 shim 与能力矩阵之上补齐 Clang `-cc1` 和 PCH 生成阶
 | compatibility shim | `cpp11-gcc11-compat-v3`（`sys/include/bits/stdc++.h`） |
 | PCH | `bits.pch`（严格 Gate，见 §5） |
 | GCC11 Header Strict Check | `gccCompatVersion=v1`（见 §6） |
-| 编译标志 | `-std=c++11 -O0 -Werror -isysroot /sys -fcolor-diagnostics -ftime-report` |
+| 编译标志 | `-std=c++11 -O0 -isysroot /sys -fcolor-diagnostics -ftime-report` |
+| warning 策略 | warning 非致命；以 Clang 非零退出判定 CE |
+| 格式兼容 | 字符串字面量 `%I64[d/i/o/u/x/X]` → `%ll[d/i/o/u/x/X]` |
 
 ## 3. GCC11 Reference 版本（Official Reference）
 
@@ -33,9 +38,9 @@ v4 在 v3 兼容 shim 与能力矩阵之上补齐 Clang `-cc1` 和 PCH 生成阶
 |----|-----|
 | 编译器 | GCC/G++ **11.5.x** |
 | 版本 | `11.5.0-1ubuntu1~24.04.1` |
-| 系统 | Ubuntu 24.04.4 LTS（yqzl-server, SSH alias `yqzl-server`） |
+| 系统 | Ubuntu 24.04 LTS GCC 11 reference environment |
 | 标准 | `-std=c++11`（C 侧 `-std=c11`） |
-| 调用 | `ssh yqzl-server "g++-11 -std=c++11 <src> -o <out> && <out> < <in>"` |
+| 调用 | `ssh <reference-host> "g++-11 -std=c++11 <src> -o <out> && <out> < <in>"` |
 
 > 禁止用宿主 GCC 15 近似结果直接声称 GCC11 兼容；一切结论以 `compat-tests/reference.json` 冻结环境为准。
 
@@ -172,7 +177,7 @@ node compat-tests/test-header-check.js
 # 2) Positive Compile / Negative CE / Deterministic Output（需本地 server + yqzl server）
 cd compat-tests
 node run-browser.js --json > _browser_all_final.json   # 需 server 运行于 localhost:3001
-node run-server.js                                     # 需 ssh yqzl-server
+node run-server.js                                     # 需配置自己的 GCC 11 reference host
 node compare.js --server=_server_all.json --browser=_browser_all_final.json --out=capability-matrix.json
 # 3) bits PCH regression（PCH on/off 语义中性）
 node verify-pch-neutral.js
@@ -188,21 +193,21 @@ warm compile 无显著回退。任何一项不满足即视为破坏 P0。
 
 | 组件 | 版本/值 |
 |------|---------|
-| Runtime ID | `cpp11-gcc11-compat-v4` |
+| Runtime ID | `cpp11-gcc11-compat-v5` |
 | Compiler | Clang 8.0.1 |
 | Runtime/Runner | `RUNNO_VERSION = 0.10.0-ojc4` |
 | shim version | `cpp11-gcc11-compat-v3` |
 | PCH version | `bits`（严格 Gate） |
 | gccCompatVersion | `v1` |
 | sysroot hash (SHA256) | `B2E4B0F28A2C56B80CA43B61DC1CA2B62B8263B582735504E6C376FED4B1F363` |
-| compiler flags | `-std=c++11 -O0 -Werror -isysroot /sys -fcolor-diagnostics -ftime-report` |
+| compiler flags | `-std=c++11 -O0 -isysroot /sys -fcolor-diagnostics -ftime-report` |
 
 ## 18. 后续修改时的版本升级规则（冻结）
 
 > **runtimeId 内任一组件（compiler / runtime / shim / PCH / gccCompatVersion / sysroot hash / compiler flags）发生改变，
 > 都必须生成新的 Runtime Version，禁止静默覆盖当前冻结版本。**
 
-- 任何核心逻辑变更前：先建立新版本号（如 `cpp11-gcc11-compat-v5`）、更新 manifest、跑完整 regression。
+- 任何核心逻辑变更前：先建立新版本号（如 `cpp11-gcc11-compat-v6`）、更新 manifest、跑完整 regression。
 - 不解除冻结不得：继续无限增加 C++ compatibility cases、追求 C++11 100% 标准库兼容。
 
 ---

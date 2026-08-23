@@ -35,7 +35,7 @@ Admin Web :3002 ─────────────> OJ Core Internal API
 | 语言 | 浏览器 Runtime | Runtime / Profile ID | 正式 Judge |
 |---|---|---|---|
 | C11 | Clang 8.0.1 + wasm-ld + WASI libc | `c11-gcc11-compat-v3` | `gcc-11 -O2 -std=c11 ... -lm` |
-| C++11 | Clang 8.0.1 + wasm-ld + WASI libc++ | `cpp11-gcc11-compat-v4` | `g++-11 -O2 -std=c++11` |
+| C++11 | Clang 8.0.1 + wasm-ld + WASI libc++ | `cpp11-gcc11-compat-v5` | `g++-11 -O2 -std=c++11` |
 | C17 | Modern C/C++ Engine v2 · Clang/LLD 19.1.7 | `c17-gcc14-compat-v2` → `cpp-modern-engine-v2` | `/usr/bin/gcc-14 -std=c17 -O2 -Wall -Wextra -DONLINE_JUDGE ... -lm` |
 | C++17 | Modern C/C++ Engine v2 · Clang/LLD 19.1.7 | `cpp17-gcc14-compat-v2` → `cpp-modern-engine-v2` | `/usr/bin/g++-14 -std=c++17 -O2 -Wall -Wextra -DONLINE_JUDGE` |
 | Python 3.12 | Pyodide 0.26.4 / CPython 3.12.1 | `py312-cpython-compat-v1` | CPython 3.12 |
@@ -43,7 +43,7 @@ Admin Web :3002 ─────────────> OJ Core Internal API
 
 关键边界：
 
-- C11/C++11 与既有冻结 profile 保持不变；C++11 显式使用 `-std=c++11`，C++14 语法不得被本地预检误放行；
+- C11 使用冻结的 v3 profile；C++11 使用 v5 profile，显式 `-std=c++11`、保留普通 warning、兼容 Codeforces 常见 `%I64*` 格式，C++14 语法不得被本地预检误放行；
 - C17/C++17 浏览器编译固定 `-O2`，C++17 禁用 PCH；正式 Judge 只接受精确的 `/usr/bin/gcc-14`、`/usr/bin/g++-14`，没有 GCC 11、通用 `gcc`/`g++` 或 Clang 回退；
 - C/C++ stdin 按 UTF-8 字节动态分配，最大 4 MiB，不再受旧 8 KiB 缓冲截断；
 - 浏览器本地 stdout/stderr 受限，超限会明确提示；各语言本地运行均在 Web Worker 中执行，超时后中断或终止 Worker，不冻结页面；
@@ -51,6 +51,8 @@ Admin Web :3002 ─────────────> OJ Core Internal API
 - COOP/COEP 保证比赛页面 `crossOriginIsolated === true`。
 
 冻结基线中，C++11 为 75/75 正向编译、13/13 负向 CE、72/72 确定性输出匹配，C11 共 82 例、Python 共 87 例回归通过。现代 Runtime 的 C17 Compatibility 91/91、Correctness 66/66；C++17 Compatibility 105/105、Correctness 80/80，`bits/stdc++.h` 通过。完整结果见 [兼容性总表](./docs/compatibility.md)、[C11 冻结报告](./docs/runtime-c11-final-freeze-report.md)、[Python 冻结报告](./docs/runtime-python-final-freeze-report.md)、[Java 21 冻结报告](./docs/runtime-freeze-java21-v2.md)、[Modern Runtime Checkpoint 2](./docs/MODERN_CPP_PHASE8_CHECKPOINT_2.md)、[C17 兼容性报告](./docs/c17-gcc14-compatibility-report.md)、[C++17 兼容性报告](./docs/cpp17-gcc14-compatibility-report.md)和 [C17/C++17 正式提交验收](./docs/C17_CPP17_FORMAL_SUBMIT_ENABLEMENT.md)。
+
+Codeforces 真实源码回放另外覆盖多种语言与提交结果。已接受语料为 40/40 份源码、515/515 个公开测试输出匹配；扩展语料包含 AC、WA、CE、RE、TLE、MLE 各 10 份。非 AC 的原始 verdict 可能由隐藏测试、时间抖动或 Codeforces 内存计量触发，所以报告只记录浏览器在公开测试上可观测的 `compile_error`、`runtime_error`、`timeout`、`output_mismatch` 或 `all_pass`，不把“未复现”误写成兼容性通过。详见 [Codeforces 兼容性报告](./docs/codeforces-browser-compatibility-report.md)与[混合 Verdict 回放报告](./docs/codeforces-mixed-verdict-browser-report.md)。
 
 ## 本地启动
 
@@ -132,23 +134,63 @@ node server/test/judge-sandbox.test.js
 node server/test/gcc14-header-check.test.mjs
 node scripts/verify-modern-runtime-v2-overlay.mjs
 node scripts/verify-modern-runtime-evidence.mjs
+node --test scripts/e2e/codeforces-browser-compat.test.mjs
+node --test server/test/*.test.js
 ```
 
-C17/C++17 正式提交验收器默认只做只读预检；仅在明确准备创建测试提交时附加 `--execute`。用法和生产验收证据见 [C17/C++17 正式提交启用报告](./docs/C17_CPP17_FORMAL_SUBMIT_ENABLEMENT.md)。能力矩阵脚本与冻结数据位于 `compat-tests/`，压力测试位于 `scripts/stress/`。
+C17/C++17 正式提交验收器默认只做只读预检；仅在明确准备创建测试提交时附加 `--execute`。Codeforces 回放器默认读取已构建语料，真实 Chrome 执行时需要 Playwright；语料下载/重建属于研究流程，不应放进普通部署门禁。用法和生产验收证据见 [C17/C++17 正式提交启用报告](./docs/C17_CPP17_FORMAL_SUBMIT_ENABLEMENT.md)。能力矩阵脚本与冻结数据位于 `compat-tests/`，压力测试位于 `scripts/stress/`。
+
+## API 快速索引
+
+所有正式 HTTP 接口、请求字段、响应示例、鉴权和限流均以 [API 文档](./docs/api.md)为准。常用入口如下：
+
+| 范围 | 基础路径 | 鉴权 | 说明 |
+|---|---|---|---|
+| 健康检查 | `/healthz`、`/readyz` | 无 | 分别表示进程存活、初始化完成 |
+| 公开 Runtime 信息 | `/api/public/*` | 无 | 仅返回脱敏的语言与编译器资料 |
+| 选手 API | `/api/contest/*` | HttpOnly `token` Cookie 或 Bearer JWT | 登录、比赛、题目、提交、榜单、设备心跳 |
+| 选手 SSE | `/api/contest/contests/:id/events` | Cookie；也兼容 `?token=<JWT>` | 榜单 delta、同步提示和队列状态 |
+| Admin API | `/api/admin/*` | 管理员 Cookie 或 Bearer JWT | `:3002` 代理到 OJ Core，不直接访问 SQLite |
+| Internal Admin | `/internal/admin/*` | HMAC 内部头 | 仅限 `:3002 → :3001`，不得暴露到公网 |
+
+正式提交端点为 `POST /api/contest/contests/:contestId/submissions`，当前语言值为 `c11`、`cpp11`、`c17`、`cpp17`、`python3`、`java21`。请求只需 `problemId`、`language`、`source`、可选幂等键 `clientRequestId` 和诊断时间 `clientSubmittedAt`；源码上限为 256 KiB UTF-8，同一用户最多 1 次/秒。浏览器本地输出、耗时和 verdict 不属于该请求，也不会被服务器采信。
 
 ## 生产部署
 
-部署采用 PM2 双进程 + Nginx 双域名。脚本会把 Contestant 指向 3001、Admin 指向 3002，并为 Runtime 大文件启用 gzip 与版本化长缓存。
+### 拓扑与前置条件
+
+生产采用 PM2 双进程与 Nginx 双入口：Contestant/OJ Core 使用 3001，Admin 使用 3002，Nginx 通过 `127.0.0.1` 连接上游；防火墙不应把这两个应用端口直接暴露到公网，外部只开放 HTTPS。OJ Core 是 SQLite 唯一 Owner，Admin 只能通过回环地址上的 Internal Admin API 访问它。
+
+目标服务器需要 Ubuntu 24.04、Node.js 16+、PM2、Nginx、`rsync`、`tar`、`curl`、`openssl`、`sqlite3`、systemd、GCC/G++ 11、GCC/G++ 14、Python 3.12 和 OpenJDK 21。部署账户还需能写入应用/备份/密钥目录、管理 PM2，并有权启动 JudgeAdapter 的 transient systemd units。缺少沙箱或指定编译器时正式 Judge 会 fail closed。
+
+Nginx 必须保留真实 `Host` 与 `X-Forwarded-*`，对 SSE 关闭 `proxy_buffering` 并设置足够长的 `proxy_read_timeout`。Contest 页面及 Runtime 资产必须保留应用返回的 COOP/COEP/CORP 头；`.wasm` 应使用 `application/wasm`，版本化 `/runtime/<engine>/<version>/...` 可长缓存，未版本化兼容路径不可设置 immutable。
+
+### 发布步骤
+
+发布脚本只接受已经提交的 `server/` 工作区。它会生成带 Git 短 SHA 的精确归档，上传到服务器 staging，在重启前使用 SQLite 在线备份两个数据库并分别备份 Contest/Admin 代码，保留 `data/`、`node_modules/` 和站点 `.env`，同步两套应用目录，按 lockfile 安装生产依赖，重启 PM2，最后验证两个进程的 liveness/readiness 和公开 Runtime API。Runtime 发布包必须同时包含 Runno、Pyodide、Java v2、Modern v2 以及 PBDS overlay。
+
+先在仓库根目录完成测试、提交并推送，再执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File deploy/deploy-server.ps1
+git status --short
+git push origin main
+pwsh -File .\deploy\deploy-server.ps1 `
+  -ServerHost <your-ssh-host> `
+  -DomainContest contest.example.com `
+  -DomainAdmin admin.example.com
 ```
 
-生产 Contestant 进程应配置：
+默认远端布局为 `/var/www/mini-oj/<domain>`、`/var/backups/mini-oj`、`/etc/mini-oj`，Node/PM2 从 `/usr/local/bin` 查找。若服务器布局不同，显式传入 `-RemoteWebRoot`、`-RemoteBackupRoot`、`-RemoteSecretsDir` 和 `-RemoteNodeBin`；这些值只属于部署者自己的命令或 CI Secret，不应提交到仓库。`-ServerHost` 可以是部署者 `~/.ssh/config` 中的别名，也可以是 `user@host`。
+
+脚本首次运行会在 `<RemoteSecretsDir>/mini-oj.env`（默认 `/etc/mini-oj/mini-oj.env`）创建权限为 `0600` 的密钥文件，保存随机生成的 `JWT_SECRET`、`HMAC_SECRET` 和 `INTERNAL_API_SECRET`；密钥不会上传或写入 Git。Contest 与 Admin 必须加载同一组 JWT/Internal 密钥。若此前使用开发默认密钥，首次安全发布会使既有登录 Cookie 失效，用户重新登录即可。
+
+生产 Contestant 进程的关键环境如下；域名和密钥也必须通过环境注入，不能写回源码：
 
 ```text
+NODE_ENV=production
 APP_ENTRY=contest
 PORT=3001
+DB_FILE=<Contestant 数据目录>/mini-oj.db
 C_COMPILER=/usr/bin/gcc-11
 CPP_COMPILER=/usr/bin/g++-11
 JAVA_JAVAC_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/javac
@@ -157,7 +199,26 @@ JUDGE_SANDBOX_MODE=systemd
 JUDGE_SANDBOX_REQUIRED=1
 ```
 
-C17/C++17 的 JudgeAdapter 会另外强制使用 `/usr/bin/gcc-14` 与 `/usr/bin/g++-14`。承载 OJ Core 的服务账户必须具备启动 transient systemd unit 及准备隔离工作目录的权限；缺少沙箱或精确编译器时判题 fail closed，不会回退到裸 `child_process`。Runtime 资产、版本升级与 COOP/COEP 要求详见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)，增量发布与回滚记录见 [Phase 9 部署报告](./docs/PHASE9_INCREMENTAL_RUNTIME_DEPLOYMENT.md)。
+Admin 使用同一个 `DB_FILE` 值仅为兼容配置，代码不会直接打开它；它还需要 `APP_ENTRY=admin`、`PORT=3002`、`CORE_BASE_URL=http://127.0.0.1:3001`。C17/C++17 的 JudgeAdapter 固定要求 `/usr/bin/gcc-14` 与 `/usr/bin/g++-14`。
+
+### 发布后验证与回滚
+
+服务器本机至少执行：
+
+```bash
+curl -fsS http://127.0.0.1:3001/healthz
+curl -fsS http://127.0.0.1:3001/readyz
+curl -fsS http://127.0.0.1:3002/healthz
+curl -fsS http://127.0.0.1:3002/readyz
+curl -fsS http://127.0.0.1:3001/api/public/runtime-profiles >/dev/null
+pm2 list
+```
+
+外部还应检查 HTTPS 登录页、Runtime `.wasm` 的 MIME/cache/COOP/COEP 响应头、一次真实 Chrome Local Run，以及 Admin SSE。脚本成功时输出 `release=<时间>-<Git SHA>` 和备份目录；记录这两项便于审计。
+
+首选回滚方式是在一个干净工作区检出目标提交，重新运行同一发布脚本，保证运行代码与 Git 提交完全一致。紧急情况下可使用脚本输出的 `<RemoteBackupRoot>/<release>/` 代码归档恢复 Contest/Admin；同一目录还包含部署前两个 SQLite 数据库的一致性快照。代码回滚不得覆盖 `data/`；只有 schema 或数据确实需要回退时，才停止 OJ Core、再次备份现状、恢复指定数据库并执行 `PRAGMA integrity_check`。回滚后重复全部 health/readiness 检查。
+
+Runtime 资产、版本升级与 COOP/COEP 细节见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)，增量发布与回滚记录见 [Phase 9 部署报告](./docs/PHASE9_INCREMENTAL_RUNTIME_DEPLOYMENT.md)。`deploy/deploy-remote.sh` 是服务器初始化参考；日常增量发布使用 `deploy/deploy-server.ps1`，不要使用 `scripts/e2e/remote-deploy.sh`（它仅服务隔离的 Phase 4 测试环境）。
 
 ## 信任边界
 
