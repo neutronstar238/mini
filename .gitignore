@@ -38,6 +38,8 @@ compat-tests/java21/timeout/*-results.json
 .DS_Store
 Thumbs.db
 node_modules/
+__pycache__/
+*.py[cod]
 .vscode/
 .codebuddy/
 
