@@ -16,9 +16,9 @@
         "url": "/runtime/cpp-modern-engine-v2/bits/stdc++.h"
       },
       {
-        "bytes": 63545,
+        "bytes": 63817,
         "file": "code/controller.mjs",
-        "sha256": "c2a980660d5c7af1a48129814d39c8aa90d4ac6303196b758d860ab09df752b1",
+        "sha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59",
         "url": "/js/contest/ide-wasi-worker-modern.js"
       },
       {
@@ -94,7 +94,7 @@
     },
     "target": "wasm32-unknown-wasi"
   },
-  "runtimeAssetHash": "584c56b9e5cce82e48956c2b7f5eb9f6d3bdbec66065fe2f34b333d632faa115",
+  "runtimeAssetHash": "5ff5765d2a0b71efed2011e74ef04a3d1a2c105404f216140895f03726209711",
   "inheritedBinaryRuntimeId": "cpp-modern-engine-v1",
   "llvm": {
     "tag": "llvmorg-19.1.7",
@@ -232,8 +232,8 @@
       "url": "/js/contest/ide-wasi-worker-modern.js",
       "kind": "metadata",
       "role": "control-code",
-      "bytes": 63545,
-      "sha256": "c2a980660d5c7af1a48129814d39c8aa90d4ac6303196b758d860ab09df752b1"
+      "bytes": 63817,
+      "sha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59"
     },
     {
       "file": "code/executor.mjs",
@@ -254,8 +254,8 @@
     {
       "file": "code/controller.mjs",
       "url": "/js/contest/ide-wasi-worker-modern.js",
-      "bytes": 63545,
-      "sha256": "c2a980660d5c7af1a48129814d39c8aa90d4ac6303196b758d860ab09df752b1"
+      "bytes": 63817,
+      "sha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59"
     },
     {
       "file": "code/executor.mjs",

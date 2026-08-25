@@ -480,8 +480,14 @@ async function manifestAssetHash(manifest, rawManifestHash) {
   }
   return rawManifestHash;
 }
+function assetRequestUrl(asset, manifestUrl) {
+  const url = originUrl(asset.url, manifestUrl);
+  const hash = asHex(asset.expectedHash || asset.sha256 || asset.hash || asset.sha);
+  if (hash && !pendingValue(hash)) url.searchParams.set('sha256', hash);
+  return url.href;
+}
 async function fetchBytes(asset, total, loaded, manifestUrl) {
-  const response = await fetch(originUrl(asset.url, manifestUrl).href, {method: 'GET', cache: 'force-cache'});
+  const response = await fetch(assetRequestUrl(asset, manifestUrl), {method: 'GET', cache: 'force-cache'});
   if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + asset.url);
   const body = new Uint8Array(await response.arrayBuffer());
   if (asset.bytes != null && body.byteLength !== asset.bytes) {
