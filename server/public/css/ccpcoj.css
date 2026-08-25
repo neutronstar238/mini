@@ -1522,7 +1522,7 @@ body.cpc-body.contest-shell {
   box-shadow: none;
 }
 .problem-topbar-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.problem-topbar-main { min-width: 0; }
+.problem-topbar-main { min-width: 0; flex: 1 1 auto; }
 .problem-back {
   display: inline-block;
   margin-bottom: 3px;
@@ -1533,6 +1533,8 @@ body.cpc-body.contest-shell {
 .problem-title {
   overflow: hidden;
   margin: 0;
+  min-width: 0;
+  flex: 1 1 auto;
   color: var(--oj-text);
   font-size: 20px;
   font-weight: 700;
@@ -1541,7 +1543,14 @@ body.cpc-body.contest-shell {
   white-space: nowrap;
 }
 .problem-title-letter { color: var(--oj-primary); font-weight: 750; }
-.problem-contest { color: var(--oj-text-muted); font-size: 12px; }
+.problem-contest {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--oj-text-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .problem-meta {
   margin-top: 9px;
   padding-top: 8px;
@@ -1645,7 +1654,7 @@ body.cpc-body.contest-shell {
   font-size: 14px;
   font-weight: 700;
 }
-.problem-pane-tools { display: flex; gap: 6px; }
+.problem-pane-tools { display: flex; flex: 0 0 auto; gap: 6px; }
 .problem-pane-tool {
   min-height: 30px;
   padding: 4px 9px;
@@ -1655,6 +1664,7 @@ body.cpc-body.contest-shell {
   border-radius: 5px;
   cursor: pointer;
   font-size: 11px;
+  white-space: nowrap;
 }
 .problem-pane-tool:hover { color: var(--oj-primary); border-color: var(--oj-primary); }
 .problem-statement-scroll {
@@ -1866,6 +1876,10 @@ body.cpc-body.contest-shell {
   .problem-meta-item { min-width: 72px; padding-inline: 8px; }
   .ide-toolbar-status,
   .ide-pch-option { display: none; }
+}
+
+@media (max-width: 1350px) {
+  .problem-contest { display: none; }
 }
 
 @media (max-width: 900px) {
