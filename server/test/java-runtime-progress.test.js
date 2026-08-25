@@ -121,6 +121,118 @@ function createJavaRunnerHarness() {
   return { context, timers, posted };
 }
 
+function createJavaLifecycleHarness(workerBehavior) {
+  const timers = new Map();
+  const workers = [];
+  const progress = [];
+  const preloadCalls = [];
+  const statuses = [];
+  let nextTimerId = 1;
+  let nextWorkerId = 1;
+
+  class FakeWorker {
+    constructor() {
+      this.id = nextWorkerId++;
+      this.listeners = new Map();
+      this.posted = [];
+      this.terminated = false;
+    }
+
+    addEventListener(type, handler) {
+      if (!this.listeners.has(type)) this.listeners.set(type, new Set());
+      this.listeners.get(type).add(handler);
+    }
+
+    removeEventListener(type, handler) {
+      const handlers = this.listeners.get(type);
+      if (handlers) handlers.delete(handler);
+    }
+
+    postMessage(message) {
+      this.posted.push(message);
+      if (workerBehavior) workerBehavior(this, message);
+    }
+
+    terminate() {
+      this.terminated = true;
+    }
+
+    emit(type, data) {
+      const handlers = this.listeners.get(type) || new Set();
+      for (const handler of [...handlers]) handler(type === 'message' ? {data} : data);
+    }
+
+    listenerCount(type) {
+      return (this.listeners.get(type) || new Set()).size;
+    }
+  }
+
+  const context = {
+    TextEncoder,
+    SharedArrayBuffer,
+    Int32Array,
+    performance: {now: () => 0},
+    console: {warn() {}, debug() {}, error() {}},
+    JAVA_WORKER_URL: '/js/contest/ide-java-worker.js',
+    JAVA_RUNTIME_ID_PRIMARY: 'java21-browserjdk-compat-v2',
+    JAVA_WORKER_BOOT_TIMEOUT_MS: 180000,
+    JAVA_INIT_TIMEOUT_MS: 195000,
+    JAVA_TIMEOUT_MIN_MS: 1000,
+    JAVA_TIMEOUT_MAX_MS: 120000,
+    JAVA_TIMEOUT_LARGE_INPUT_BYTES: 1024 * 1024,
+    JAVA_TIMEOUT_INPUT_STEP_BYTES: 1024 * 1024,
+    JAVA_EXEC_TIMEOUT_MS: 15000,
+    JAVA_INTERRUPT_GRACE_MS: 800,
+    javaInterruptBuf: null,
+    javaInitMs: null,
+    javaRequestSequence: 1,
+    detectPythonInterruptCapability: () => 'FALLBACK',
+    setJavaStatus(status) { statuses.push(status); },
+    javaProgress(stage, extra) { progress.push(Object.assign({stage}, extra || {})); },
+    preloadJavaRuntimeAssets(forceReload) {
+      preloadCalls.push(forceReload);
+      return Promise.resolve();
+    },
+    Worker: function Worker() {
+      const worker = new FakeWorker();
+      workers.push(worker);
+      return worker;
+    },
+    setTimeout(callback, delay) {
+      const id = nextTimerId++;
+      timers.set(id, {callback, delay});
+      return id;
+    },
+    clearTimeout(id) {
+      timers.delete(id);
+    },
+    sha256Hex: async () => '0123456789abcdef'
+  };
+
+  const declarations = [
+    'let javaWorker = null;',
+    'let javaReadyPromise = null;',
+    'let javaInitMs = null;',
+    'let javaInterruptBuf = null;',
+    'let javaRequestSequence = 1;',
+    "let javaRuntimeStatus = 'idle';"
+  ].join('\n');
+  const source = [
+    declarations,
+    extractFunction(runner, 'normalizeJavaTimeoutMs'),
+    extractFunction(runner, 'javaInputByteLength'),
+    extractFunction(runner, 'resolveJavaTimeoutMs'),
+    extractFunction(runner, 'disposeJavaWorker'),
+    extractFunction(runner, 'ensureJavaWorker'),
+    extractFunction(runner, 'runJava')
+  ].join('\n');
+  vm.runInNewContext(`${source}
+    this.ensureJavaWorker = ensureJavaWorker;
+    this.runJava = runJava;
+  `, context);
+  return {context, timers, workers, progress, preloadCalls, statuses};
+}
+
 function createJavaWorkerHarness(runtimeRun) {
   const context = {
     TextEncoder,
@@ -264,4 +376,112 @@ test('Java Worker reports LOCAL_TIMEOUT instead of a formal TLE', async () => {
   assert.notEqual(result.runStatus, 'TLE');
   assert.equal(result.timedOut, true);
   assert.equal(result.executionTime, 2400);
+});
+
+test('Java worker boot is 180s and the main-thread handshake is 195s', async () => {
+  assert.match(runner, /const JAVA_WORKER_BOOT_TIMEOUT_MS\s*=\s*180000/);
+  assert.match(runner, /const JAVA_INIT_TIMEOUT_MS\s*=\s*195000/);
+  const harness = createJavaLifecycleHarness();
+  const pending = harness.context.ensureJavaWorker();
+  await flushMicrotasks();
+
+  const worker = harness.workers[0];
+  const init = worker.posted.find(message => message.type === 'init');
+  assert.equal(init.bootTimeoutMs, 180000);
+  assert.equal([...harness.timers.values()][0].delay, 195000);
+
+  worker.emit('message', {type: 'inited', runtimeId: 'java21-browserjdk-compat-v2', initMs: 1});
+  await pending;
+});
+
+test('Java handshake timeout identifies whether WASM or JVM boot stalled', async () => {
+  const wasm = createJavaLifecycleHarness();
+  const wasmPending = wasm.context.ensureJavaWorker();
+  await flushMicrotasks();
+  wasm.workers[0].emit('message', {type: 'state', state: 'INITIALIZING_WASM'});
+  [...wasm.timers.values()][0].callback();
+  await assert.rejects(wasmPending);
+
+  const jvm = createJavaLifecycleHarness();
+  const jvmPending = jvm.context.ensureJavaWorker();
+  await flushMicrotasks();
+  jvm.workers[0].emit('message', {type: 'state', state: 'BOOTING_JVM'});
+  [...jvm.timers.values()][0].callback();
+  await assert.rejects(jvmPending);
+
+  const wasmError = JSON.stringify(wasm.progress.at(-1));
+  const jvmError = JSON.stringify(jvm.progress.at(-1));
+  assert.match(wasmError, /INITIALIZE_WASM|WASM|WebAssembly/i);
+  assert.match(jvmError, /BOOT_JVM|JVM|OpenJDK/i);
+  assert.notEqual(wasmError, jvmError);
+});
+
+test('Java init errors clean up listeners and reject a mismatched runtimeId', async () => {
+  const errorHarness = createJavaLifecycleHarness();
+  const errorPending = errorHarness.context.ensureJavaWorker();
+  await flushMicrotasks();
+  const errorWorker = errorHarness.workers[0];
+  errorWorker.emit('message', {type: 'error', error: 'loader failed'});
+  await assert.rejects(errorPending);
+  assert.equal(errorWorker.listenerCount('message'), 0);
+  assert.equal(errorWorker.listenerCount('error'), 0);
+  assert.equal(errorWorker.terminated, true);
+  assert.ok(errorWorker.posted.some(message => message.type === 'dispose'));
+
+  const idHarness = createJavaLifecycleHarness();
+  const idPending = idHarness.context.ensureJavaWorker();
+  await flushMicrotasks();
+  const idWorker = idHarness.workers[0];
+  idWorker.emit('message', {type: 'inited', runtimeId: 'wrong-runtime', initMs: 1});
+  await assert.rejects(idPending, /runtimeId|Runtime/);
+  assert.equal(idWorker.listenerCount('message'), 0);
+  assert.equal(idWorker.listenerCount('error'), 0);
+  assert.equal(idWorker.terminated, true);
+});
+
+test('Java retry keeps the existing asset cache path', async () => {
+  const calls = [];
+  const context = {
+    disposeJavaWorker() {},
+    setJavaStatus() {},
+    preloadJavaRuntimeAssets(forceReload) {
+      calls.push(forceReload);
+      return Promise.resolve();
+    },
+    ensureJavaWorker: () => Promise.resolve()
+  };
+  vm.runInNewContext(`${extractFunction(runner, 'retryJavaRuntime')}
+    this.retryJavaRuntime = retryJavaRuntime;`, context);
+
+  await context.retryJavaRuntime();
+  assert.equal(calls.length, 1);
+  assert.notEqual(calls[0], true);
+});
+
+test('a READY Java worker crash is disposed before the next run', async () => {
+  const harness = createJavaLifecycleHarness((worker, message) => {
+    if (message.type === 'init') {
+      queueMicrotask(() => worker.emit('message', {
+        type: 'inited', runtimeId: 'java21-browserjdk-compat-v2', initMs: 1
+      }));
+    } else if (message.type === 'run' && worker.id === 1) {
+      queueMicrotask(() => worker.emit('error', {message: 'worker crashed'}));
+    } else if (message.type === 'run') {
+      queueMicrotask(() => worker.emit('message', {
+        type: 'run-result',
+        result: {
+          requestId: message.requestId, status: 'ac', runStatus: 'AC',
+          stdout: 'ALIVE', stderr: '', exitCode: 0, runtimeId: 'java21-browserjdk-compat-v2'
+        }
+      }));
+    }
+  });
+
+  const first = await harness.context.runJava({source: 'class Main {}', stdin: ''});
+  assert.equal(first.runStatus, 'ABORTED');
+  assert.equal(harness.workers[0].terminated, true);
+
+  const second = await harness.context.runJava({source: 'class Main {}', stdin: ''});
+  assert.equal(second.stdout, 'ALIVE');
+  assert.equal(harness.workers.length, 2);
 });
