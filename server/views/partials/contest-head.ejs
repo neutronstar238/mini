@@ -6,65 +6,68 @@
   <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>Mini-OJ 选手端</title>
   <link rel="stylesheet" href="/css/ccpcoj.css">
 </head>
-<body class="cpc-body">
-  <!-- 顶部导航（亮蓝白顶栏） -->
-  <div class="cpc-navbar">
-    <button type="button" class="navbar-toggle cpc-nav-toggle" aria-label="切换导航" aria-controls="sidebar_div" aria-expanded="false">
+<body class="cpc-body contest-shell">
+  <!-- 选手端顶栏：品牌、赛事上下文与导航入口保持在同一层级 -->
+  <div class="cpc-navbar contest-topbar">
+    <button type="button" class="navbar-toggle cpc-nav-toggle contest-nav-toggle" aria-label="切换导航" aria-controls="sidebar_div" aria-expanded="false">
       <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
     </button>
-    <a class="cpc-brand" href="/contest">Mini-OJ</a>
-    <span class="cpc-brand-subtitle">选手端 · 浏览器本地预检 + 服务器权威判题</span>
+    <a class="cpc-brand contest-brand" href="/contest"><span class="contest-brand-name">Mini-OJ</span></a>
+    <span class="cpc-brand-subtitle contest-brand-subtitle" id="contest-brand-subtitle">选手端 · 浏览器本地预检 + 服务器权威判题</span>
+    <span class="contest-topbar-context" aria-label="当前端">CONTEST · 选手端</span>
   </div>
 
-  <header class="cpc-header">
-    <ul id="sidebar_div" class="sidebar">
-      <li class="user_panel">
+  <header class="cpc-header contest-shell-nav">
+    <nav class="contest-nav" aria-label="选手端导航">
+    <ul id="sidebar_div" class="sidebar contest-nav-list">
+      <li class="user_panel contest-user-panel">
         <% if (user && user.role === 'admin') { %>
-          <div style="padding: 4px 0 8px;">
-            <span class="text-danger" style="font-weight:bold">管理员账号</span>
-            <span style="font-size:12px;color:#d9534f;display:block;margin-top:4px">请前往管理端，选手端仅面向参赛选手</span>
+          <div class="contest-user-details">
+            <span class="text-danger contest-user-name">管理员账号</span>
+            <span class="contest-user-hint">请前往管理端，选手端仅面向参赛选手</span>
           </div>
-          <div style="padding-bottom:6px;">
-            <a class="btn btn-primary btn-sm" style="width:100%" href="/admin">前往管理端</a>
-            <button class="btn btn-default btn-sm" id="logout-btn" style="width:100%;margin-top:6px">退出</button>
+          <div class="contest-user-actions">
+            <a class="btn btn-primary btn-sm contest-user-action" href="/admin">前往管理端</a>
+            <button class="btn btn-default btn-sm contest-user-action" id="logout-btn">退出</button>
           </div>
         <% } else if (user) { %>
-          <div style="padding: 4px 0 8px;">
-            <span class="text-primary" style="font-weight:bold"><%= user.nickname || user.username %></span>
-            <span class="label label-success" style="padding:1px 8px;border-radius:6px;font-size:12px">选手</span>
+          <div class="contest-user-details">
+            <span class="text-primary contest-user-name"><%= user.nickname || user.username %></span>
+            <span class="label label-success contest-user-role">选手</span>
           </div>
-          <div style="padding-bottom:6px;">
-            <button class="btn btn-default btn-sm" id="logout-btn" style="width:100%">退出登录</button>
+          <div class="contest-user-actions">
+            <button class="btn btn-default btn-sm contest-user-action" id="logout-btn">退出登录</button>
           </div>
         <% } else { %>
-          <a href="/contest/login" class="btn btn-success btn-sm" style="width:100%;margin:4px 0">登录 / 注册</a>
+          <a href="/contest/login" class="btn btn-success btn-sm contest-user-login">登录 / 注册</a>
         <% } %>
       </li>
-      <hr>
-      <li class="<%= (typeof nav !== 'undefined' && nav === 'contests') ? 'active' : '' %>">
-        <a href="/contest/contests">比赛</a>
+      <li class="contest-nav-divider" role="separator"><hr></li>
+      <li class="contest-nav-item <%= (typeof nav !== 'undefined' && nav === 'contests') ? 'active' : '' %>">
+        <a class="contest-nav-link" href="/contest/contests"><span class="contest-nav-link-label">比赛</span><span class="en-text contest-nav-link-meta">Contests</span></a>
       </li>
       <% if (typeof contestId !== 'undefined' && contestId) { %>
-        <li class="sidebar-section"><span class="text-muted">比赛内</span></li>
-        <li class="<%= (typeof nav !== 'undefined' && nav === 'problems') ? 'active' : '' %>">
-          <a href="/contest/contests/<%= contestId %>/problems">题目</a>
+        <li class="sidebar-section contest-nav-section"><span class="text-muted contest-nav-section-label">比赛内</span></li>
+        <li class="contest-nav-item <%= (typeof nav !== 'undefined' && nav === 'problems') ? 'active' : '' %>">
+          <a class="contest-nav-link" href="/contest/contests/<%= contestId %>/problems"><span class="contest-nav-link-label">题目</span><span class="en-text contest-nav-link-meta">Problems</span></a>
         </li>
-        <li class="<%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'active' : '' %>">
-          <a href="/contest/contests/<%= contestId %>/submissions">我的提交</a>
+        <li class="contest-nav-item <%= (typeof nav !== 'undefined' && nav === 'submissions') ? 'active' : '' %>">
+          <a class="contest-nav-link" href="/contest/contests/<%= contestId %>/submissions"><span class="contest-nav-link-label">我的提交</span><span class="en-text contest-nav-link-meta">My Submissions</span></a>
         </li>
-        <li class="<%= (typeof nav !== 'undefined' && nav === 'rank') ? 'active' : '' %>">
-          <a href="/contest/contests/<%= contestId %>/rank">榜单</a>
+        <li class="contest-nav-item <%= (typeof nav !== 'undefined' && nav === 'rank') ? 'active' : '' %>">
+          <a class="contest-nav-link" href="/contest/contests/<%= contestId %>/rank"><span class="contest-nav-link-label">榜单</span><span class="en-text contest-nav-link-meta">Ranklist</span></a>
         </li>
       <% } %>
-      <hr>
-      <li class="sidebar-section"><span class="text-muted">参考</span></li>
-      <li class="<%= (typeof nav !== 'undefined' && nav === 'runtime-info') ? 'active' : '' %>">
-        <a href="/contest/runtime-info">运行环境</a>
+      <li class="contest-nav-divider" role="separator"><hr></li>
+      <li class="sidebar-section contest-nav-section"><span class="text-muted contest-nav-section-label">参考</span></li>
+      <li class="contest-nav-item <%= (typeof nav !== 'undefined' && nav === 'runtime-info') ? 'active' : '' %>">
+        <a class="contest-nav-link" href="/contest/runtime-info"><span class="contest-nav-link-label">运行环境</span><span class="en-text contest-nav-link-meta">Runtime</span></a>
       </li>
-      <li class="<%= (typeof nav !== 'undefined' && nav === 'faq') ? 'active' : '' %>">
-        <a href="/contest/faq">常见问题</a>
+      <li class="contest-nav-item <%= (typeof nav !== 'undefined' && nav === 'faq') ? 'active' : '' %>">
+        <a class="contest-nav-link" href="/contest/faq"><span class="contest-nav-link-label">常见问题</span><span class="en-text contest-nav-link-meta">FAQ</span></a>
       </li>
     </ul>
+    </nav>
   </header>
 
-  <main class="cpc-main">
+  <main class="cpc-main contest-main">

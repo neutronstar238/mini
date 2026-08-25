@@ -4,15 +4,24 @@
 <%- include('../partials/contest-head', { title: '我的提交', nav: 'submissions', contestId: cid }) %>
 <% var pageScript = '/js/contest/submissions.js' %>
 
-<div class="flex-between mb-16">
-  <h2 class="page-title">我的提交 <span class="mono text-muted" id="contest-title" style="font-size:14px"></span></h2>
-  <div class="mono text-muted">本页面读取 <b>OJ Core 关系库</b>（官方正式评测结果）</div>
-</div>
+<div class="contest-page contest-submissions-page">
+  <div class="contest-page-head">
+    <div class="contest-page-head-main">
+      <div class="contest-kicker">CONTEST SUBMISSIONS</div>
+      <h1 class="page-title contest-page-title">我的提交 <span class="mono text-muted contest-title-code" id="contest-title"></span></h1>
+      <p class="contest-page-lead">按结果筛选本场比赛的评测流水，展开记录可查看服务器返回的详情。</p>
+    </div>
+    <div class="contest-page-head-meta contest-source-note" aria-label="提交数据来源">
+      <span class="contest-meta-label">数据来源</span>
+      <span class="contest-table-note">本页面读取 <b>OJ Core 关系库</b>（官方正式评测结果）</span>
+    </div>
+  </div>
 
-<div class="toolbar-oj">
-  <div class="form-group">
-    <label>结果</label>
-    <select class="form-control" id="f-status" style="display:inline-block;width:150px">
+  <section class="toolbar-oj contest-filter-shell" aria-label="提交结果筛选">
+    <div class="contest-filter-heading">FILTER / 筛选</div>
+    <div class="form-group contest-filter-group">
+      <label class="contest-filter-label" for="f-status">结果</label>
+      <select class="form-control contest-filter-select" id="f-status">
       <option value="all">全部</option>
       <option value="QUEUED">Queued</option>
       <option value="JUDGING">Judging</option>
@@ -24,29 +33,34 @@
       <option value="RE">Runtime Error</option>
       <option value="CE">Compile Error</option>
       <option value="SYSTEM_ERROR">System Error</option>
-    </select>
-  </div>
-</div>
+      </select>
+    </div>
+  </section>
 
-<div class="panel-oj">
-  <table class="table-oj table-striped table-hover" style="margin-bottom:0">
+  <section class="panel-oj contest-section contest-table-shell contest-submissions-shell" aria-label="我的提交记录">
+    <div class="contest-table-note">
+      <span class="contest-table-note-title">评测流水</span>
+      <span class="contest-table-note-meta">状态、资源消耗与服务器时间</span>
+    </div>
+    <table class="table-oj table-striped table-hover contest-table">
     <thead>
       <tr>
-        <th style="width:80px">RunID</th>
-        <th>Problem</th>
-        <th style="width:90px">Lang</th>
-        <th style="width:130px">Verdict / Status</th>
-        <th style="width:90px;text-align:right">Time</th>
-        <th style="width:90px;text-align:right">Memory</th>
-        <th style="width:150px">Submit Time (server)</th>
+        <th class="contest-col-run-id" scope="col"><span class="table-head-main">RunID</span></th>
+        <th class="contest-col-problem" scope="col"><span class="table-head-main">Problem</span></th>
+        <th class="contest-col-language" scope="col"><span class="table-head-main">Lang</span></th>
+        <th class="contest-col-verdict" scope="col"><span class="table-head-main">Verdict / Status</span></th>
+        <th class="contest-col-resource" scope="col"><span class="table-head-main">Time</span></th>
+        <th class="contest-col-resource" scope="col"><span class="table-head-main">Memory</span></th>
+        <th class="contest-col-submit-time" scope="col"><span class="table-head-main">Submit Time (server)</span></th>
       </tr>
     </thead>
     <tbody id="sub-tbody"><tr><td colspan="7" class="empty">加载中…</td></tr></tbody>
-  </table>
-  <div class="flex-between" style="padding:8px 12px;border-top:1px solid #eee">
-    <span class="text-muted mono" id="page-info" style="font-size:12px"></span>
-    <div><button class="btn btn-default btn-sm" id="prev-page">上一页</button> <button class="btn btn-default btn-sm" id="next-page">下一页</button></div>
-  </div>
+    </table>
+    <div class="flex-between contest-pagination">
+      <span class="text-muted mono contest-page-info" id="page-info"></span>
+      <div class="contest-pagination-actions"><button class="btn btn-default btn-sm" id="prev-page">上一页</button> <button class="btn btn-default btn-sm" id="next-page">下一页</button></div>
+    </div>
+  </section>
 </div>
 
 <script>window.__CONTEST_ID__ = '<%= cid %>';</script>

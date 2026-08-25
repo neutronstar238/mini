@@ -1,19 +1,36 @@
 <%- include('../partials/contest-head', { title: '常见问题', nav: 'faq', contestId: '' }) %>
 <% var pageScript = '/js/contest/runtime-info.js' %>
 
-<div class="panel-oj">
-  <div class="panel-heading">
-    常见问题
-    <span class="pull-right text-muted" style="font-size:12px">数据来源：<code>GET /api/public/faq</code></span>
-  </div>
-  <div class="panel-body">
-    <div class="text-muted" style="margin-bottom:16px">
-      FAQ 与「运行环境」页同源渲染（来自 <code>/api/public/faq</code>）。Admin 修改正式评测 Profile 后会自动反映。
+<div class="contest-page contest-reference-page">
+  <div class="contest-page-head">
+    <div class="contest-page-head-main">
+      <div class="contest-kicker">CONTEST GUIDE</div>
+      <h1 class="page-title">常见问题</h1>
+      <p class="contest-page-lead">快速了解本地预检、正式评测与参赛过程中的常见说明。</p>
     </div>
-    <div id="faq-list">
-      <div class="text-muted">加载中…</div>
+    <div class="contest-page-head-meta" aria-label="常见问题数据来源">
+      <span class="contest-meta-label">公开数据</span>
+      <code class="mono">GET /api/public/faq</code>
     </div>
   </div>
+
+  <section class="panel-oj contest-section" aria-labelledby="faq-section-title">
+    <div class="panel-heading">
+      <div class="contest-panel-heading-main">
+        <span class="contest-section-kicker">FAQ</span>
+        <span id="faq-section-title">常见问题</span>
+      </div>
+      <span class="contest-panel-status" aria-label="内容状态">动态同步</span>
+    </div>
+    <div class="panel-body">
+      <div class="contest-info-banner" role="note">
+        FAQ 与「运行环境」页同源渲染（来自 <code>/api/public/faq</code>）。Admin 修改正式评测 Profile 后会自动反映。
+      </div>
+      <div id="faq-list" class="contest-data-region" aria-live="polite">
+        <div class="text-muted" role="status">加载中…</div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script>

@@ -26,6 +26,150 @@ function renderMd(text) {
   return html;
 }
 
+/* ================= 赛事战术栏与工作区 UI ================= */
+var contestElapsedTimer = null;
+
+function formatContestElapsed(ms) {
+  var total = Math.max(0, Math.floor(ms / 1000));
+  var hours = Math.floor(total / 3600);
+  var minutes = Math.floor((total % 3600) / 60);
+  var seconds = total % 60;
+  return [hours, minutes, seconds].map(function (value) {
+    return String(value).padStart(2, '0');
+  }).join(':');
+}
+
+function startContestElapsed(contest) {
+  var target = $('contest-elapsed');
+  if (!target) return;
+  if (contestElapsedTimer) clearInterval(contestElapsedTimer);
+  var start = Number(contest && contest.startTimeMs);
+  if (!start) {
+    target.textContent = contest && contest.status === 'ended' ? '已结束' : '进行中';
+    return;
+  }
+  function render() { target.textContent = formatContestElapsed(Date.now() - start); }
+  render();
+  contestElapsedTimer = setInterval(render, 1000);
+}
+
+function renderContestProblemRail(problems, submissions) {
+  var rail = $('contest-problem-rail');
+  if (!rail) return;
+  var states = {};
+  (submissions || []).forEach(function (submission) {
+    var key = submission.problemId;
+    if (!key) return;
+    if (!states[key]) states[key] = { attempts: 0, accepted: false };
+    states[key].attempts += 1;
+    if (submission.verdict === 'AC' || submission.status === 'AC') states[key].accepted = true;
+  });
+  var solved = Object.keys(states).filter(function (key) { return states[key].accepted; }).length;
+  if ($('contest-solved')) $('contest-solved').textContent = solved + ' / ' + problems.length;
+  rail.innerHTML = problems.map(function (problem, index) {
+    var state = states[problem.id] || { attempts: 0, accepted: false };
+    var current = String(problem.id) === String(problemId);
+    var label = problem.label || problem.letter || letter(index);
+    var className = 'contest-problem-chip';
+    if (current) className += ' is-current';
+    if (state.accepted) className += ' is-ac';
+    else if (state.attempts) className += ' is-attempted';
+    var status = state.accepted ? '已通过' : state.attempts ? state.attempts + ' 次尝试' : current ? '进行中' : '未尝试';
+    return '<a class="' + className + '" href="/contest/contests/' + encodeURIComponent(cid) + '/problems/' + encodeURIComponent(problem.id) + '"' +
+      (current ? ' aria-current="page"' : '') + '><span class="contest-problem-chip-letter">' + escapeHtml(label) + '</span>' +
+      '<span class="contest-problem-chip-status">' + escapeHtml(status) + '</span></a>';
+  }).join('');
+}
+
+async function loadContestTacticalBar() {
+  try {
+    var result = await Promise.all([
+      api('/api/contest/contests/' + cid + '/problems'),
+      api('/api/contest/contests/' + cid).catch(function () { return { contest: null }; }),
+      api('/api/contest/contests/' + cid + '/submissions/me').catch(function () { return { submissions: [] }; })
+    ]);
+    var problemData = result[0] || {};
+    var contest = result[1] && result[1].contest ? result[1].contest : problemData.contest;
+    if ($('p-contest') && contest && contest.title) $('p-contest').textContent = contest.title;
+    startContestElapsed(contest || {});
+    renderContestProblemRail(problemData.problems || [], (result[2] && result[2].submissions) || []);
+  } catch (_) {
+    if ($('contest-elapsed')) $('contest-elapsed').textContent = '进行中';
+    if ($('contest-solved')) $('contest-solved').textContent = '-';
+  }
+}
+
+function selectConsoleTab(targetId) {
+  var targets = ['ide-output-wrap', 'ide-samples-wrap', 'ide-input-wrap'];
+  document.querySelectorAll('[data-console-target]').forEach(function (tab) {
+    var selected = tab.dataset.consoleTarget === targetId;
+    tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+  });
+  targets.forEach(function (id) {
+    var section = $(id);
+    if (section) section.style.display = id === targetId ? '' : 'none';
+  });
+}
+
+function initProblemWorkspaceUi() {
+  document.querySelectorAll('[data-console-target]').forEach(function (tab) {
+    tab.addEventListener('click', function () { selectConsoleTab(tab.dataset.consoleTarget); });
+  });
+
+  var page = document.querySelector('.problem-detail-page');
+  var statement = document.querySelector('.problem-statement-scroll');
+  var readingButton = document.querySelector('[data-problem-action="fullscreen"]');
+  var topButton = document.querySelector('[data-problem-action="top"]');
+  if (topButton && statement) {
+    topButton.addEventListener('click', function () { statement.scrollTo({ top: 0, behavior: 'smooth' }); });
+  }
+  if (readingButton && page) {
+    readingButton.setAttribute('aria-pressed', 'false');
+    readingButton.addEventListener('click', function () {
+      var active = page.classList.toggle('is-reading');
+      readingButton.setAttribute('aria-pressed', active ? 'true' : 'false');
+      readingButton.textContent = active ? '退出全屏' : '全屏阅读';
+    });
+  }
+
+  var splitter = $('problem-splitter');
+  var workspace = document.querySelector('.problem-workspace');
+  if (!splitter || !workspace) return;
+  var dragging = false;
+  function setStatementWidth(percent) {
+    var value = Math.max(28, Math.min(58, percent));
+    workspace.style.setProperty('--problem-statement-width', value.toFixed(1) + '%');
+    splitter.setAttribute('aria-valuenow', String(Math.round(value)));
+  }
+  function resizeFromPointer(event) {
+    var rect = workspace.getBoundingClientRect();
+    setStatementWidth(((event.clientX - rect.left) / rect.width) * 100);
+  }
+  splitter.addEventListener('pointerdown', function (event) {
+    dragging = true;
+    splitter.classList.add('is-dragging');
+    splitter.setPointerCapture(event.pointerId);
+    resizeFromPointer(event);
+  });
+  splitter.addEventListener('pointermove', function (event) {
+    if (dragging) resizeFromPointer(event);
+  });
+  function finishDrag(event) {
+    if (!dragging) return;
+    dragging = false;
+    splitter.classList.remove('is-dragging');
+    if (splitter.hasPointerCapture(event.pointerId)) splitter.releasePointerCapture(event.pointerId);
+  }
+  splitter.addEventListener('pointerup', finishDrag);
+  splitter.addEventListener('pointercancel', finishDrag);
+  splitter.addEventListener('keydown', function (event) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    var current = Number(splitter.getAttribute('aria-valuenow')) || 40;
+    setStatementWidth(current + (event.key === 'ArrowRight' ? 2 : -2));
+  });
+}
+
 /* ================= 题目加载 ================= */
 async function loadProblem() {
   try {
@@ -407,12 +551,12 @@ async function onRun() {
   var abort = newAbort();
   abortRun = abort;
 
-  $('ide-output-wrap').style.display = '';
+  selectConsoleTab('ide-output-wrap');
   $('ide-output-head').innerHTML = '<span class="oj-source-tag">LOCAL</span> ' + escapeHtml(ideLanguageLabel(lang));
   $('ide-time').textContent = '运行中…（' + runningDetail + '）';
   $('ide-timing').textContent = '';
   $('ide-output').innerHTML = '<span style="color:#94a3b8">…</span>';
-  btn.textContent = '◼ 中断';
+  btn.textContent = '中断';
 
   try {
     var r = await runIde(code, lang, stdin, { abort: abort });
@@ -472,7 +616,7 @@ async function onRun() {
     if (ver === runVersion) $('ide-output').innerHTML = '<span class="out-stderr">运行失败：' + escapeHtml(String(e.message || e)) + '</span>';
   } finally {
     if (abortRun === abort) abortRun = null;
-    btn.textContent = '▶ 运行代码';
+    btn.textContent = '运行代码';
   }
 }
 
@@ -491,9 +635,9 @@ async function onRunSamples() {
 
   var abort = newAbort();
   abortRun = abort;
-  btn.textContent = '◼ 中断样例';
+  btn.textContent = '中断样例';
 
-  $('ide-samples-wrap').style.display = '';
+  selectConsoleTab('ide-samples-wrap');
   $('ide-samples-result').innerHTML = '<span class="text-muted">自测中…</span>';
   var rows = [];
   var compileSummary = ''; // Compile Time 汇总（仅首个未命中样例产生一次）
@@ -1199,4 +1343,6 @@ window.__RUNTIME_UI__ = {
   }
 };
 
+initProblemWorkspaceUi();
+loadContestTacticalBar();
 loadProblem();

@@ -4,26 +4,36 @@
 <%- include('../partials/contest-head', { title: '榜单', nav: 'rank', contestId: cid }) %>
 <% var pageScript = '/js/contest/rank.js' %>
 
-<div class="flex-between mb-16">
-  <h2 class="page-title">榜单 <span class="mono text-muted" id="contest-title" style="font-size:14px"></span></h2>
-  <div class="mono text-muted">ICPC · Solved / Penalty</div>
-</div>
-
-<!-- 状态条：Scoreboard version / SSE 连接 / Cache Lease -->
-<div class="panel-oj" style="padding:8px 14px;margin-bottom:12px">
-  <div class="flex-between">
-    <span id="sb-status" class="mono" style="font-size:12px;color:#6b7280">加载中…</span>
-    <span class="text-muted" style="font-size:12px">实时榜单 · 10s 批量刷新</span>
+<div class="contest-page contest-rank-page">
+  <div class="contest-page-head">
+    <div class="contest-page-head-main">
+      <div class="contest-kicker">CONTEST SCOREBOARD</div>
+      <h1 class="page-title contest-page-title">榜单 <span class="mono text-muted contest-title-code" id="contest-title"></span></h1>
+      <p class="contest-page-lead">按 Solved / Penalty 查看实时排名与每题通过情况。</p>
+    </div>
+    <div class="contest-page-head-meta contest-scoreboard-rule" aria-label="榜单计分规则">
+      <span class="contest-meta-label">计分规则</span>
+      <span class="contest-table-note">ICPC · Solved / Penalty</span>
+    </div>
   </div>
-</div>
 
-<div class="panel-oj">
-  <div style="overflow-x:auto">
-    <table class="table-oj table-striped table-hover rank-table" style="margin-bottom:0;min-width:100%">
-      <thead id="rank-head"></thead>
-      <tbody id="rank-tbody"><tr><td colspan="4" class="empty">加载中…</td></tr></tbody>
-    </table>
-  </div>
+  <!-- 状态条：Scoreboard version / SSE 连接 / Cache Lease -->
+  <section class="panel-oj contest-summary-bar contest-scoreboard-status" aria-live="polite">
+    <div class="flex-between contest-status-row">
+      <span id="sb-status" class="mono contest-status-value">加载中…</span>
+      <span class="contest-table-note contest-status-note">实时榜单 · 10s 批量刷新</span>
+    </div>
+  </section>
+
+  <section class="panel-oj contest-section contest-table-shell contest-scoreboard-shell" aria-label="比赛榜单">
+    <div class="contest-table-scroll">
+      <table class="table-oj table-striped table-hover rank-table contest-table">
+        <caption class="contest-table-caption">比赛榜单，按 Solved / Penalty 排序</caption>
+        <thead id="rank-head"></thead>
+        <tbody id="rank-tbody"><tr><td colspan="4" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <script>window.__CONTEST_ID__ = '<%= cid %>';</script>

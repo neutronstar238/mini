@@ -1,33 +1,61 @@
 <%- include('../partials/contest-head', { title: '编译器与运行环境', nav: 'runtime-info', contestId: '' }) %>
 <% var pageScript = '/js/contest/runtime-info.js' %>
 
-<div class="panel-oj">
-  <div class="panel-heading">
-    编译器与运行环境
-    <span class="pull-right text-muted" style="font-size:12px">数据来源：<code>GET /api/public/runtime-profiles</code></span>
-  </div>
-  <div class="panel-body">
-    <div class="oj-rtinfo-section">
-      <h3>Browser Local Runtime vs Official Judge</h3>
-      <div class="sub">
-        本地浏览器运行时（Browser Local）用于零安装快速自检，<b>并非</b>正式评测环境。<br>
-        正式评测（Official Judge）由服务器编译器/GCC/OpenJDK 完成，<b>最终结果以正式评测为准</b>。
-      </div>
+<div class="contest-page contest-reference-page">
+  <div class="contest-page-head">
+    <div class="contest-page-head-main">
+      <div class="contest-kicker">CONTEST TOOLKIT</div>
+      <h1 class="page-title">编译器与运行环境</h1>
+      <p class="contest-page-lead">先了解浏览器本地预检，再以服务器正式评测结果为准。</p>
     </div>
-    <div id="runtime-info-list">
-      <div class="text-muted">加载中…</div>
-    </div>
-    <div class="oj-rtinfo-section" style="margin-top:24px">
-      <h3>为什么浏览器用 Clang？</h3>
-      <div class="sub">
-        Clang 本身主要使用 C++ 实现，但浏览器内运行的并非 Clang 源码，而是预先编译好的 <code>clang.wasm</code>。
-        本项目选择 Clang 是基于 WebAssembly 工程实现：LLVM/Clang 模块化程度高，Frontend/Linker/Target Backend 容易拆分，
-        且 WebAssembly/WASI 工具链生态成熟，能构建 Browser-hosted Compiler。
-        Official Judge 在受控 systemd 沙箱中使用 GCC/G++ + Linux。
-        两者通过 Compatibility Matrix 做行为验证。
-      </div>
+    <div class="contest-page-head-meta" aria-label="运行环境数据来源">
+      <span class="contest-meta-label">公开数据</span>
+      <code class="mono">GET /api/public/runtime-profiles</code>
     </div>
   </div>
+
+  <section class="panel-oj contest-section" aria-labelledby="runtime-section-title">
+    <div class="panel-heading">
+      <div class="contest-panel-heading-main">
+        <span class="contest-section-kicker">JUDGE PROFILE</span>
+        <span id="runtime-section-title">本地预检与正式评测</span>
+      </div>
+      <span class="contest-panel-status" aria-label="数据来源">动态同步</span>
+    </div>
+    <div class="panel-body">
+      <div class="oj-rtinfo-section contest-info-intro">
+        <div class="oj-rtinfo-grid contest-info-grid">
+          <div class="oj-rtinfo-card local contest-info-card">
+            <h5>Browser Local</h5>
+            <div class="sub">
+              本地浏览器运行时（Browser Local）用于零安装快速自检，<b>并非</b>正式评测环境。
+            </div>
+          </div>
+          <div class="oj-rtinfo-card official contest-info-card">
+            <h5>Official Judge</h5>
+            <div class="sub">
+              正式评测（Official Judge）由服务器编译器/GCC/OpenJDK 完成，<b>最终结果以正式评测为准</b>。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="runtime-info-list" class="contest-data-region" aria-live="polite">
+        <div class="text-muted" role="status">加载中…</div>
+      </div>
+
+      <div class="oj-rtinfo-section contest-info-section">
+        <h3 id="runtime-why-clang">为什么浏览器用 Clang？</h3>
+        <div class="sub">
+          Clang 本身主要使用 C++ 实现，但浏览器内运行的并非 Clang 源码，而是预先编译好的 <code>clang.wasm</code>。
+          本项目选择 Clang 是基于 WebAssembly 工程实现：LLVM/Clang 模块化程度高，Frontend/Linker/Target Backend 容易拆分，
+          且 WebAssembly/WASI 工具链生态成熟，能构建 Browser-hosted Compiler。
+          Official Judge 在受控 systemd 沙箱中使用 GCC/G++ + Linux。
+          两者通过 Compatibility Matrix 做行为验证。
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script>

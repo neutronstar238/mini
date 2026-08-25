@@ -1,13 +1,32 @@
 <%- include('../partials/contest-head', { title: '比赛', nav: 'contests' }) %>
 <% var pageScript = '/js/contest/contests.js' %>
 
-<div class="flex-between mb-16">
-  <h2 class="page-title">比赛</h2>
-  <div class="mono text-muted">选择一场已发布的比赛</div>
-</div>
+<div class="contest-page contest-hub-page">
+  <div class="contest-page-head">
+    <div class="contest-page-head-main">
+      <div class="contest-kicker">CONTEST HUB</div>
+      <h1 class="page-title">比赛</h1>
+      <p class="contest-page-lead">选择一场已发布的比赛，进入题目、提交与榜单。</p>
+    </div>
+    <div class="contest-page-head-meta" aria-label="比赛列表说明">
+      <span class="contest-meta-label">参赛入口</span>
+      <span class="mono text-muted">已发布比赛</span>
+    </div>
+  </div>
 
-<div class="contest-grid" id="contest-grid">
-  <div class="text-muted" style="text-align:center;padding:40px 0">加载中…</div>
+  <section class="contest-section contest-list-section" aria-labelledby="contest-list-title">
+    <div class="contest-section-head">
+      <div>
+        <h2 class="contest-section-title" id="contest-list-title">可参加的比赛</h2>
+        <p class="contest-section-subtitle">比赛开始后可进入题目页；未开始的比赛会保留入口并显示开始时间。</p>
+      </div>
+      <span class="contest-section-badge" aria-hidden="true">CONTESTS</span>
+    </div>
+
+    <div class="contest-card-grid contest-grid" id="contest-grid" aria-live="polite">
+      <div class="text-muted" role="status" style="text-align:center;padding:40px 0">加载中…</div>
+    </div>
+  </section>
 </div>
 
 <style>
