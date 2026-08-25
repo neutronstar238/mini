@@ -137,7 +137,7 @@ async function uiRun(page, source, stdin, options = {}) {
 async function uiSamples(page, source, options = {}) {
   await page.locator('#ide-code').fill(source);
   await page.locator('#ide-run-samples').click();
-  const text = await waitForText(page.locator('#ide-samples-result'), value => /Passed|编译失败|自测失败|WA|RE|TLE/.test(value), options.timeoutMs || 180000, 100);
+  const text = await waitForText(page.locator('#ide-samples-result'), value => /Passed|编译失败|自测失败|WA|RE|LOCAL_TIMEOUT/.test(value), options.timeoutMs || 180000, 100);
   return {text, state: await pageState(page)};
 }
 
@@ -330,7 +330,7 @@ async function main() {
       report.cases.push(localUnavailable ? blockedJava('java-re') : await runnerCase(chrome.page, 'java-re', JAVA_RE_SOURCE, '', {runStatus: 'RE'}, executionState));
       const timeout = localUnavailable
         ? blockedJava('java-local-timeout')
-        : await runnerCase(chrome.page, 'java-local-timeout', JAVA_TIMEOUT_SOURCE, '', {runStatus: 'TLE', harnessTimeoutMs: 30000}, executionState);
+        : await runnerCase(chrome.page, 'java-local-timeout', JAVA_TIMEOUT_SOURCE, '', {runStatus: 'LOCAL_TIMEOUT', harnessTimeoutMs: 30000}, executionState);
       report.cases.push(timeout);
       const alive = localUnavailable
         ? blockedJava('java-timeout-recovery')

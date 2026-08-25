@@ -66,7 +66,7 @@ const c17Checks = checkMap([
     cSummary(name)?.matrixCompatible === cSummary(name)?.expected), c17.summary],
   ['correctnessOutput', ['positive', 'acm-corpus'].every(name =>
     cSummary(name)?.browserMatchesExpected === cSummary(name)?.expected), c17.summary],
-  ['timeout', e2e.modern?.c17?.timeout?.runStatus === 'TLE'
+  ['timeout', e2e.modern?.c17?.timeout?.runStatus === 'LOCAL_TIMEOUT'
     && e2e.modern?.c17?.statsAfterTimeout?.ready === true
     && e2e.modern?.c17?.aliveAfterTimeout?.outputMatches === true, e2e.modern?.c17]
 ]);
@@ -105,7 +105,7 @@ const cpp17Checks = checkMap([
   ['correctnessOutput', ['feature', 'acm'].every(name => browserCategory(name).passed === browserCategory(name).total), {
       feature: browserCategory('feature'), acm: browserCategory('acm')
     }],
-  ['timeout', e2e.modern?.cpp17?.timeout?.runStatus === 'TLE'
+  ['timeout', e2e.modern?.cpp17?.timeout?.runStatus === 'LOCAL_TIMEOUT'
     && e2e.modern?.cpp17?.statsAfterTimeout?.ready === true
     && e2e.modern?.cpp17?.aliveAfterTimeout?.outputMatches === true, e2e.modern?.cpp17]
 ]);

@@ -208,11 +208,11 @@ async function runOne(page, profile, source, test) {
       compileStatus: result.compileStatus || null,
       runStatus: result.runStatus || null,
       compileFailed: !!result.compileFailed || result.compileStatus === 'CE',
-      timedOut: !!result.timedOut || !!result.harnessTimeout || result.runStatus === 'TLE',
+      timedOut: !!result.timedOut || !!result.harnessTimeout || result.runStatus === 'LOCAL_TIMEOUT',
       runtimeError: !!result.runtimeError || result.runStatus === 'RE'
         || result.runStatus === 'ABORTED'
         || (result.exitCode != null && result.exitCode !== 0
-          && result.runStatus !== 'TLE' && result.runStatus !== 'HARNESS_TIMEOUT'),
+          && result.runStatus !== 'LOCAL_TIMEOUT' && result.runStatus !== 'HARNESS_TIMEOUT'),
       runnerError: !!result.runnerError,
       stdout: String(result.stdout || ''),
       stderr: String(result.stderr || '').slice(0, 2000),

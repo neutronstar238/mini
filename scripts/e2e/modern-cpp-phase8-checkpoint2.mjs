@@ -235,7 +235,7 @@ async function main() {
         headerGuard: headerGuard ? summarizeRun(headerGuard) : null,
         pass: first.compileStatus === 'PASS' && first.runStatus === 'PASS' && normalize(first.stdout) === '42'
           && second.cacheHit === true && ce.compileStatus === 'CE' && re.runStatus === 'RE'
-          && timeout.runStatus === 'TLE' && timeout.timedOut === true
+          && timeout.runStatus === 'LOCAL_TIMEOUT' && timeout.timedOut === true
           && timeout.compilerWorkerPreserved === true && statsAfterTimeout.ready === true
           && alive.runStatus === 'PASS' && normalize(alive.stdout) === '3'
           && truncation.outputTruncatedFields?.includes('stdout')
