@@ -43,12 +43,6 @@
           <div class="problem-meta-item"><span class="k">通过率</span><b class="mono" id="p-acrate">-</b></div>
         </div>
       </header>
-      <div class="problem-pane-heading panel-heading">
-        <span>题目描述</span>
-        <span class="problem-pane-tools" aria-label="题面工具">
-          <span class="text-muted">Statement</span>
-        </span>
-      </div>
       <div class="problem-statement-scroll panel-body">
         <div id="p-desc" class="md_display_div"></div>
       </div>
@@ -172,6 +166,7 @@ int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
 
         <section class="ide-submit-panel panel-oj" aria-label="正式提交">
           <div class="ide-bottom-actionbar" role="toolbar" aria-label="提交与运行操作">
+            <span class="text-muted ide-submit-note">本地自测通过仅表示公开样例通过；正式结果以服务器评测为准</span>
             <div class="ide-primary-actions">
               <button class="btn btn-info btn-sm ide-samples-btn" id="ide-run-samples" type="button">运行样例</button>
               <button class="btn btn-primary btn-sm ide-run-btn" id="ide-run" type="button">运行代码</button>
@@ -183,9 +178,6 @@ int main() { /* 在这里书写你的代码 */ return 0; }"></textarea>
             <span>正式提交</span>
           </div>
           <div class="ide-submit-body panel-body">
-            <div class="ide-submit-actionbar">
-              <span class="text-muted ide-submit-note">本地自测通过仅表示公开样例通过；正式结果以服务器评测为准</span>
-            </div>
             <div id="submit-preview-note" class="text-muted ide-submit-preview" style="display:none">
               当前该语言暂不支持正式提交。
             </div>

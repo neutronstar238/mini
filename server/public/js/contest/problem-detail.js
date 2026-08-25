@@ -10,6 +10,16 @@ var problemId = window.__PROBLEM_ID__ || location.pathname.split('/').pop();
 if (!cid) location.href = '/contest/contests';
 
 var IDE = { samples: [] };
+var PUBLIC_API_BASE = '/api/public';
+var cachedProfiles = null; // 缓存 /api/public/runtime-profiles，避免重复请求
+
+// 题目切换使用同页加载：不拆掉 Web IDE / Runtime，只替换题面数据。
+var contestProblems = [];
+var contestSubmissions = [];
+var problemCache = Object.create(null);
+var problemFetches = Object.create(null);
+var problemSwitchToken = 0;
+var currentProblem = null;
 
 function $(id) { return document.getElementById(id); }
 
@@ -24,6 +34,43 @@ function renderMd(text) {
   html = html.replace(/```([\s\S]*?)```/g, function (_, code) { return '<pre class="code-block-oj">' + code.trim() + '</pre>'; });
   html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`(.+?)`/g, '<code>$1</code>').replace(/\$(.+?)\$/g, '<i>$1</i>').replace(/\n/g, '<br>');
   return html;
+}
+
+function problemPath(id) {
+  return '/contest/contests/' + encodeURIComponent(cid) + '/problems/' + encodeURIComponent(id);
+}
+
+function problemApiPath(id) {
+  return '/api/contest/contests/' + encodeURIComponent(cid) + '/problems/' + encodeURIComponent(id);
+}
+
+function fetchProblem(id) {
+  var key = String(id);
+  if (problemCache[key]) return Promise.resolve(problemCache[key]);
+  if (problemFetches[key]) return problemFetches[key];
+  problemFetches[key] = api(problemApiPath(key)).then(function (data) {
+    var problem = data && data.problem;
+    if (!problem) throw new Error('题目数据为空');
+    problemCache[key] = problem;
+    return problem;
+  }).finally(function () {
+    delete problemFetches[key];
+  });
+  return problemFetches[key];
+}
+
+function updateProblemHistory(id, replace) {
+  var nextPath = problemPath(id) + (location.search || '');
+  var state = { contestId: String(cid), problemId: String(id) };
+  if (replace) history.replaceState(state, '', nextPath);
+  else history.pushState(state, '', nextPath);
+}
+
+function currentProblemIdFromLocation() {
+  var parts = location.pathname.split('/').filter(Boolean);
+  var index = parts.lastIndexOf('problems');
+  if (index < 0 || !parts[index + 1]) return '';
+  try { return decodeURIComponent(parts[index + 1]); } catch (_) { return parts[index + 1]; }
 }
 
 /* ================= 赛事战术栏与工作区 UI ================= */
@@ -75,10 +122,46 @@ function renderContestProblemRail(problems, submissions) {
     if (state.accepted) className += ' is-ac';
     else if (state.attempts) className += ' is-attempted';
     var status = state.accepted ? '已通过' : state.attempts ? state.attempts + ' 次尝试' : current ? '进行中' : '未尝试';
-    return '<a class="' + className + '" href="/contest/contests/' + encodeURIComponent(cid) + '/problems/' + encodeURIComponent(problem.id) + '"' +
+    return '<a class="' + className + '" href="' + problemPath(problem.id) + '" data-problem-id="' + escapeHtml(problem.id) + '"' +
       (current ? ' aria-current="page"' : '') + '><span class="contest-problem-chip-letter">' + escapeHtml(label) + '</span>' +
       '<span class="contest-problem-chip-status">' + escapeHtml(status) + '</span></a>';
   }).join('');
+  bindProblemRail(rail);
+}
+
+function bindProblemRail(rail) {
+  if (!rail || rail.dataset.problemNavBound === 'true') return;
+  rail.dataset.problemNavBound = 'true';
+  rail.addEventListener('click', function (event) {
+    var target = event.target && event.target.closest ? event.target.closest('[data-problem-id]') : null;
+    if (!target || !rail.contains(target)) return;
+    if ((event.button != null && event.button !== 0) || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    var nextId = target.getAttribute('data-problem-id');
+    if (!nextId || String(nextId) === String(problemId)) {
+      event.preventDefault();
+      return;
+    }
+    event.preventDefault();
+    switchProblem(nextId, { pushHistory: true });
+  });
+  function prefetchFromEvent(event) {
+    var target = event.target && event.target.closest ? event.target.closest('[data-problem-id]') : null;
+    if (!target || !rail.contains(target)) return;
+    var nextId = target.getAttribute('data-problem-id');
+    if (nextId && String(nextId) !== String(problemId)) fetchProblem(nextId).catch(function () { /* 点击时再提示 */ });
+  }
+  rail.addEventListener('pointerover', prefetchFromEvent);
+  rail.addEventListener('focusin', prefetchFromEvent);
+}
+
+function prefetchAdjacentProblems() {
+  if (!contestProblems.length) return;
+  var currentIndex = contestProblems.findIndex(function (problem) { return String(problem.id) === String(problemId); });
+  var ids = [];
+  if (currentIndex > 0) ids.push(contestProblems[currentIndex - 1].id);
+  if (currentIndex >= 0 && currentIndex < contestProblems.length - 1) ids.push(contestProblems[currentIndex + 1].id);
+  var idle = window.requestIdleCallback || function (callback) { setTimeout(callback, 0); };
+  idle(function () { ids.forEach(function (id) { fetchProblem(id).catch(function () { /* 点击时再提示 */ }); }); });
 }
 
 async function loadContestTacticalBar() {
@@ -90,9 +173,12 @@ async function loadContestTacticalBar() {
     ]);
     var problemData = result[0] || {};
     var contest = result[1] && result[1].contest ? result[1].contest : problemData.contest;
+    contestProblems = problemData.problems || [];
+    contestSubmissions = (result[2] && result[2].submissions) || [];
     if ($('p-contest') && contest && contest.title) $('p-contest').textContent = contest.title;
     startContestElapsed(contest || {});
-    renderContestProblemRail(problemData.problems || [], (result[2] && result[2].submissions) || []);
+    renderContestProblemRail(contestProblems, contestSubmissions);
+    prefetchAdjacentProblems();
   } catch (_) {
     if ($('contest-elapsed')) $('contest-elapsed').textContent = '进行中';
     if ($('contest-solved')) $('contest-solved').textContent = '-';
@@ -171,27 +257,106 @@ function initProblemWorkspaceUi() {
 }
 
 /* ================= 题目加载 ================= */
-async function loadProblem() {
+function renderProblem(p) {
+  currentProblem = p;
+  document.title = p.title + ' · Mini-OJ';
+  $('p-title').textContent = p.title;
+  var idx = p.order ? (p.order - 1) : -1;
+  $('p-letter').textContent = idx >= 0 ? letter(idx) + ' ·' : '题目 ·';
+  $('p-desc').innerHTML = renderMd(p.description);
+  (p.samples || []).forEach(function (s, i) {
+    $('p-desc').insertAdjacentHTML('beforeend',
+      '<div class="md_display_div"><h2>Sample ' + (i + 1) + '</h2>' +
+      '<div class="sample_row"><div class="sample_col"><div style="font-size:13px;color:#555;margin-bottom:4px">输入</div><pre class="sampledata">' + escapeHtml(s.input || '') + '</pre></div>' +
+      '<div class="sample_col"><div style="font-size:13px;color:#555;margin-bottom:4px">输出</div><pre class="sampledata">' + escapeHtml(s.output || '') + '</pre></div></div></div>');
+  });
+  IDE.samples = p.samples || [];
+  $('p-time').textContent = p.timeLimitMs + ' ms';
+  $('p-mem').textContent = p.memoryLimitMb + ' MB';
+  $('p-cases').textContent = p.testcaseCount || '-';
+  $('p-subcnt').textContent = p.submitCount;
+  $('p-acrate').textContent = (p.acRate || 0) + '%';
+}
+
+function resetProblemRunState() {
+  if (abortRun) {
+    try { abortRun(); } catch (_) { /* ignore */ }
+    abortRun = null;
+  }
+  runVersion++;
+  pendingRequestId = null;
+  selectConsoleTab('ide-input-wrap');
+  if ($('ide-output')) $('ide-output').textContent = '';
+  if ($('ide-output-head')) $('ide-output-head').textContent = '';
+  if ($('ide-time')) $('ide-time').textContent = '';
+  if ($('ide-timing')) $('ide-timing').textContent = '';
+  if ($('ide-samples-result')) $('ide-samples-result').textContent = '';
+  if ($('ide-compile-detail')) $('ide-compile-detail').style.display = 'none';
+  if ($('submit-result')) $('submit-result').style.display = 'none';
+  if ($('submit-preview-note')) $('submit-preview-note').style.display = 'none';
+  if ($('submit-btn')) {
+    $('submit-btn').disabled = false;
+    $('submit-btn').textContent = '正式提交';
+  }
+}
+
+function setProblemSwitching(loading) {
+  var page = document.querySelector('.problem-detail-page');
+  var rail = $('contest-problem-rail');
+  if (page) {
+    page.classList.toggle('is-problem-switching', loading);
+    page.setAttribute('aria-busy', loading ? 'true' : 'false');
+  }
+  if (rail) rail.setAttribute('aria-busy', loading ? 'true' : 'false');
+}
+
+async function switchProblem(nextId, options) {
+  options = options || {};
+  nextId = String(nextId || '');
+  if (!nextId || nextId === String(problemId)) return;
+  var previousId = String(problemId);
+  var token = ++problemSwitchToken;
+  if (typeof flushDraft === 'function') flushDraft();
+  resetProblemRunState();
+  problemId = nextId;
+  window.__PROBLEM_ID__ = nextId;
+  if (options.pushHistory !== false) updateProblemHistory(nextId, false);
+  renderContestProblemRail(contestProblems, contestSubmissions);
+  setProblemSwitching(true);
   try {
-    var d = await api('/api/contest/contests/' + cid + '/problems/' + problemId);
-    var p = d.problem;
-    document.title = p.title + ' · Mini-OJ';
-    $('p-title').textContent = p.title;
-    var idx = p.order ? (p.order - 1) : -1;
-    $('p-letter').textContent = idx >= 0 ? letter(idx) + ' · ' + String(p.id).slice(0, 6) : String(p.id).slice(0, 8);
-    $('p-desc').innerHTML = renderMd(p.description);
-    (p.samples || []).forEach(function (s, i) {
-      $('p-desc').insertAdjacentHTML('beforeend',
-        '<div class="md_display_div"><h2>Sample ' + (i + 1) + '</h2>' +
-        '<div class="sample_row"><div class="sample_col"><div style="font-size:13px;color:#555;margin-bottom:4px">输入</div><pre class="sampledata">' + escapeHtml(s.input || '') + '</pre></div>' +
-        '<div class="sample_col"><div style="font-size:13px;color:#555;margin-bottom:4px">输出</div><pre class="sampledata">' + escapeHtml(s.output || '') + '</pre></div></div></div>');
-    });
-    IDE.samples = p.samples || [];
-    $('p-time').textContent = p.timeLimitMs + ' ms';
-    $('p-mem').textContent = p.memoryLimitMb + ' MB';
-    $('p-cases').textContent = p.testcaseCount || '-';
-    $('p-subcnt').textContent = p.submitCount;
-    $('p-acrate').textContent = (p.acRate || 0) + '%';
+    var p = await fetchProblem(nextId);
+    if (token !== problemSwitchToken || String(problemId) !== nextId) return;
+    renderProblem(p);
+    if ($('ide-code')) $('ide-code').value = '';
+    if ($('ide-input')) $('ide-input').value = '';
+    if (typeof loadDraft === 'function') loadDraft();
+    if (typeof updateSubmitPreviewGate === 'function') updateSubmitPreviewGate();
+    if (typeof updateModernControls === 'function') updateModernControls();
+    var statement = document.querySelector('.problem-statement-scroll');
+    if (statement) statement.scrollTo({ top: 0, behavior: 'auto' });
+    renderContestProblemRail(contestProblems, contestSubmissions);
+  } catch (err) {
+    if (token !== problemSwitchToken) return;
+    problemId = previousId;
+    window.__PROBLEM_ID__ = previousId;
+    updateProblemHistory(previousId, true);
+    renderContestProblemRail(contestProblems, contestSubmissions);
+    if (currentProblem) renderProblem(currentProblem);
+    if ($('ide-code')) $('ide-code').value = '';
+    if ($('ide-input')) $('ide-input').value = '';
+    if (typeof loadDraft === 'function') loadDraft();
+    toast(err.message || '题目加载失败', 'err');
+  } finally {
+    if (token === problemSwitchToken) setProblemSwitching(false);
+  }
+}
+
+async function loadProblem() {
+  var requestedId = String(problemId);
+  try {
+    var p = await fetchProblem(requestedId);
+    if (String(problemId) !== requestedId) return;
+    renderProblem(p);
   } catch (err) {
     toast(err.message, 'err');
     $('p-title').textContent = '加载失败';
@@ -203,8 +368,6 @@ async function loadProblem() {
  * 页面需 COOP/COEP 头（cross-origin isolated）以启用 SharedArrayBuffer。
  */
 var RUNNO_VERSION = '0.10.0';
-var PUBLIC_API_BASE = '/api/public';
-var cachedProfiles = null; // 缓存 /api/public/runtime-profiles，避免每次切换重复请求
 var runtimeUiState = {
   runno: 'idle',
   modernStage: 'IDLE',
@@ -716,6 +879,8 @@ function officialLanguage(frontendLang) {
 }
 
 document.getElementById('submit-btn').addEventListener('click', async function () {
+  var submitProblemId = String(problemId);
+  var submitSwitchToken = problemSwitchToken;
   var code = $('ide-code').value;
   var frontendLang = $('ide-lang').value;
   var language = officialLanguage(frontendLang);
@@ -737,19 +902,25 @@ document.getElementById('submit-btn').addEventListener('click', async function (
         clientSubmittedAt: new Date().toISOString() // 仅作日志，排名以 server_received_at 为准
       })
     });
-    pendingRequestId = null; // 成功即清空
+    if (submitSwitchToken === problemSwitchToken && String(problemId) === submitProblemId) pendingRequestId = null; // 成功即清空
+    if (submitSwitchToken !== problemSwitchToken || String(problemId) !== submitProblemId) return;
     $('submit-result').style.display = '';
     $('sub-id').textContent = d.submission.id.slice(0, 8);
     $('sub-status').innerHTML = officialBadge(d.submission.status, d.submission.verdict);
     $('sub-cases').innerHTML = '';
     if (d.deduplicated) toast('检测到重复请求，已复用原提交', 'warn');
     else toast('已提交，服务器评测中');
-    trackSubmission(d.submission.id);
+    trackSubmission(d.submission.id, submitProblemId, submitSwitchToken);
   } catch (err) {
     // 网络失败：保留 requestId 供重试复用，避免重复建 Submission
     toast(err.message, 'err');
   }
-  finally { btn.disabled = false; btn.textContent = '正式提交'; }
+  finally {
+    if (submitSwitchToken === problemSwitchToken && String(problemId) === submitProblemId) {
+      btn.disabled = false;
+      btn.textContent = '正式提交';
+    }
+  }
 });
 
 /** 正式 Verdict 徽标（OFFICIAL） */
@@ -767,22 +938,29 @@ function verdictLabel(v) {
   return { AC: 'Accepted', WA: 'Wrong Answer', TLE: 'Time Limit Exceeded', MLE: 'Memory Limit Exceeded', RE: 'Runtime Error', CE: 'Compile Error', SYSTEM_ERROR: 'System Error', QUEUED: 'Queued', JUDGING: 'Judging', FINISHED: 'Finished' }[v] || v;
 }
 
-function trackSubmission(id) {
+function trackSubmission(id, submissionProblemId, submissionSwitchToken) {
   var statusEl = $('sub-status');
+  submissionProblemId = submissionProblemId == null ? String(problemId) : String(submissionProblemId);
+  submissionSwitchToken = submissionSwitchToken == null ? problemSwitchToken : submissionSwitchToken;
+  function isCurrent() {
+    return String(problemId) === submissionProblemId && problemSwitchToken === submissionSwitchToken;
+  }
+  if (!isCurrent()) return;
   statusEl.innerHTML = officialBadge('QUEUED');
   var stop = false;
   var sse = null;
   function finish(s) {
-    if (stop) return;
+    if (stop || !isCurrent()) { stop = true; return; }
     stop = true;
     statusEl.innerHTML = officialBadge(s.status, s.verdict);
     if (s.verdict === 'AC') toast('评测通过！Official Accepted');
     else if (s.status === 'FINISHED') toast('评测完成：' + verdictLabel(s.verdict || ''));
   }
   async function poll() {
-    if (stop) return;
+    if (stop || !isCurrent()) { stop = true; return; }
     try {
       var s = (await api('/api/contest/submissions/' + id)).submission;
+      if (!isCurrent()) { stop = true; return; }
       if (s.status === 'QUEUED' || s.status === 'JUDGING') statusEl.innerHTML = officialBadge(s.status, s.verdict);
       else finish(s);
     } catch (_) { /* ignore */ }
@@ -791,7 +969,7 @@ function trackSubmission(id) {
   // SSE 优先
   sse = sseConnect('/api/contest/events/stream', {
     submission_update: function (d) {
-      if (d.id !== id) return;
+      if (d.id !== id || !isCurrent()) return;
       if (d.status === 'QUEUED' || d.status === 'JUDGING') statusEl.innerHTML = officialBadge(d.status, d.verdict);
       else finish({ status: d.status, verdict: d.verdict });
     }
@@ -816,17 +994,25 @@ function loadDraft() {
 }
 
 var draftTimer = null;
+function saveDraftNow() {
+  try {
+    var lang = $('ide-lang').value;
+    localStorage.setItem(draftKey(lang), JSON.stringify({
+      source: $('ide-code').value,
+      input: $('ide-input').value,
+      savedAt: Date.now()
+    }));
+  } catch (_) { /* 隐私模式等无 localStorage 时忽略 */ }
+}
+function flushDraft() {
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  saveDraftNow();
+}
 function saveDraft() {
   clearTimeout(draftTimer);
   draftTimer = setTimeout(function () {
-    try {
-      var lang = $('ide-lang').value;
-      localStorage.setItem(draftKey(lang), JSON.stringify({
-        source: $('ide-code').value,
-        input: $('ide-input').value,
-        savedAt: Date.now()
-      }));
-    } catch (_) { /* 隐私模式等无 localStorage 时忽略 */ }
+    saveDraftNow();
   }, 800); // debounce 800ms
 }
 function updateSubmitPreviewGate() {
@@ -1344,5 +1530,11 @@ window.__RUNTIME_UI__ = {
 };
 
 initProblemWorkspaceUi();
+window.addEventListener('popstate', function () {
+  var nextId = currentProblemIdFromLocation();
+  if (nextId && String(nextId) !== String(problemId)) {
+    switchProblem(nextId, { pushHistory: false });
+  }
+});
 loadContestTacticalBar();
 loadProblem();
