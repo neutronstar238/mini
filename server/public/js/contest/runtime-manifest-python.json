@@ -47,7 +47,7 @@
       { "name": "pyodide.asm.wasm", "bytes": 10088038, "sha256": "b7e66a19427a55010ac3367c1b6c64b893f9826f783412945fdf0c3337f3bc94" },
       { "name": "python_stdlib.zip", "bytes": 2341888, "sha256": "72894522b791858b9d613ac786b951d8b5094035dcf376313ea24a466810f336" }
     ],
-    "totalBytes": 13819891,
+    "totalBytes": 13793891,
     "wasmRuntimeHash": "b7e66a19427a55010ac3367c1b6c64b893f9826f783412945fdf0c3337f3bc94",
     "stdlibHash": "72894522b791858b9d613ac786b951d8b5094035dcf376313ea24a466810f336",
     "runtimeAssetHash": "17E09D0EF8C89EF403F8DB7F34AACFE323A271D624F6CF1C4C9D1CB43B38922B",
