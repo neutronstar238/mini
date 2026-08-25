@@ -939,7 +939,8 @@ async function runC(opts) {
 const JAVA_WORKER_URL = '/js/contest/ide-java-worker.js';
 const JAVA_RUNTIME_BASE_URL = '/runtime/' + JAVA_RUNTIME_ID_PRIMARY + '/';
 const JAVA_RUNTIME_MANIFEST_URL = JAVA_RUNTIME_BASE_URL + 'runtime-manifest.json';
-const JAVA_INIT_TIMEOUT_MS = 120000;      // 首次含 wasm 下载 + JVM/CompileServer 初始化
+const JAVA_WORKER_BOOT_TIMEOUT_MS = 180000; // JVM/CompileServer 启动超时
+const JAVA_INIT_TIMEOUT_MS = 195000;     // Worker 初始化超时，略大于 JVM boot timeout
 const JAVA_ASSET_TIMEOUT_MS = 180000;     // 移动网络下载约 30 MiB 冻结资产的总超时
 const JAVA_EXEC_TIMEOUT_MS = 15000;       // Java 小输入的默认本地保护
 const JAVA_TIMEOUT_MIN_MS = 1000;
@@ -973,7 +974,7 @@ function resolveJavaTimeoutMs(opts) {
   if (inputBytes <= JAVA_TIMEOUT_LARGE_INPUT_BYTES) return JAVA_EXEC_TIMEOUT_MS;
   const progress = Math.min(1, Math.max(0,
     (inputBytes - JAVA_TIMEOUT_LARGE_INPUT_BYTES) / (3 * JAVA_TIMEOUT_INPUT_STEP_BYTES)));
-  return JAVA_EXEC_TIMEOUT_MS + progress * (JAVA_TIMEOUT_MAX_MS - JAVA_EXEC_TIMEOUT_MS);
+  return Math.round(JAVA_EXEC_TIMEOUT_MS + progress * (JAVA_TIMEOUT_MAX_MS - JAVA_EXEC_TIMEOUT_MS));
 }
 
 let javaWorker = null;
@@ -1129,61 +1130,78 @@ function ensureJavaWorker() {
       javaInterruptBuf = null;
       console.warn('[ide-runner] SAB 不可用，Java Local Timeout 走 FALLBACK terminate 兜底');
     }
-    const timer = setTimeout(function () {
-      cleanup();
-      javaProgress('ERROR', {error: 'Java Runtime 初始化超时，请检查网络或释放设备内存后重试'});
-      disposeJavaWorker();
-      reject(new Error('Java Runtime 初始化超时'));
-    }, JAVA_INIT_TIMEOUT_MS);
-    function cleanup() {
-      clearTimeout(timer);
+    const initStartedAt = performance.now();
+    let lastInitStage = 'INITIALIZING_WASM';
+    let ready = false;
+    let timer = null;
+    function cleanupInit() {
+      if (timer) { clearTimeout(timer); timer = null; }
       worker.removeEventListener('message', onMsg);
-      worker.removeEventListener('error', onErr);
     }
+    function failInit(message, extra) {
+      cleanupInit();
+      worker.removeEventListener('error', onWorkerError);
+      javaProgress('ERROR', Object.assign({error: message, stage: lastInitStage}, extra || {}));
+      disposeJavaWorker();
+      setJavaStatus('error');
+      reject(new Error(message));
+    }
+    function onWorkerError(e) {
+      if (javaWorker !== worker) return;
+      const message = 'Java Worker 异常: ' + (e.message || 'unknown');
+      if (!ready) {
+        failInit(message);
+        return;
+      }
+      worker.removeEventListener('error', onWorkerError);
+      javaProgress('ERROR', {error: message, stage: 'READY'});
+      disposeJavaWorker();
+      setJavaStatus('error');
+    }
+    timer = setTimeout(function () {
+      const waitedMs = Math.max(0, Math.round(performance.now() - initStartedAt));
+      const message = 'Java Runtime 初始化超时：阶段 ' + lastInitStage + '，已等待 ' + waitedMs + 'ms';
+      failInit(message, {waitedMs: waitedMs});
+    }, JAVA_INIT_TIMEOUT_MS);
     function onMsg(e) {
+      if (javaWorker !== worker) return;
       const d = e.data;
       if (!d) return;
       if (d.type === 'state') {
         if (d.state === 'INITIALIZING_WASM') {
+          lastInitStage = 'INITIALIZING_WASM';
           javaProgress('INITIALIZE_WASM', {message: '正在加载 BrowserJDK WebAssembly'});
         } else if (d.state === 'BOOTING_JVM') {
+          lastInitStage = 'BOOT_JVM';
           javaProgress('BOOT_JVM', {message: '正在启动 OpenJDK 21 与 JavaCompiler，移动设备可能需要较长时间'});
         }
         return;
       }
       if (d.type === 'inited') {
-        cleanup();
+        if (d.runtimeId !== JAVA_RUNTIME_ID_PRIMARY) {
+          const actualRuntimeId = d.runtimeId == null ? '(missing)' : String(d.runtimeId);
+          failInit('Java Runtime runtimeId 不匹配：收到 ' + actualRuntimeId + '，期望 ' + JAVA_RUNTIME_ID_PRIMARY);
+          return;
+        }
+        cleanupInit();
+        ready = true;
         javaInitMs = d.initMs;
         setJavaStatus('ready');
         javaProgress('READY', {percent: 100, indeterminate: false, message: 'Java 21 Runtime 已就绪'});
         console.debug('[ide-runner] Java Runtime READY', { runtimeId: d.runtimeId, javaVersion: d.javaVersion, initMs: d.initMs, source: d.runtimeSource, warning: d.warning });
         resolve(worker);
       } else if (d.type === 'init-failed' || d.type === 'error') {
-        if (d.type === 'init-failed') cleanup();
-        javaProgress('ERROR', {error: d.error || d.message || 'unknown'});
-        disposeJavaWorker();
-        setJavaStatus('error');
-        reject(new Error('Java Runtime 初始化失败: ' + (d.error || d.message || 'unknown')));
+        failInit('Java Runtime 初始化失败: ' + (d.error || d.message || 'unknown'));
       }
     }
-    function onErr(e) {
-      cleanup();
-      javaProgress('ERROR', {error: e.message || 'Java Worker 启动失败'});
-      disposeJavaWorker();
-      setJavaStatus('error');
-      reject(new Error('Java Worker 异常: ' + (e.message || 'unknown')));
-    }
     worker.addEventListener('message', onMsg);
-    worker.addEventListener('error', onErr);
+    worker.addEventListener('error', onWorkerError);
     try {
-      worker.postMessage({ type: 'init', interruptBuffer: javaInterruptBuf });
+      worker.postMessage({ type: 'init', interruptBuffer: javaInterruptBuf, bootTimeoutMs: JAVA_WORKER_BOOT_TIMEOUT_MS });
       setJavaStatus('preparing');
     } catch (e) {
       console.error('[ide-runner] Java Worker postMessage 失败:', e && e.message, e && e.stack);
-      cleanup();
-      disposeJavaWorker();
-      setJavaStatus('error');
-      reject(e);
+      failInit('Java Worker postMessage 失败: ' + (e && e.message || e));
     }
   }); });
   javaReadyPromise = attempt;
@@ -1197,7 +1215,7 @@ function ensureJavaWorker() {
 function retryJavaRuntime() {
   disposeJavaWorker();
   setJavaStatus('loading');
-  return preloadJavaRuntimeAssets(true).then(function () { return ensureJavaWorker(); });
+  return preloadJavaRuntimeAssets(false).then(function () { return ensureJavaWorker(); });
 }
 
 async function runJava(opts) {

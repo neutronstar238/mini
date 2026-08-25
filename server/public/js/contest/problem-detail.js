@@ -269,7 +269,11 @@ async function runIde(code, lang, stdin, opts) {
   var races = [invoke, abortPromise];
   if (!useRunner) {
     races.push(new Promise(function (_, reject) {
-      setTimeout(function () { reject(new Error('浏览器运行超时（可能 stdin 竞态），请重试')); }, RUN_TIMEOUT_MS);
+      setTimeout(function () {
+        var e = new Error('浏览器运行超时');
+        e.__localTimeout = true;
+        reject(e);
+      }, RUN_TIMEOUT_MS);
     }));
   }
 
@@ -277,31 +281,51 @@ async function runIde(code, lang, stdin, opts) {
     var timeMs0 = Math.round(performance.now() - t0);
     var isAbort = !!(abort && e && e.__abort);
     if (isAbort) return { __aborted: true };
+    var isLocalTimeout = !!(e && e.__localTimeout);
     // PrepareError（编译失败）的详细 stderr 存放在 e.data.stderr
     var detail = '';
-    if (e && e.data && e.data.stderr) detail = e.data.stderr;
+    if (isLocalTimeout) detail = 'LOCAL_TIMEOUT：仅本地保护，正式结果以 Judge 为准。';
+    else if (e && e.data && e.data.stderr) detail = e.data.stderr;
     else if (e && e.message) detail = e.message;
-    return { __err: true, stdout: '', stderr: detail || ('运行失败：' + String(e)), exitCode: -1, timeMs: timeMs0, terminated: false, timeout: false };
+    return { __err: true, stdout: '', stderr: detail || ('运行失败：' + String(e)), exitCode: -1, timeMs: timeMs0, terminated: false, timeout: isLocalTimeout };
   });
   if (result && result.__aborted) return { __aborted: true, stdout: '', stderr: '', exitCode: -1, timeMs: 0, terminated: false, timeout: false };
   if (result && result.__err) return { stdout: result.stdout, stderr: result.stderr, exitCode: result.exitCode, timeMs: result.timeMs, terminated: false, timeout: result.timeout };
   var timeMs = Math.round(performance.now() - t0);
 
   // —— ide-runner 管线结果（Execution Time 与 Compile Time 严格分离） ——
-  if (result && result.timing) {
-    if (result.aborted && !result.timedOut) return { __aborted: true, stdout: '', stderr: '', exitCode: -1, timeMs: 0, terminated: false, timeout: false };
+  if (result && (result.timing || result.runStatus || result.compileStatus || result.coverageLimited || result.reason || result.warnings || result.outputTruncated || result.limitField)) {
+    if (result.aborted && !result.timedOut && result.runStatus !== 'LOCAL_TERMINATED') return { __aborted: true, stdout: '', stderr: '', exitCode: -1, timeMs: 0, terminated: false, timeout: false };
     logProfile('profile', result.timing);
     var rt = {
       stdout: result.stdout || '',
       stderr: result.stderr || '',
-      exitCode: result.exitCode,
+      exitCode: result.exitCode != null ? result.exitCode : -1,
       timeMs: result.timeMs != null ? result.timeMs : timeMs,
-      executionMs: result.executionMs != null ? result.executionMs : null, // 主指标：纯程序运行时间
-      compileFailed: !!result.compileFailed,
-      terminated: false, timeout: !!result.timedOut,
+      executionMs: result.executionMs != null ? result.executionMs : (result.executionTime != null ? result.executionTime : null), // 主指标：纯程序运行时间
+      compileFailed: !!result.compileFailed || result.compileStatus === 'CE',
+      terminated: !!result.terminated || result.runStatus === 'LOCAL_TERMINATED',
+      timeout: !!result.timedOut || result.runStatus === 'LOCAL_TIMEOUT',
+      timedOut: !!result.timedOut || result.runStatus === 'LOCAL_TIMEOUT',
+      aborted: !!result.aborted,
+      runStatus: result.runStatus || null,
+      reason: result.reason || null,
+      coverageLimited: !!result.coverageLimited,
+      warnings: result.warnings || [],
+      inputBytes: result.inputBytes != null ? result.inputBytes : result.stdinBytes,
+      outputBytes: result.outputBytes,
+      stdoutBytes: result.stdoutBytes,
+      stderrBytes: result.stderrBytes,
+      inputLimitBytes: result.inputLimitBytes,
+      outputLimitBytes: result.outputLimitBytes,
+      limitField: result.limitField,
+      limitBytes: result.limitBytes,
+      actualBytes: result.actualBytes,
+      outputTruncated: !!result.outputTruncated,
+      outputTruncatedFields: result.outputTruncatedFields || [],
       timing: result.timing
     };
-    if (result.timedOut && !rt.stderr) rt.stderr = '运行超时（浏览器本地 6s 限制）';
+    if (rt.timeout) rt.stderr = 'LOCAL_TIMEOUT：仅本地保护，正式结果以 Judge 为准。';
     return rt;
   }
 
@@ -310,7 +334,7 @@ async function runIde(code, lang, stdin, opts) {
     return { stdout: '', stderr: '程序被终止（可能超时）', exitCode: -1, timeMs, terminated: true, timeout: false };
   }
   if (result.resultType === 'timeout') {
-    return { stdout: '', stderr: '运行超时（浏览器本地 5s 限制）', exitCode: -1, timeMs, terminated: false, timeout: true };
+    return { stdout: '', stderr: 'LOCAL_TIMEOUT：仅本地保护，正式结果以 Judge 为准。', exitCode: -1, timeMs, terminated: false, timeout: true };
   }
   if (result.resultType === 'crash') {
     var em = result.error && (result.error.message || result.error.type || JSON.stringify(result.error));
@@ -330,6 +354,34 @@ async function runIde(code, lang, stdin, opts) {
 function normalizeOut(s) {
   return String(s == null ? '' : s).replace(/\r\n/g, '\n').split('\n')
     .map(function (l) { return l.replace(/\s+$/, ''); }).join('\n').replace(/^\s+|\s+$/g, '');
+}
+
+function isLocalUnsupportedResult(r) {
+  return !!r && (r.coverageLimited === true || r.runStatus === 'LOCAL_UNSUPPORTED');
+}
+
+function runnerWarningText(w) {
+  if (w == null) return '';
+  if (typeof w === 'string') return w;
+  if (typeof w === 'object') return String(w.message || w.text || w.warning || w.detail || w.code || '');
+  return String(w);
+}
+
+function localRunNotices(r) {
+  var raw = r && r.warnings;
+  var list = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+  var messages = [];
+  list.forEach(function (w) {
+    var text = runnerWarningText(w);
+    if (text && messages.indexOf(text) < 0) messages.push(text);
+  });
+  var coverage = r && (r.coverageMessage || (isLocalUnsupportedResult(r) ? r.stderr : ''));
+  if (coverage && messages.indexOf(coverage) < 0) messages.unshift(coverage);
+  return messages;
+}
+
+function localNoticeText(notes) {
+  return notes && notes.length ? '\n[提示]\n' + notes.join('\n') : '';
 }
 
 /* ================= 运行代码（自定义输入，支持再次点击中断并重跑） ================= */
@@ -366,8 +418,23 @@ async function onRun() {
     var r = await runIde(code, lang, stdin, { abort: abort });
     if (ver !== runVersion) return; // 已被新的点击作废，丢弃旧结果
     if (r.__aborted) { $('ide-time').textContent = '已中断'; $('ide-timing').textContent = ''; $('ide-output').innerHTML = '<span class="out-stderr">上一次运行已中断，点击「运行代码」重新开始</span>'; return; }
+    var coverageLimited = (typeof isLocalUnsupportedResult === 'function' && isLocalUnsupportedResult(r)) ||
+      !!(r && (r.coverageLimited === true || r.runStatus === 'LOCAL_UNSUPPORTED' || r.reason === 'LOCAL_UNSUPPORTED'));
+    var localNotices = typeof localRunNotices === 'function' ? localRunNotices(r, lang, code, stdin) : [];
+    if (coverageLimited) {
+      $('ide-time').textContent = '浏览器环境无法覆盖';
+      $('ide-timing').textContent = localNotices.join(' · ');
+      $('ide-output').innerHTML = '<span class="text-muted">浏览器环境无法覆盖</span>' + (localNotices.length ? '<span class="text-muted">' + escapeHtml(localNoticeText(localNotices)) + '</span>' : '');
+      return;
+    }
     // 主指标：运行时间 = 纯 Execution Time（编译耗时仅作次要信息，不计入）
-    if (r.executionMs != null) {
+    if (r.timeout || r.runStatus === 'LOCAL_TIMEOUT') {
+      var timeoutMs = r.executionMs != null ? r.executionMs : r.timeMs;
+      $('ide-time').textContent = 'LOCAL_TIMEOUT' + (timeoutMs != null ? ' · 运行时间：' + fmtExecMs(timeoutMs) + ' ms' : '') + '（仅本地保护，正式结果以 Judge 为准）';
+    } else if (r.terminated || r.runStatus === 'LOCAL_TERMINATED') {
+      var terminatedMs = r.executionMs != null ? r.executionMs : r.timeMs;
+      $('ide-time').textContent = 'LOCAL_TERMINATED' + (terminatedMs != null ? ' · 运行时间：' + fmtExecMs(terminatedMs) + ' ms' : '') + '（仅本地中断，正式结果以 Judge 为准）';
+    } else if (r.executionMs != null) {
       $('ide-time').textContent = '运行时间：' + fmtExecMs(r.executionMs) + ' ms' +
         (lang === 'python' ? '（本地参考，正式 TLE 以服务器为准）' : '');
     } else if (r.compileFailed) {
@@ -379,6 +446,7 @@ async function onRun() {
     if (lang === 'python' && r.reason === 'NON_ZERO_EXIT' && r.exitCode !== 0) {
       $('ide-time').textContent = 'Local Runtime Error · Program exited with code ' + r.exitCode;
       html = '<span class="out-stderr">程序以非零退出码结束（' + r.exitCode + '）。正式 Judge 视为异常退出（RE）。</span>';
+      if (localNotices.length) html += '<span class="text-muted">' + escapeHtml(localNoticeText(localNotices)) + '</span>';
       $('ide-output').innerHTML = html;
       $('ide-timing').textContent = 'Python 编译 ' + fmtExecMs((r.timing && r.timing.compileTime) || 0) + ' ms · Runtime 加载 ' +
         fmtExecMs((r.timing && r.timing.runtimeLoadMs) || 0) + ' ms · Code Cache ' + (r.timing && r.timing.cacheHit ? '命中' : '未命中');
@@ -394,6 +462,7 @@ async function onRun() {
     var html = escapeHtml(r.stdout || '（无标准输出）');
     if (r.stderr) html += '<span class="out-stderr">\n[stderr]\n' + escapeHtml(r.stderr) + '</span>';
     if (r.exitCode !== 0) html += '\n[exit ' + r.exitCode + ']';
+    if (localNotices.length) html += '<span class="text-muted">' + escapeHtml(localNoticeText(localNotices)) + '</span>';
     $('ide-output').innerHTML = html;
     // 运行时增强：显示编译详情（折叠区）
     if (window.__RUNTIME_UI__ && typeof window.__RUNTIME_UI__.showCompileDetail === 'function') {
@@ -434,28 +503,42 @@ async function onRunSamples() {
       var r = await runIde(code, lang, s.input || '', { abort: abort });
       if (ver !== runVersion) return; // 被新点击作废
       if (r.__aborted) { $('ide-samples-result').innerHTML = '<span class="text-muted">已中断</span>'; return; }
+      var coverageLimited = (typeof isLocalUnsupportedResult === 'function' && isLocalUnsupportedResult(r)) ||
+        !!(r && (r.coverageLimited === true || r.runStatus === 'LOCAL_UNSUPPORTED' || r.reason === 'LOCAL_UNSUPPORTED'));
+      var localNotices = typeof localRunNotices === 'function' ? localRunNotices(r, lang, code, s.input || '') : [];
+      if (coverageLimited) {
+        rows.push(
+          '<div class="sample-case-row">' + caseDot('LOCAL_UNSUPPORTED') +
+          '<span class="oj-source-tag">LOCAL</span> <b>Sample ' + (i + 1) + '</b> <span class="res-badge res-warning">浏览器环境无法覆盖</span></div>' +
+          (localNotices.length ? '<pre class="output-oj">提示：' + escapeHtml(localNotices.join('\n')) + '</pre>' : '')
+        );
+        continue;
+      }
       // 编译失败：所有样例结果相同，直接展示 CE 并终止
       if (r.compileFailed) {
         $('ide-samples-result').innerHTML = '<div class="sample-case-row">' + caseDot('CE') +
-          '<span class="oj-source-tag">LOCAL</span> <span class="res-badge res-danger">编译失败 (Local CE)</span></div><pre class="output-oj">' + escapeHtml(r.stderr || '编译错误') + '</pre>';
+          '<span class="oj-source-tag">LOCAL</span> <span class="res-badge res-danger">编译失败 (Local CE)</span></div><pre class="output-oj">' + escapeHtml(r.stderr || '编译错误') + (localNotices.length ? '\n提示：' + escapeHtml(localNotices.join('\n')) : '') + '</pre>';
         return;
       }
       if (r.timing && !r.timing.cacheHit && !compileSummary) compileSummary = formatCompileInfo(r);
       var out = normalizeOut(r.stdout);
       var expect = normalizeOut(s.output || '');
       var status;
-      if (r.timeout) status = 'TLE';
-      else if (r.terminated) status = 'TLE';
+      if (r.timeout || r.runStatus === 'LOCAL_TIMEOUT') status = 'LOCAL_TIMEOUT';
+      else if (r.terminated || r.runStatus === 'LOCAL_TERMINATED') status = 'LOCAL_TERMINATED';
       else if (r.exitCode !== 0) status = 'RE';
       else status = out === expect ? 'Passed' : 'WA';
       var cls = status === 'Passed' ? 'res-success' : (status === 'RE' || status === 'WA' ? 'res-danger' : 'res-warning');
-      // 行内时间只显示 Execution Time（纯程序运行时间）；超时被 kill 无计时，显示上限
-      var timeText = r.timeout ? '>6000 ms' : (r.executionMs != null ? fmtExecMs(r.executionMs) + ' ms' : r.timeMs + ' ms');
+      // 行内时间只显示 Execution Time（纯程序运行时间）；超时也优先使用结果中的实际耗时
+      var sampleTimeMs = r.executionMs != null ? r.executionMs : r.timeMs;
+      var timeText = sampleTimeMs != null ? fmtExecMs(sampleTimeMs) + ' ms' : '-';
+      var timeoutNote = status === 'LOCAL_TIMEOUT' ? '（仅本地保护，正式结果以 Judge 为准）' : (status === 'LOCAL_TERMINATED' ? '（仅本地中断，正式结果以 Judge 为准）' : '');
       rows.push(
         '<div class="sample-case-row">' + caseDot(status) +
         '<span class="oj-source-tag">LOCAL</span> <b>Sample ' + (i + 1) + '</b> <span class="res-badge ' + cls + '">' + status + '</span>' +
-        '<span class="text-muted">运行 ' + timeText + '</span></div>' +
-        (status === 'WA' ? '<pre class="output-oj">期望：' + escapeHtml(expect || '(空)') + '\n实际：' + escapeHtml(out || '(空)') + '</pre>' : '')
+        '<span class="text-muted">运行 ' + timeText + timeoutNote + '</span></div>' +
+        (status === 'WA' ? '<pre class="output-oj">期望：' + escapeHtml(expect || '(空)') + '\n实际：' + escapeHtml(out || '(空)') + '</pre>' : '') +
+        (localNotices.length ? '<pre class="output-oj">提示：' + escapeHtml(localNotices.join('\n')) + '</pre>' : '')
       );
     }
     if (ver === runVersion) {
@@ -895,8 +978,7 @@ function classifyError(r) {
     if (r.stage === 'gcc11-header') return 'compile';
     return 'compile';
   }
-  if (r.timedOut) return 'local-timeout';
-  if (r.aborted) return 'local-timeout';
+  if (r.timedOut || r.timeout) return 'local-timeout';
   return null;
 }
 function errorBadgeHtml(cls, label) {
