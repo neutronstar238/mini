@@ -85,7 +85,134 @@ const COMPILE_TIMEOUT_MS = 90000; // 编译兜底（首次含 clang.wasm 下载+
 const EXEC_TIMEOUT_MS = 6000;     // 程序执行本地限制
 const ARTIFACT_CACHE_MAX = 8;
 const MAX_STDIN_BYTES = 4 * 1024 * 1024;
+const MAX_OUTPUT_BYTES = 1 * 1024 * 1024;
+const JAVA_SCANNER_WARNING_INPUT_BYTES = 1 * 1024 * 1024;
 const VALID_OPTS = { '-O0': 1, '-O1': 1, '-O2': 1 };
+
+function utf8ByteLength(value) {
+  return new TextEncoder().encode(String(value == null ? '' : value)).byteLength;
+}
+
+function createLocalInputLimitResult(opts, actualBytes) {
+  const options = opts || {};
+  const language = options.language || options.lang || 'python';
+  const message = '浏览器环境无法覆盖：stdin 实际 UTF-8 ' + actualBytes +
+    ' 字节，超过本地上限 ' + MAX_STDIN_BYTES + ' 字节（4 MiB）。';
+  return {
+    language: language,
+    runtimeId: null,
+    compileStatus: 'SKIP', compileTime: 0, compileFailed: false,
+    runStatus: 'LOCAL_UNSUPPORTED', executionTime: 0, executionMs: 0, timeMs: 0,
+    stdout: '', stderr: message, exitCode: -1,
+    cacheHit: false, linkTime: null, timedOut: false, aborted: false,
+    outputTruncated: false, failureLayer: 'input',
+    reason: 'LOCAL_INPUT_LIMIT', coverageLimited: true,
+    limitField: 'stdin', limitBytes: MAX_STDIN_BYTES, actualBytes: actualBytes,
+    coverageMessage: message
+  };
+}
+
+function normalizeLocalOutputLimitResult(result) {
+  if (!result || result.outputTruncated !== true) return result;
+  if (result.compileFailed === true || result.compileStatus === 'CE' || result.runStatus === 'CE') return result;
+  const message = '浏览器环境无法覆盖：浏览器本地输出能力上限为 1 MiB（' +
+    MAX_OUTPUT_BYTES + ' 字节），输出已截断。';
+  const stderr = String(result.stderr == null ? '' : result.stderr);
+  return Object.assign({}, result, {
+    stderr: stderr.indexOf(message) >= 0 ? stderr : (stderr ? stderr + '\n' : '') + message,
+    runStatus: 'LOCAL_UNSUPPORTED',
+    reason: 'LOCAL_OUTPUT_LIMIT',
+    coverageLimited: true,
+    coverageMessage: message,
+    limitField: result.limitField || 'stdout/stderr',
+    limitBytes: MAX_OUTPUT_BYTES,
+    outputLimitBytes: MAX_OUTPUT_BYTES,
+    timedOut: false,
+    aborted: false,
+    runtimeError: false
+  });
+}
+
+function javaScannerWarnings(source, stdin) {
+  const sourceText = String(source == null ? '' : source);
+  const inputBytes = utf8ByteLength(stdin);
+  if (inputBytes <= JAVA_SCANNER_WARNING_INPUT_BYTES) return [];
+  let code = '';
+  let mode = 'code';
+  let quote = '';
+  for (let i = 0; i < sourceText.length; i += 1) {
+    const ch = sourceText[i];
+    const next = sourceText[i + 1];
+    if (mode === 'line') {
+      if (ch === '\n' || ch === '\r') mode = 'code';
+      code += ' ';
+      continue;
+    }
+    if (mode === 'block') {
+      if (ch === '*' && next === '/') {
+        mode = 'code'; code += '  '; i += 1;
+      } else {
+        code += ' ';
+      }
+      continue;
+    }
+    if (mode === 'literal') {
+      if (ch === '\\') {
+        code += '  '; i += 1;
+      } else {
+        if (ch === quote) { mode = 'code'; quote = ''; }
+        code += ' ';
+      }
+      continue;
+    }
+    if (mode === 'text') {
+      if (ch === '"' && next === '"' && sourceText[i + 2] === '"') {
+        mode = 'code'; code += '   '; i += 2;
+      } else {
+        code += ' ';
+      }
+      continue;
+    }
+    if (ch === '/' && next === '/') {
+      mode = 'line'; code += '  '; i += 1;
+    } else if (ch === '/' && next === '*') {
+      mode = 'block'; code += '  '; i += 1;
+    } else if (ch === '"' && next === '"' && sourceText[i + 2] === '"') {
+      mode = 'text'; code += '   '; i += 2;
+    } else if (ch === '"' || ch === "'") {
+      mode = 'literal'; quote = ch; code += ' ';
+    } else {
+      code += ch;
+    }
+  }
+  const usesScanner = /\bnew\s+(?:(?:java\s*\.\s*util\s*\.)?Scanner)\s*\(/.test(code);
+  if (!usesScanner) return [];
+  return [{
+    code: 'JAVA_SCANNER_LARGE_INPUT',
+    severity: 'warning',
+    actualBytes: inputBytes,
+    limitBytes: JAVA_SCANNER_WARNING_INPUT_BYTES,
+    message: 'stdin 超过 1 MiB 且源码使用 Scanner；浏览器本地运行可能较慢，建议使用 BufferedReader 或快速输入。'
+  }];
+}
+
+function appendJavaScannerWarnings(result, opts) {
+  if (!result) return result;
+  const options = opts || {};
+  const language = options.language || options.lang || '';
+  if (language !== 'java' && language !== 'java21') return result;
+  const warnings = javaScannerWarnings(
+    options.source != null ? options.source : options.code,
+    options.stdin
+  );
+  if (!warnings.length) return result;
+  const existing = Array.isArray(result.warnings) ? result.warnings : [];
+  return Object.assign({}, result, { warnings: existing.concat(warnings) });
+}
+
+function normalizeBrowserRunResult(result, opts) {
+  return normalizeLocalOutputLimitResult(appendJavaScannerWarnings(result, opts));
+}
 
 /* ---------------- 语言 profile 表（§15：语言配置驱动，复用统一 Runner） ----------------
  * 公共流程 source → profile → compile → link → artifact cache → run → stdout/stderr/executionTime
@@ -276,7 +403,7 @@ function armModernExecutionTimeout(state) {
         cacheHit: !!state.cacheHit,
         runtimeAssetHash: state.runtimeAssetHash || null,
         cacheKey: state.cacheKey || null,
-        compileStatus: 'PASS', runStatus: 'TLE', exitCode: -1,
+        compileStatus: 'PASS', runStatus: 'LOCAL_TIMEOUT', exitCode: -1,
         compilerInitMs: state.compilerInitMs || 0,
         compileMs: state.compileMs || 0, linkMs: state.linkMs || 0,
         executionMs: EXEC_TIMEOUT_MS, timedOut: true, outputTruncated: false,
@@ -417,7 +544,7 @@ async function runModern(opts) {
       };
       const timer = setTimeout(function () {
         finish({
-          ok: false, compileStatus: 'PASS', runStatus: 'TLE', exitCode: -1,
+          ok: false, compileStatus: 'PASS', runStatus: 'LOCAL_TIMEOUT', exitCode: -1,
           stdout: '', stderr: '本地运行超时（6s）已终止。Local Timeout 仅用于调试保护，正式 TLE 以服务器 Judge 为准。',
           executionMs: EXEC_TIMEOUT_MS, executionTime: EXEC_TIMEOUT_MS,
           timedOut: true, aborted: true, failureLayer: 'execution'
@@ -802,8 +929,8 @@ async function runC(opts) {
  *   - 懒加载：首次选择 Java 或 prewarm('java') 时创建 Worker + 初始化 JVM + CompileServer。
  *   - Compile Once, Run Many：runtimeId + SHA-256(source) → immutable bytecode LRU（cap=8）。
  *   - Run Isolation：每次 Run 走 fresh MemoryClassLoader、swap System.in/out/err 缓冲、reset 协议 stdin。
- *   - 超时保护：JAVA_EXEC_TIMEOUT_MS（15s）后置 SAB interrupt → CompileServer bytecode 边界抛
- *     InternalInterrupt；宽限期仍无响应 → terminate + 重建 Worker，绝不卡死主 UI。
+ *   - 超时保护：按 stdin UTF-8 字节数计算 timeoutMs（默认 15s，最大 120s）后置 SAB interrupt
+ *     → CompileServer bytecode 边界抛 InternalInterrupt；宽限期仍无响应 → terminate + 重建 Worker，绝不卡死主 UI。
  *   - Java 与 C/C++/Python 语义不同：Persistent JVM 内部 CompileServer 同时承担 compile + run。
  *     self-built CompileServer 返回 compile/run 分离语义；cache hit 仍用 fresh MemoryClassLoader 执行。
  *   - 禁止 Server Fallback：Local 失败只显示"Java 本地运行环境不可用 [重试]"，
@@ -814,9 +941,40 @@ const JAVA_RUNTIME_BASE_URL = '/runtime/' + JAVA_RUNTIME_ID_PRIMARY + '/';
 const JAVA_RUNTIME_MANIFEST_URL = JAVA_RUNTIME_BASE_URL + 'runtime-manifest.json';
 const JAVA_INIT_TIMEOUT_MS = 120000;      // 首次含 wasm 下载 + JVM/CompileServer 初始化
 const JAVA_ASSET_TIMEOUT_MS = 180000;     // 移动网络下载约 30 MiB 冻结资产的总超时
-const JAVA_EXEC_TIMEOUT_MS = 15000;       // Zero 解释器显著慢于 JIT Runtime，使用 Java 专用本地保护
+const JAVA_EXEC_TIMEOUT_MS = 15000;       // Java 小输入的默认本地保护
+const JAVA_TIMEOUT_MIN_MS = 1000;
+const JAVA_TIMEOUT_MAX_MS = 120000;
+const JAVA_TIMEOUT_LARGE_INPUT_BYTES = 1024 * 1024;
+const JAVA_TIMEOUT_INPUT_STEP_BYTES = 1024 * 1024;
 const JAVA_INTERRUPT_GRACE_MS = 800;      // SAB interrupt 后等待 bytecode 边界生效窗口
-const JAVA_FALLBACK_TIMEOUT_MS = JAVA_EXEC_TIMEOUT_MS; // 无 SAB 时使用相同 Java 本地保护
+
+function normalizeJavaTimeoutMs(value) {
+  const numeric = Number(value);
+  if (Number.isNaN(numeric)) return null;
+  return Math.min(JAVA_TIMEOUT_MAX_MS, Math.max(JAVA_TIMEOUT_MIN_MS, Math.round(numeric)));
+}
+
+function javaInputByteLength(input) {
+  return new TextEncoder().encode(String(input || '')).byteLength;
+}
+
+function resolveJavaTimeoutMs(opts) {
+  const options = opts || {};
+  const runtimeConfig = options.runtimeConfig;
+  const requested = options.timeoutMs != null
+    ? options.timeoutMs
+    : (runtimeConfig && runtimeConfig.timeoutMs);
+  if (requested != null) {
+    const explicit = normalizeJavaTimeoutMs(requested);
+    if (explicit != null) return explicit;
+  }
+
+  const inputBytes = javaInputByteLength(options.stdin);
+  if (inputBytes <= JAVA_TIMEOUT_LARGE_INPUT_BYTES) return JAVA_EXEC_TIMEOUT_MS;
+  const progress = Math.min(1, Math.max(0,
+    (inputBytes - JAVA_TIMEOUT_LARGE_INPUT_BYTES) / (3 * JAVA_TIMEOUT_INPUT_STEP_BYTES)));
+  return JAVA_EXEC_TIMEOUT_MS + progress * (JAVA_TIMEOUT_MAX_MS - JAVA_EXEC_TIMEOUT_MS);
+}
 
 let javaWorker = null;
 let javaReadyPromise = null;
@@ -1045,6 +1203,7 @@ function retryJavaRuntime() {
 async function runJava(opts) {
   const killers = opts.killers || null;
   const t0 = performance.now();
+  const timeoutMs = resolveJavaTimeoutMs(opts);
   const timing = {
     cacheHit: false, hash: '', optLevel: null, pchUsed: false,
     runtimeLoadMs: 0, compileTime: 0, executionTime: 0, resetMs: 0,
@@ -1128,25 +1287,25 @@ async function runJava(opts) {
           console.warn('[ide-runner] Java 执行超时且 interrupt 未生效，terminate + 重建 Worker');
           disposeJavaWorker();
           finish({
-            status: 'timeout', compileStatus: 'PASS', runStatus: 'TLE',
-            stdout: '', stderr: '本地运行超时（' + JAVA_EXEC_TIMEOUT_MS + 'ms）已终止。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
-            exitCode: -1, compileTime: 0, executionTime: JAVA_EXEC_TIMEOUT_MS, cacheHit: false, timedOut: true
+            status: 'timeout', compileStatus: 'PASS', runStatus: 'LOCAL_TIMEOUT',
+            stdout: '', stderr: '本地运行超时（' + timeoutMs + 'ms）已终止。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
+            exitCode: -1, compileTime: 0, executionTime: timeoutMs, cacheHit: false, timedOut: true
           });
         }, JAVA_INTERRUPT_GRACE_MS);
       } else {
         console.warn('[ide-runner] Java 执行超时（SAB 不可用，FALLBACK）：terminate + 重建 Worker');
         disposeJavaWorker();
         finish({
-          status: 'timeout', compileStatus: 'PASS', runStatus: 'TLE',
-          stdout: '', stderr: '本地运行超时（' + JAVA_FALLBACK_TIMEOUT_MS + 'ms）已终止（当前环境不支持 SAB 中断，已强制终止 Worker）。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
-          exitCode: -1, compileTime: 0, executionTime: JAVA_FALLBACK_TIMEOUT_MS, cacheHit: false, timedOut: true
+          status: 'timeout', compileStatus: 'PASS', runStatus: 'LOCAL_TIMEOUT',
+          stdout: '', stderr: '本地运行超时（' + timeoutMs + 'ms）已终止（当前环境不支持 SAB 中断，已强制终止 Worker）。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
+          exitCode: -1, compileTime: 0, executionTime: timeoutMs, cacheHit: false, timedOut: true
         });
       }
-    }, JAVA_EXEC_TIMEOUT_MS);
+    }, timeoutMs);
 
     try {
       worker.postMessage({ type: 'run', requestId: requestId, source: source, sourceHash: codeHash,
-        stdin: opts.stdin || '', timeoutMs: JAVA_EXEC_TIMEOUT_MS });
+        stdin: opts.stdin || '', timeoutMs: timeoutMs });
     } catch (e) {
       finish({
         status: 'crash', compileStatus: 'SKIP', runStatus: 'ABORTED',
@@ -1169,7 +1328,7 @@ async function runJava(opts) {
     compileFailed: compileFailed,
     compileStatus: compileFailed ? 'CE' : (result.cacheHit ? 'SKIP' : 'PASS'),
     compileTime: result.compileTime || 0,
-    runStatus: compileFailed ? 'CE' : (result.runStatus || (result.status === 'timeout' ? 'TLE' : (result.status === 'aborted' || result.status === 'crash' ? 'ABORTED' : 'PASS'))),
+    runStatus: compileFailed ? 'CE' : (result.runStatus || (result.status === 'timeout' ? 'LOCAL_TIMEOUT' : (result.status === 'aborted' || result.status === 'crash' ? 'ABORTED' : 'PASS'))),
     executionTime: result.executionTime || 0,
     stdout: result.stdout || '', stderr: result.stderr || '',
     exitCode: result.exitCode != null ? result.exitCode : -1,
@@ -1389,7 +1548,7 @@ async function runPython(opts) {
           console.warn('[ide-runner] Python 执行超时且 interrupt 未生效，terminate + 重建 Worker');
           disposePythonWorker();
           finish({
-            status: 'timeout', compileStatus: 'SKIP', runStatus: 'TLE',
+            status: 'timeout', compileStatus: 'SKIP', runStatus: 'LOCAL_TIMEOUT',
             stdout: '', stderr: '本地运行超时（' + EXEC_TIMEOUT_MS + 'ms）已终止。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
             exitCode: -1, compileTime: 0, executionTime: EXEC_TIMEOUT_MS, cacheHit: false, timedOut: true
           });
@@ -1398,7 +1557,7 @@ async function runPython(opts) {
         console.warn('[ide-runner] Python 执行超时（SAB 不可用，FALLBACK）：terminate + 重建 Worker');
         disposePythonWorker();
         finish({
-          status: 'timeout', compileStatus: 'SKIP', runStatus: 'TLE',
+          status: 'timeout', compileStatus: 'SKIP', runStatus: 'LOCAL_TIMEOUT',
           stdout: '', stderr: '本地运行超时（' + PY_FALLBACK_TIMEOUT_MS + 'ms）已终止（当前环境不支持 SAB 中断，已强制终止 Worker）。Local Timeout 仅本地调试保护，正式 TLE 以服务器 Judge 为准。',
           exitCode: -1, compileTime: 0, executionTime: PY_FALLBACK_TIMEOUT_MS, cacheHit: false, timedOut: true
         });
@@ -1449,6 +1608,11 @@ async function runPython(opts) {
  * executionTime, stdout, stderr, cacheHit, linkTime}；Python/Java linkTime=null。
  */
 async function runCode(opts) {
+  opts = opts || {};
+  const stdinBytes = utf8ByteLength(opts.stdin);
+  if (stdinBytes > MAX_STDIN_BYTES) {
+    return normalizeBrowserRunResult(createLocalInputLimitResult(opts, stdinBytes), opts);
+  }
   const lang = opts.language || opts.lang || 'python';
   const requestedProfile = String(opts.profileId || '');
   // Modern profiles are deliberately routed before the frozen C/C++ branch.
@@ -1456,7 +1620,7 @@ async function runCode(opts) {
   if (lang === 'c17' || lang === 'cpp17' || opts.profileId === 'c17-gcc14-compat-v1' ||
       opts.profileId === 'cpp17-gcc14-compat-v1' || opts.profileId === 'c17-gcc14-compat-v2' ||
       opts.profileId === 'cpp17-gcc14-compat-v2') {
-    return runModern(opts);
+    return normalizeBrowserRunResult(await runModern(opts), opts);
   }
   // Phase 8 Checkpoint 2 deliberately does not implement C++20/C++23. Keep these
   // profiles pending even when a caller bypasses the disabled selector; they
@@ -1464,21 +1628,21 @@ async function runCode(opts) {
   if (lang === 'cpp20' || lang === 'cpp23' || requestedProfile === 'cpp20-gcc14-compat-v1' ||
       requestedProfile === 'cpp23-gcc14-compat-v1') {
     const profileId = requestedProfile || (lang === 'cpp20' ? 'cpp20-gcc14-compat-v1' : 'cpp23-gcc14-compat-v1');
-    return {
+    return normalizeBrowserRunResult({
       language: 'cpp', runtimeId: profileId, profileId,
       compileStatus: 'PENDING', compileTime: 0,
       runStatus: 'UNAVAILABLE', executionTime: 0,
       stdout: '', stderr: 'C++20/C++23 remain PENDING in Phase 8 Checkpoint 2; Browser Local is not enabled.',
       cacheHit: false, linkTime: 0, timedOut: false, aborted: false, exitCode: -1,
       outputTruncated: false, compileFailed: true, failureLayer: 'profile'
-    };
+    }, opts);
   }
   // Java 21 Browser Local：Phase 7 Checkpoint 2 self-built v2 runtime。
   // 严禁自动 POST source 到服务器帮用户运行（无 Server Fallback），正式提交仍正常走 server OpenJDK 21；
   // 法律/项目负责人审核前 redistributable=false。
   if (lang === 'java' || lang === 'java21') {
     const r = await runJava(opts);
-    return {
+    return normalizeBrowserRunResult({
       language: 'java', runtimeId: r.runtimeId,
       compileStatus: r.compileStatus, compileTime: r.compileTime,
       runStatus: r.runStatus, executionTime: r.executionTime,
@@ -1488,11 +1652,11 @@ async function runCode(opts) {
       outputTruncated: !!r.outputTruncated,
       tracebackClass: r.tracebackClass, ce: r.ce,
       timing: r.timing, executionMs: r.executionMs, timeMs: r.timeMs, compileFailed: r.compileFailed
-    };
+    }, opts);
   }
   if (lang === 'python' || lang === 'python3') {
     const r = await runPython(opts);
-    return {
+    return normalizeBrowserRunResult({
       language: 'python', runtimeId: r.runtimeId,
       compileStatus: r.compileStatus, compileTime: r.compileTime,
       runStatus: r.runStatus, executionTime: r.executionTime,
@@ -1502,7 +1666,7 @@ async function runCode(opts) {
       outputTruncated: !!r.outputTruncated,
       tracebackClass: r.tracebackClass, ce: r.ce,
       timing: r.timing, executionMs: r.executionMs, timeMs: r.timeMs, compileFailed: r.compileFailed
-    };
+    }, opts);
   }
   const isC = lang === 'c';
   const r = await runC({
@@ -1513,11 +1677,11 @@ async function runCode(opts) {
     pchLevel: opts.pchLevel || 'auto',
     killers: opts.killers || null
   });
-  return {
+  return normalizeBrowserRunResult({
     language: isC ? 'c' : 'cpp', runtimeId: runtimeIds[isC ? 'c' : 'cpp'],
     compileStatus: r.compileFailed ? 'CE' : 'PASS',
     compileTime: (r.timing && r.timing.compileMs) || 0,
-    runStatus: r.timedOut ? 'TLE' : (r.aborted ? 'ABORTED' : (r.compileFailed ? 'CE' : (r.runStatus || (r.runtimeError ? 'RE' : 'PASS')))),
+    runStatus: r.timedOut ? 'LOCAL_TIMEOUT' : (r.aborted ? 'ABORTED' : (r.compileFailed ? 'CE' : (r.runStatus || (r.runtimeError ? 'RE' : 'PASS')))),
     executionTime: r.executionMs != null ? r.executionMs : 0,
     stdout: r.stdout || '', stderr: r.stderr || '',
     cacheHit: !!(r.timing && r.timing.cacheHit),
@@ -1525,7 +1689,7 @@ async function runCode(opts) {
     timedOut: !!r.timedOut, aborted: !!r.aborted, runtimeError: !!r.runtimeError, exitCode: r.exitCode,
     outputTruncated: !!r.outputTruncated,
     timing: r.timing, executionMs: r.executionMs, timeMs: r.timeMs, compileFailed: r.compileFailed
-  };
+  }, opts);
 }
 
 /* ---------------- 后台 speculative compile（编辑停止后预编译，错误静默） ---------------- */
@@ -1663,6 +1827,12 @@ window.__IDE_RUNNER__ = {
   runJava: runJava,
   runModern: runModern,
   runCode: runCode,
+  // Browser coverage helpers：纯函数，供回归测试和 UI 诊断复用
+  utf8ByteLength: utf8ByteLength,
+  createLocalInputLimitResult: createLocalInputLimitResult,
+  normalizeLocalOutputLimitResult: normalizeLocalOutputLimitResult,
+  javaScannerWarnings: javaScannerWarnings,
+  normalizeBrowserRunResult: normalizeBrowserRunResult,
   speculate: speculate,
   prewarm: prewarm,
   checkGcc11Headers: checkGcc11Headers,
