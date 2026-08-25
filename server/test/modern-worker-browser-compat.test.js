@@ -7,13 +7,13 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function loadWorker(file, extra) {
-  const internals = file.includes('execution-worker-modern') ? '{execute}' : '{compileArgs, sourceUsesUnsupportedX86StackAsm, executeArtifact}';
+  const internals = file.includes('execution-worker-modern') ? '{execute}' : '{assetRequestUrl, compileArgs, sourceUsesUnsupportedX86StackAsm, executeArtifact}';
   const source = fs.readFileSync(path.join(__dirname, '../public/js/contest', file), 'utf8')
     .replace(/^import[^\r\n]*\r?\n/m, '') +
     `\nthis.__workerInternals = ${internals};`;
   const context = Object.assign({
     self: {addEventListener() {}, postMessage() {}},
-    TextEncoder, TextDecoder, WebAssembly, performance,
+    TextEncoder, TextDecoder, WebAssembly, performance, URL,
     WASI: class { getImportObject() { return {}; } start() { throw new Error('Maximum call stack size exceeded'); } }
   }, extra || {});
   vm.runInNewContext(source, context);
@@ -53,4 +53,14 @@ test('both execution workers classify the JavaScript call-stack limit as local u
   assert.equal(disposableResult.runStatus, 'LOCAL_UNSUPPORTED');
   assert.equal(disposableResult.reason, 'BROWSER_CALL_STACK_LIMIT');
   assert.equal(disposableResult.coverageLimited, true);
+});
+
+test('immutable runtime assets use their content hash as a cache-busting URL key', () => {
+  const worker = loadWorker('ide-wasi-worker-modern.js');
+  const url = new URL(worker.assetRequestUrl({
+    url: '/runtime/cpp-modern-engine-v2/bits/stdc++.h',
+    expectedHash: 'A'.repeat(64)
+  }, 'https://contest.example/runtime/cpp-modern-engine-v2/runtime-manifest.json'));
+  assert.equal(url.pathname, '/runtime/cpp-modern-engine-v2/bits/stdc++.h');
+  assert.equal(url.searchParams.get('sha256'), 'a'.repeat(64));
 });
