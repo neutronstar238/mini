@@ -73,7 +73,7 @@ function buildManifest() {
     },
     profileFlags: {
       'c17-gcc14-compat-v2': ['-std=c17', '-O2'],
-      'cpp17-gcc14-compat-v2': ['-std=c++17', '-O2']
+      'cpp17-gcc14-compat-v2': ['-std=c++17', '-O2', '-Wno-c++11-narrowing']
     },
     orderedAssets
   });
@@ -86,7 +86,7 @@ function buildManifest() {
     emscripten: v1.emscripten, wasiLibc: v1.wasiLibc, memory: v1.memory,
     profiles: {
       'c17-gcc14-compat-v2': {standard: 'c17', flags: ['-std=c17', '-O2'], submissionEnabled: false},
-      'cpp17-gcc14-compat-v2': {standard: 'c++17', flags: ['-std=c++17', '-O2'], submissionEnabled: false, pchPolicy: 'none'}
+      'cpp17-gcc14-compat-v2': {standard: 'c++17', flags: ['-std=c++17', '-O2', '-Wno-c++11-narrowing'], submissionEnabled: false, pchPolicy: 'none'}
     },
     assets, assetInventory: orderedAssets,
     reproducibleBuild: 'PASS', build: {sourceDateEpoch: v1.build.sourceDateEpoch, generatedAt: v1.build.generatedAt},

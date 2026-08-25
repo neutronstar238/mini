@@ -25,6 +25,9 @@ const MAX_SOURCE_BYTES = 1024 * 1024;
 const MAX_STDIN_BYTES = 4 * 1024 * 1024;
 const MAX_OUTPUT_CHARS = 1024 * 1024;
 const ARTIFACT_CACHE_CAPACITY = 8;
+const DEFAULT_STACK_BYTES = 32 * 1024 * 1024;
+const BROWSER_ARCH_UNSUPPORTED_MESSAGE = '浏览器本地运行环境不支持 x86 %rsp/rsp 内联汇编扩栈；请移除该扩栈代码或使用服务器判题。 Browser Local does not support x86 %rsp/rsp inline-assembly stack expansion; remove it or use server judging.';
+const BROWSER_CALL_STACK_LIMIT_MESSAGE = '浏览器本地运行触发 JavaScript 调用栈上限（Maximum call stack size exceeded），这不是程序 RE；请使用服务器判题。 Browser Local hit the JavaScript call-stack limit; this is not a program RE. Use server judging.';
 
 const STATE = Object.freeze({
   NOT_LOADED: 'NOT_LOADED', CHECK_CACHE: 'CHECK_CACHE', DOWNLOAD_RUNTIME: 'DOWNLOAD_RUNTIME',
@@ -55,6 +58,10 @@ function now() {
   return typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now() : Date.now();
 }
 function errorMessage(error) { return String(error && error.message || error || 'unknown error'); }
+function isCallStackLimitError(error) { return /maximum call stack size exceeded/i.test(errorMessage(error)); }
+function appendCoverageMessage(value, message) {
+  const text = String(value || ''); return text.indexOf(message) >= 0 ? text : (text ? text + '\n' : '') + message;
+}
 function pendingValue(value) { return value == null || value === '' || /^PENDING(?:_|$)/i.test(String(value)); }
 function asHex(value) {
   const text = String(value || '').trim().toLowerCase();
@@ -88,6 +95,103 @@ function normaliseProfile(input) {
   return {profileId: value || 'cpp17-gcc14-compat-v2', standard: 'c++17', language: 'cpp'};
 }
 function sourceOf(message) { return String(message.source != null ? message.source : (message.code != null ? message.code : '')); }
+function isIdentifierStart(value) { return !!value && /[A-Za-z_]/.test(value); }
+function isIdentifierPart(value) { return !!value && /[A-Za-z0-9_]/.test(value); }
+function skipInlineAsmTrivia(source, index) {
+  let cursor = index;
+  for (;;) {
+    while (cursor < source.length && /\s/.test(source[cursor])) cursor += 1;
+    if (source.startsWith('//', cursor)) {
+      const end = source.indexOf('\n', cursor + 2); cursor = end < 0 ? source.length : end + 1; continue;
+    }
+    if (source.startsWith('/*', cursor)) {
+      const end = source.indexOf('*/', cursor + 2); cursor = end < 0 ? source.length : end + 2; continue;
+    }
+    return cursor;
+  }
+}
+function readInlineAsmLiteral(source, index) {
+  const raw = source.slice(index).match(/^(?:u8|u|U|L)?R"([^ ()\\]*)\(/);
+  if (raw) {
+    const close = ')' + raw[1] + '"'; const bodyStart = index + raw[0].length;
+    const bodyEnd = source.indexOf(close, bodyStart); const end = bodyEnd < 0 ? source.length : bodyEnd + close.length;
+    return {end, text: source.slice(bodyStart, bodyEnd < 0 ? source.length : bodyEnd)};
+  }
+  const quote = source[index]; if (quote !== '"' && quote !== "'") return null;
+  let cursor = index + 1;
+  while (cursor < source.length) {
+    if (source[cursor] === '\\') { cursor += 2; continue; }
+    if (source[cursor] === quote) return {end: cursor + 1, text: quote === '"' ? source.slice(index + 1, cursor) : null};
+    cursor += 1;
+  }
+  return {end: source.length, text: quote === '"' ? source.slice(index + 1) : null};
+}
+function readInlineAsmExpression(source, open) {
+  let depth = 0; let cursor = open; let template = '';
+  while (cursor < source.length) {
+    if (source.startsWith('//', cursor)) {
+      const end = source.indexOf('\n', cursor + 2); cursor = end < 0 ? source.length : end + 1; continue;
+    }
+    if (source.startsWith('/*', cursor)) {
+      const end = source.indexOf('*/', cursor + 2); cursor = end < 0 ? source.length : end + 2; continue;
+    }
+    const literal = readInlineAsmLiteral(source, cursor);
+    if (literal) { if (literal.text != null) template += '\n' + literal.text; cursor = literal.end; continue; }
+    if (source[cursor] === '(') depth += 1;
+    else if (source[cursor] === ')' && --depth === 0) return {end: cursor + 1, template};
+    cursor += 1;
+  }
+  return null;
+}
+function asmTemplateHasStackAdjustment(template) {
+  const register = '(?:%%?rsp|\\brsp\\b)';
+  const lines = String(template).replace(/\\(?:n|r)/gi, '\n').replace(/\\t/gi, ' ').split(/[;\n]/);
+  return lines.some(line => {
+    if (/^\s*(?:#|\/\/)/.test(line)) return false;
+    const prefix = '^\\s*(?:lock\\s+)?(?:sub|add)(?:[bwlq])?\\s+';
+    return new RegExp(prefix + '[^,]+,\\s*' + register + '(?:\\b|$)', 'i').test(line)
+      || new RegExp(prefix + register + '\\s*,\\s*[^,;]+(?:\\s|$)', 'i').test(line)
+      || new RegExp('^\\s*mov(?:[bwlq])?\\s+[^,]+,\\s*' + register + '(?:\\b|$)', 'i').test(line);
+  });
+}
+function sourceUsesUnsupportedX86StackAsm(source) {
+  const asmNames = new Set(['asm', '__asm', '__asm__']);
+  const qualifiers = new Set(['volatile', '__volatile', '__volatile__', 'inline', '__inline', '__inline__', 'goto']);
+  let cursor = 0;
+  while (cursor < source.length) {
+    const literal = readInlineAsmLiteral(source, cursor);
+    if (literal) { cursor = literal.end; continue; }
+    if (source.startsWith('//', cursor)) {
+      const end = source.indexOf('\n', cursor + 2); cursor = end < 0 ? source.length : end + 1; continue;
+    }
+    if (source.startsWith('/*', cursor)) {
+      const end = source.indexOf('*/', cursor + 2); cursor = end < 0 ? source.length : end + 2; continue;
+    }
+    if (!isIdentifierStart(source[cursor])) { cursor += 1; continue; }
+    const start = cursor; cursor += 1; while (isIdentifierPart(source[cursor])) cursor += 1;
+    if (!asmNames.has(source.slice(start, cursor))) continue;
+    let open = skipInlineAsmTrivia(source, cursor);
+    for (;;) {
+      const qualifierStart = open;
+      if (!isIdentifierStart(source[open])) break;
+      open += 1; while (isIdentifierPart(source[open])) open += 1;
+      if (!qualifiers.has(source.slice(qualifierStart, open))) { open = qualifierStart; break; }
+      open = skipInlineAsmTrivia(source, open);
+    }
+    if (source[open] !== '(') { cursor = open + 1; continue; }
+    const expression = readInlineAsmExpression(source, open);
+    if (expression && asmTemplateHasStackAdjustment(expression.template)) return true;
+    cursor = expression ? expression.end : open + 1;
+  }
+  return false;
+}
+function browserArchitectureUnsupportedResult(profile) {
+  return {ok: false, runtimeId: ENGINE_RUNTIME_ID, engineRuntimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId,
+    standard: profile.standard, sourceHash: null, cacheHit: false, compileStatus: 'SKIP', runStatus: 'LOCAL_UNSUPPORTED',
+    exitCode: -1, compileFailed: false, failureLayer: 'architecture', error: BROWSER_ARCH_UNSUPPORTED_MESSAGE,
+    stdout: '', stderr: BROWSER_ARCH_UNSUPPORTED_MESSAGE, reason: 'BROWSER_ARCH_UNSUPPORTED', coverageLimited: true,
+    coverageMessage: BROWSER_ARCH_UNSUPPORTED_MESSAGE};
+}
 function flagsOf(message) {
   if (Array.isArray(message.flags)) return message.flags.map(String);
   if (typeof message.flags === 'string') return message.flags.trim() ? message.flags.trim().split(/\s+/) : [];
@@ -423,6 +527,22 @@ function replaceTemplate(value, replacements) {
 }
 function templateArgs(value, replacements) { return Array.isArray(value) ? value.map(item => replaceTemplate(item, replacements)) : null; }
 
+function manifestBytes(value) {
+  const bytes = Number(value);
+  return Number.isSafeInteger(bytes) && bytes > 0 ? bytes : null;
+}
+function linkerStackBytes(profile, manifest) {
+  const profileConfig = manifest && manifest.profiles && manifest.profiles[profile.profileId] || {};
+  const profileMemory = profileConfig.memory && typeof profileConfig.memory === 'object' ? profileConfig.memory : {};
+  const runtimeMemory = manifest && manifest.memory && typeof manifest.memory === 'object' ? manifest.memory : {};
+  const configured = manifestBytes(profileMemory.stackBytes || profileConfig.stackBytes || runtimeMemory.stackBytes) || DEFAULT_STACK_BYTES;
+  const limits = [
+    manifestBytes(profileMemory.initialBytes || profileConfig.initialBytes || runtimeMemory.initialBytes),
+    manifestBytes(profileMemory.maximumBytes || profileConfig.maximumBytes || runtimeMemory.maximumBytes)
+  ].filter(value => value != null);
+  return limits.length ? Math.min(configured, ...limits) : configured;
+}
+
 function compileArgs(profile, message, manifest, fs) {
   const optLevel = /^-O[0-2s]$/.test(String(message.optLevel || '')) ? String(message.optLevel) : '-O2';
   const flags = flagsOf(message).filter(flag => !/^-std=/.test(flag) && !/^-O[0-3s]$/.test(flag));
@@ -436,7 +556,8 @@ function compileArgs(profile, message, manifest, fs) {
   const replacements = {source: '/program', object: '/program.o', output: '/program.wasm', sysroot: '/sys',
     standard: profile.standard, resourceDir, optLevel};
   const fromManifest = templateArgs(manifest.compilerArgs || manifest.compileArgs, replacements);
-  if (fromManifest) return fromManifest.concat(flags);
+  const defaultCc1Flags = profile.language === 'cpp' ? ['-Wno-c++11-narrowing'] : [];
+  if (fromManifest) return fromManifest.concat(flags, defaultCc1Flags);
   // These are cc1 arguments, not driver arguments.  The generated Clang 19
   // browser binary rejects the driver-only diagnostic formatting switches.
   const args = ['clang', '-cc1', '-triple', TARGET, '-isysroot', '/sys', '-ferror-limit', '4',
@@ -451,7 +572,7 @@ function compileArgs(profile, message, manifest, fs) {
     args.push('-internal-isystem', '/sys/include/c++/v1', '-internal-externc-isystem', '/sys/include/wasm32-wasi',
       '-internal-isystem', resourceDir, '-x', 'c++');
   }
-  return args.concat(flags, ['-o', '/program.o', '/program']);
+  return args.concat(flags, defaultCc1Flags, ['-o', '/program.o', '/program']);
 }
 function linkerArgs(profile, message, manifest, fs, sharedRoot) {
   const root = String(sharedRoot || '/shared').replace(/\/$/, '');
@@ -465,7 +586,7 @@ function linkerArgs(profile, message, manifest, fs, sharedRoot) {
   if (fromManifest) return fromManifest;
   const crt = manifest.crt1 || manifest.startupObject
     || findFsFile(fs, ['/sys/lib/wasm32-wasi/crt1-command.o', '/sys/lib/wasm32-wasi/crt1.o']);
-  const args = ['wasm-ld', '--export-dynamic', '--undefined=main', '-z', 'stack-size=1048576', '-L' + root + '/sys/lib/wasm32-wasi'];
+  const args = ['wasm-ld', '--export-dynamic', '--undefined=main', '-z', 'stack-size=' + linkerStackBytes(profile, manifest), '-L' + root + '/sys/lib/wasm32-wasi'];
   if (crt) args.push(sharedPath(crt));
   const libraryDirs = new Set([root + '/sys/lib/wasm32-wasi']);
   for (const suffix of ['/libc++.a', '/libc++abi.a', '/libclang_rt.builtins-wasm32.a']) {
@@ -709,6 +830,7 @@ async function compile(message) {
     sourceHash: null, cacheHit: false, compileStatus: 'CE', runStatus: 'CE', exitCode: -1, failureLayer: 'frontend',
     error: 'source exceeds 1 MiB local limit', stderr: 'source exceeds 1 MiB local limit',
     limitField: 'source', limitBytes: MAX_SOURCE_BYTES, actualBytes: sourceBytes.byteLength};
+  if (sourceUsesUnsupportedX86StackAsm(source)) return browserArchitectureUnsupportedResult(profile);
   const sourceHash = await sha256Hex(sourceBytes);
   const key = makeCacheKey(profile.profileId, profile.standard, flagsText, runtime.runtimeAssetHash, sourceHash);
   const cached = cacheGet(key);
@@ -845,15 +967,19 @@ async function executeArtifact(bytes, message, profile, compileResult) {
       linkerGlueVerified: compileResult.linkerGlueVerified ?? !!runtime?.linkerHandle?.factoryVerified,
       proxyFsMounted: compileResult.proxyFsMounted ?? !!runtime?.proxyFs?.mounted};
   } catch (error) {
-    return {ok: false, runtimeId: ENGINE_RUNTIME_ID, engineRuntimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId, sourceHash: compileResult.sourceHash,
-      cacheHit: !!compileResult.cacheHit, compileStatus: 'PASS', runStatus: 'RE', exitCode: -1, stdout: stdout.text, stderr: stderr.text || errorMessage(error),
+    const text = errorMessage(error); const callStackLimit = isCallStackLimitError(error);
+    const result = {ok: false, runtimeId: ENGINE_RUNTIME_ID, engineRuntimeId: ENGINE_RUNTIME_ID, profileId: profile.profileId, sourceHash: compileResult.sourceHash,
+      cacheHit: !!compileResult.cacheHit, compileStatus: 'PASS', runStatus: callStackLimit ? 'LOCAL_UNSUPPORTED' : 'RE', exitCode: -1, stdout: stdout.text,
+      stderr: callStackLimit ? appendCoverageMessage(stderr.text, BROWSER_CALL_STACK_LIMIT_MESSAGE) : stderr.text || text,
       runtimeAssetHash: runtime && runtime.runtimeAssetHash || null, cacheKey: compileResult.cacheKey || null,
-      outputTruncated: stdout.truncated || stderr.truncated, timedOut: false, aborted: false, failureLayer: 'execution', error: errorMessage(error), timing,
+      outputTruncated: stdout.truncated || stderr.truncated, timedOut: false, aborted: false, failureLayer: 'execution', error: text, timing,
       compilerInitMs: compileResult.compilerInitMs || 0, compileMs: compileResult.compileMs || 0, linkMs: compileResult.linkMs || 0, executionMs: 0,
       compileTime: (compileResult.compileMs || 0) + (compileResult.linkMs || 0), executionTime: 0,
       compilerGlueVerified: compileResult.compilerGlueVerified ?? !!runtime?.compilerHandle?.factoryVerified,
       linkerGlueVerified: compileResult.linkerGlueVerified ?? !!runtime?.linkerHandle?.factoryVerified,
       proxyFsMounted: compileResult.proxyFsMounted ?? !!runtime?.proxyFs?.mounted};
+    if (callStackLimit) Object.assign(result, {reason: 'BROWSER_CALL_STACK_LIMIT', coverageLimited: true, coverageMessage: BROWSER_CALL_STACK_LIMIT_MESSAGE});
+    return result;
   }
 }
 async function run(message) {

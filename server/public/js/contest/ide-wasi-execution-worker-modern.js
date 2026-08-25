@@ -4,6 +4,7 @@ import {WASI} from '/runtime/runno/0.10.0-ojc4/runno-wasi.js';
 const ENGINE_RUNTIME_ID = 'cpp-modern-engine-v2';
 const MAX_STDIN_BYTES = 4 * 1024 * 1024;
 const MAX_OUTPUT_BYTES = 1024 * 1024;
+const BROWSER_CALL_STACK_LIMIT_MESSAGE = '浏览器本地运行触发 JavaScript 调用栈上限（Maximum call stack size exceeded），这不是程序 RE；请使用服务器判题。 Browser Local hit the JavaScript call-stack limit; this is not a program RE. Use server judging.';
 
 function now() {
   return typeof performance !== 'undefined' && typeof performance.now === 'function'
@@ -11,6 +12,10 @@ function now() {
 }
 
 function errorMessage(error) { return String(error && error.message || error || 'unknown error'); }
+function isCallStackLimitError(error) { return /maximum call stack size exceeded/i.test(errorMessage(error)); }
+function appendCoverageMessage(value, message) {
+  const text = String(value || ''); return text.indexOf(message) >= 0 ? text : (text ? text + '\n' : '') + message;
+}
 
 function outputBuffer() { return {chunks: [], bytes: 0, truncated: false}; }
 
@@ -83,14 +88,17 @@ async function execute(message) {
       timedOut: false, aborted: false, timing, executionMs: timing.executionMs
     };
   } catch (error) {
-    return {
-      ok: false, runtimeId: ENGINE_RUNTIME_ID, compileStatus: 'PASS', runStatus: 'RE', exitCode: -1,
-      stdout: outputText(stdout), stderr: outputText(stderr) || errorMessage(error),
+    const text = errorMessage(error); const callStackLimit = isCallStackLimitError(error);
+    const result = {
+      ok: false, runtimeId: ENGINE_RUNTIME_ID, compileStatus: 'PASS', runStatus: callStackLimit ? 'LOCAL_UNSUPPORTED' : 'RE', exitCode: -1,
+      stdout: outputText(stdout), stderr: callStackLimit ? appendCoverageMessage(outputText(stderr), BROWSER_CALL_STACK_LIMIT_MESSAGE) : outputText(stderr) || text,
       stdoutBytes: stdout.bytes, stderrBytes: stderr.bytes,
       outputTruncated: stdout.truncated || stderr.truncated,
       outputTruncatedFields: [stdout.truncated ? 'stdout' : null, stderr.truncated ? 'stderr' : null].filter(Boolean),
-      timedOut: false, aborted: false, error: errorMessage(error), timing, executionMs: 0
+      timedOut: false, aborted: false, error: text, timing, executionMs: 0
     };
+    if (callStackLimit) Object.assign(result, {reason: 'BROWSER_CALL_STACK_LIMIT', coverageLimited: true, coverageMessage: BROWSER_CALL_STACK_LIMIT_MESSAGE});
+    return result;
   }
 }
 
