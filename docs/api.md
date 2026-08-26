@@ -141,12 +141,6 @@ Admin 浏览器只访问 `:3002/api/admin/*`。除登录外全部端点要求管
 | POST | `/api/admin/auth/login` | `{username,password}`，仅管理员 |
 | GET | `/api/admin/overview` | 系统总览 |
 | GET | `/api/admin/devices` | 浏览器设备与在线状态 |
-| GET | `/api/admin/nodes` | 遗留 Worker 节点 |
-| POST | `/api/admin/nodes/:id/tier` | 修改节点等级 |
-| POST | `/api/admin/nodes/:id/approve` | 批准节点 |
-| POST | `/api/admin/nodes/:id/suspend` | 停用节点 |
-| GET/POST | `/api/admin/certs` | 遗留 Worker 证书 |
-| GET | `/api/admin/queue` | 队列状态 |
 | GET | `/api/admin/audit` | 最近审计事件 |
 | GET | `/api/admin/compiler` | 编译器探活 |
 | GET/POST | `/api/admin/contests` | 比赛列表/新建 |

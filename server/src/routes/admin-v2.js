@@ -65,36 +65,6 @@ router.get('/devices', wrap(async (_req, res) => {
   res.status(r.status).json(r.data);
 }));
 
-router.get('/nodes', wrap(async (_req, res) => {
-  const r = await callCore('GET', '/internal/admin/nodes');
-  res.status(r.status).json(r.data);
-}));
-router.post('/nodes/:id/tier', wrap(async (req, res) => {
-  const r = await callCore('POST', `/internal/admin/nodes/${req.params.id}/tier`, req.body);
-  res.status(r.status).json(r.data);
-}));
-router.post('/nodes/:id/approve', wrap(async (req, res) => {
-  const r = await callCore('POST', `/internal/admin/nodes/${req.params.id}/approve`, req.body);
-  res.status(r.status).json(r.data);
-}));
-router.post('/nodes/:id/suspend', wrap(async (req, res) => {
-  const r = await callCore('POST', `/internal/admin/nodes/${req.params.id}/suspend`, req.body);
-  res.status(r.status).json(r.data);
-}));
-
-router.get('/certs', wrap(async (_req, res) => {
-  const r = await callCore('GET', '/internal/admin/certs');
-  res.status(r.status).json(r.data);
-}));
-router.post('/certs', wrap(async (_req, res) => {
-  const r = await callCore('POST', '/internal/admin/certs');
-  res.status(r.status).json(r.data);
-}));
-
-router.get('/queue', wrap(async (_req, res) => {
-  const r = await callCore('GET', '/internal/admin/queue');
-  res.status(r.status).json(r.data);
-}));
 router.get('/audit', wrap(async (_req, res) => {
   const r = await callCore('GET', '/internal/admin/audit');
   res.status(r.status).json(r.data);

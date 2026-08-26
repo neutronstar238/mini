@@ -172,9 +172,6 @@ if (config.entry === 'all' || config.entry === 'admin') {
   app.get('/admin', (req, res) => res.redirect(req.user ? '/admin/overview' : '/admin/login'));
   app.get('/admin/overview', guardPage('/admin/login'), (req, res) => res.render('admin/overview', { user: req.user || null }));
   app.get('/admin/devices', guardPage('/admin/login'), (req, res) => res.render('admin/devices', { user: req.user || null }));
-  app.get('/admin/nodes', guardPage('/admin/login'), (req, res) => res.render('admin/nodes', { user: req.user || null }));
-  app.get('/admin/certs', guardPage('/admin/login'), (req, res) => res.render('admin/certs', { user: req.user || null }));
-  app.get('/admin/queue', guardPage('/admin/login'), (req, res) => res.render('admin/queue', { user: req.user || null }));
   app.get('/admin/audit', guardPage('/admin/login'), (req, res) => res.render('admin/audit', { user: req.user || null }));
   app.get('/admin/contests', guardPage('/admin/login'), (req, res) => res.render('admin/contests', { user: req.user || null }));
   app.get('/admin/problems', guardPage('/admin/login'), (req, res) => res.render('admin/problems', { user: req.user || null }));
