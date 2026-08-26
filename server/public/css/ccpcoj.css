@@ -1794,9 +1794,10 @@ body.cpc-body.contest-shell {
   font-size: 11px;
 }
 .ide-console-tabs button[aria-selected="true"] { color: var(--oj-primary); border-bottom-color: var(--oj-primary); }
-.ide-console-body { height: calc(100% - 32px); padding: 7px 10px; overflow-y: auto; }
+.ide-console-body { height: calc(100% - 32px); padding: 7px 10px; overflow-y: hidden; }
 .ide-console-label { margin-bottom: 5px; font-size: 10px; }
 .ide-input-editor { min-height: 58px; resize: vertical; font-family: Consolas, monospace; font-size: 12px; }
+#ide-input.ide-input-editor { height: 58px; min-height: 58px; resize: none; }
 .ide-console .output-oj { min-height: 70px; margin: 6px 0 0; }
 .ide-submit-panel {
   margin: 0;
@@ -1828,7 +1829,7 @@ body.cpc-body.contest-shell {
   border-color: var(--oj-success) !important;
 }
 .ide-submit-panel > .ide-submit-heading { display: none; }
-.ide-submit-body { padding: 0; border: 0; }
+.ide-submit-panel > .ide-submit-body { padding: 0; border: 0; }
 .ide-submit-actionbar { display: none; }
 .ide-submit-note { max-width: 45%; font-size: 9px; line-height: 1.35; }
 .ide-submit-status { margin-right: auto; font-size: 11px; }
