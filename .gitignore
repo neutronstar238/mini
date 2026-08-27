@@ -42,6 +42,7 @@ __pycache__/
 *.py[cod]
 .vscode/
 .codebuddy/
+.codex-remote-attachments/
 
 # 计划与参考资料（含真实域名/备案号等个人信息，不入库）
 paper/
