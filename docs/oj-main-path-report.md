@@ -6,8 +6,8 @@
 - 阶段：Phase 4 — OJ Core Main Path MVP
 - 状态：✅ 主链路真实跑通（Contestant → Local Run → Formal Submit → Official Judge → Official Result）
 - 日期：2026-08-20
-- 测试环境：localhost（Windows，本地 spawn Judge）+ **生产部署 yqzl-server（GCC/G++ 11.5 / CPython 3.12.3）**
-- 部署路径：生产站点 `contest.mini.nstarzx.cn`(:3001) + `admin.mini.nstarzx.cn`(:3002)，经既有 nginx 反代 + HTTPS 正式提供服务；pm2 双入口
+- 测试环境：localhost（Windows，本地 spawn Judge）+ **Linux 参考环境（GCC/G++ 11.5 / CPython 3.12.3）**
+- 部署拓扑：Contestant/OJ Core (:3001) + Admin (:3002)，经 nginx 反代 + HTTPS 提供服务；PM2 双入口
 
 ---
 
@@ -337,7 +337,7 @@ JudgeAdapter 返回 verdict
 
 本轮扩展后覆盖 **10 个 case**，三语言各 AC 一次 + CE/WA/RE/TLE + hidden-WA + 幂等 + 越权，全状态机验证。
 
-| Case | 场景 | 结果（本地 Windows gcc15/Py3.13） | 结果（生产 yqzl-server gcc13/Py3.12.3） |
+| Case | 场景 | 结果（本地 Windows gcc15/Py3.13） | 结果（Linux 参考环境 gcc13/Py3.12.3） |
 |---|---|---|---|
 | 1 | C++11 A+B 正式提交 | AC ✅ | AC ✅ |
 | 1b | **C11 A+B**（`long long`） | AC ✅（新增，三语言各 AC） | AC ✅ |
@@ -350,20 +350,20 @@ JudgeAdapter 返回 verdict
 | 6 | 同 clientRequestId 二次提交 | 幂等同一 submissionId ✅ | 幂等 ✅ |
 | 7 | 用户 A 访问用户 B submission | 403 ✅ | 403 ✅ |
 
-**本地与生产 yqzl-server 均 10/10 通过（新增三语言 AC + TLE 后仍全绿）。**
+**本地与 Linux 参考环境均 10/10 通过（新增三语言 AC + TLE 后仍全绿）。**
 
 > **TLE case 设计说明（实测发现）**：`1+2+...+n` 的 naive `O(n)` 累加若用 **C 编写，gcc `-O2` 会把等差数列求和优化为 O(1) 公式**，`n=1e9` 也能瞬间 AC，无法触发 TLE。故 E2E 的 TLE case 改用 **Python naive 循环**（CPython 无该优化，1e9 次迭代必然超时，实测 `judgeDurationMs≈1160` / `executionTimeMs≈1013`，恰在 1000ms 上限触发 TLE）。这是评测编译器优化行为，并非评测系统缺陷；真实 OJ 用 `-O2` 属标准行为。
 
 > **服务端结构化日志（§37 验收）**：`judge-service.js` 新增 `[judge:enqueue]`（submissionId/userId/problemId/language/status/receivedAt）、`[judge:transition]`（QUEUED→JUDGING 时间点）、`[judge:verdict]`（verdict/judgeDurationMs/executionTimeMs/memoryKb）三类结构化日志，覆盖每次提交的完整生命周期，**不含 source / Cookie / 密码等敏感字段**。
 
-### 生产部署验证（contest.mini.nstarzx.cn :3001 / admin.mini.nstarzx.cn :3002）
+### 生产部署验证（Contestant :3001 / Admin :3002）
 
 - 代码更新至生产 `contest`/`admin` 站点 `src/`（含 `db/`、`judge/`、`store/repositories/`）与前端改动，pm2 双服务重启。
 - 经域名 HTTPS（nginx 反代 + COOP/COEP 透传）登录 + E2E 全过。
 - 生产关系库 `oj-main-path.db`：WAL 正常、E2E 比赛 seed、提交持久化（AC/CE/RE/WA 分布正确）、服务日志无主链路错误。
-- 部署前已备份生产数据至 `/www/wwwroot/_backup-phase4-20260820152927/`。
+- 部署前已完成测试环境数据备份。
 - admin 站点 `/api/admin` 登录 / overview 正常。
-- 部署工具：`scripts/e2e/remote-deploy.sh`（参考环境一键部署）、`scripts/e2e/remote-run-prod.sh`（生产 E2E）。
+- 当前部署与回滚统一使用 `deploy/deploy-server.ps1`；主链路验证使用 `scripts/e2e/oj-main-path.js`。
 
 > 注：服务器实测编译器为 GCC 13.3（非记忆中 GCC11）；Judge 以 `-std=c11`/`-std=c++11` 编译，AC/CE/RE/WA/TLE 语义与 GCC11 一致，E2E 已实证。如需严格 GCC 11 可用 `g++-11`。
 

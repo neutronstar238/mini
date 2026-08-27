@@ -6,7 +6,7 @@
     "medianRatioMax": 1.5,
     "p95CompileLinkMsMax": 5000
   },
-  "referenceHost": "yqzl-server",
+  "referenceHost": "reference-host",
   "repetitions": 2,
   "cases": [
     {

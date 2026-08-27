@@ -69,7 +69,7 @@
   "environment": {
     "server": {
       "status": "READY",
-      "host": "yqzl-server",
+      "host": "reference-host",
       "version": "gcc-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
       "reused": true,
       "reusedFrom": "compat-tests/c17/reference-c17.json",

@@ -3,7 +3,7 @@
 > **Browser C++11 Runtime：`P0 FROZEN`（`cpp11-gcc11-compat-v5`，冻结于 2026-08-23）**
 > 后续开发默认不得修改该 Runtime 核心逻辑。冻结基线见
 > [docs/runtime-freeze-cpp11.md](./runtime-freeze-cpp11.md)，
-> Known Divergences 见 `compat-tests/KNOWN_DIVERGENCES.md`，
+> Known Divergences 见本文“已知差异”章节，
 > 机器可读 manifest 见 `server/public/js/contest/runtime-manifest-cpp11.json`。
 
 > 本说明面向最终用户/维护者，总结 Browser 内 C++11 编译器（Clang 8.0.1 + WASI libc++ +

@@ -25,13 +25,17 @@ const cliArgs = new Set(process.argv.slice(2));
 const timeoutMs = Number(process.env.C17_SSH_TIMEOUT_MS || 8000);
 const sshCommand = process.env.C17_SSH_COMMAND || 'ssh';
 const scpCommand = process.env.C17_SCP_COMMAND || 'scp';
-const remoteHost = process.env.C17_SSH_HOST || process.env.GCC14_SSH_HOST || 'yqzl-server';
+const remoteHost = process.env.C17_SSH_HOST || process.env.GCC14_SSH_HOST || '';
 const sshConnectArgs = ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=' + Math.max(1, Math.ceil(timeoutMs / 1000)), '-o', 'ConnectionAttempts=1'];
 const browserOptLevel = process.env.C17_BROWSER_OPT_LEVEL || '-O2';
 const runServer = !cliArgs.has('--no-server') && process.env.C17_SKIP_SERVER !== '1';
 const runBrowser = cliArgs.has('--browser') || process.env.C17_RUN_BROWSER === '1';
 const strict = cliArgs.has('--strict');
 const verbose = cliArgs.has('--verbose') || process.env.C17_VERBOSE === '1';
+
+if (runServer && !remoteHost) {
+  throw new Error('Set C17_SSH_HOST or GCC14_SSH_HOST, or pass --no-server');
+}
 
 const require = createRequire(import.meta.url);
 

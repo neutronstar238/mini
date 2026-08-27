@@ -11,7 +11,6 @@ async function request(path, expectation) {
   if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
   expectation(body, response);
   console.log(`PASS ${path} (${response.status}, ${elapsedMs} ms, ${body.length} chars)`);
-  return { body, response };
 }
 
 await request('/healthz', (body) => {
@@ -35,4 +34,4 @@ await request('/api/public/runtime-profiles', (body) => {
   }
 });
 
-console.log(`DAY6 READINESS SMOKE: PASS ${baseUrl.origin}`);
+console.log(`RELEASE READINESS SMOKE: PASS ${baseUrl.origin}`);

@@ -2,9 +2,9 @@
 
 ## Result
 
-- Production URL: `https://contest.mini.nstarzx.cn`
-- Test contest: `Browser OJ E2E Test` (`b0f5796b-7d30-4241-9326-b5d8c3ce8363`)
-- Final release: `20260822T032542Z-b6e04e8-c17-cpp17-formal-enabled-r2`
+- Production URL: supplied by the deployment environment
+- Test contest: isolated seeded E2E contest
+- Final release: recorded in the private deployment log
 - C17 Formal Submit: **ENABLED**
 - C++17 Formal Submit: **ENABLED**
 - Final acceptance result: **PASS**

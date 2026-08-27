@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url);
  *
  * The official compile flags are read from server/src/language-profiles.js; this
  * file does not duplicate or mutate server/runtime configuration. The default
- * reference backend is an SSH host named yqzl-server. Browser validation uses
+ * reference backend is supplied through CPP17_SSH_HOST. Browser validation uses
  * the existing real-Chrome E2E launcher by default; incomplete corpus
  * coverage remains a visible beta-gate blocker.
  */
@@ -57,7 +57,7 @@ function readJson(file) {
 
 function parseArgs(argv) {
   const out = {
-    sshHost: process.env.CPP17_SSH_HOST || 'yqzl-server',
+    sshHost: process.env.CPP17_SSH_HOST || '',
     browserCommand: process.env.CPP17_BROWSER_HARNESS || '',
     skipRemote: false,
     browserOnly: false,
@@ -77,7 +77,7 @@ function parseArgs(argv) {
     else if (arg === '--help') {
       console.log([
         'Usage: node run-cpp17-matrix.mjs [options]',
-        '  --ssh-host HOST          SSH alias (default: yqzl-server)',
+        '  --ssh-host HOST          SSH host (or set CPP17_SSH_HOST)',
         '  --browser-command CMD    callable Browser harness command',
         '  --skip-remote            emit a truthful BLOCKED reference result',
         '  --browser-only           reuse reference-cpp17.json and run only Browser Chrome cases',
@@ -87,6 +87,9 @@ function parseArgs(argv) {
       ].join('\n'));
       process.exit(0);
     }
+  }
+  if (!out.skipRemote && !out.browserOnly && !out.sshHost) {
+    throw new Error('Set CPP17_SSH_HOST, pass --ssh-host, or use --skip-remote');
   }
   return out;
 }

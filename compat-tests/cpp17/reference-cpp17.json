@@ -29,7 +29,7 @@
   },
   "backend": {
     "type": "ssh",
-    "host": "yqzl-server",
+    "host": "reference-host",
     "commandPolicy": "profile-derived; source/input transferred through ephemeral SSH tempdir",
     "timeoutSeconds": 10
   },

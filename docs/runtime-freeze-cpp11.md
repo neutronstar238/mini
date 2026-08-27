@@ -134,7 +134,7 @@ Source
 
 ## 13. Known Divergences（冻结）
 
-详见 [KNOWN_DIVERGENCES.md](./KNOWN_DIVERGENCES.md)。分类：Header / Compiler / Link / Runtime / Host-WASI / STL Implementation / GNU Extension。
+详见 [兼容性总表](./compatibility.md)中的“已知差异”章节。分类：Header / Compiler / Link / Runtime / Host-WASI / STL Implementation / GNU Extension。
 
 ## 14. P0 Supported Profile（冻结）
 

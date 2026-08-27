@@ -58,6 +58,6 @@ if (baseUrl) {
   }
 }
 
-console.log('DAY6 RUNTIME CATALOG: PASS');
+console.log('RUNTIME CATALOG: PASS');
 for (const [profileId, runtimeId] of catalog) console.log(`- ${profileId}: ${runtimeId}`);
 console.log(`- Python assets: ${python.assets.files.length} files, ${pythonAssetBytes} bytes`);

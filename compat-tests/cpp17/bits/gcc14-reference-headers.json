@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedAt": "2026-08-21T15:09:08.781Z",
-  "host": "yqzl-server",
+  "host": "reference-host",
   "compilerVersion": "g++-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0",
   "command": "g++-14 -std=c++17 -H -E probe.cpp",
   "nativeBits": {

@@ -92,7 +92,7 @@
   "reference": {
     "status": "GCC14_REFERENCE_READY",
     "file": "reference-cpp17.json",
-    "host": "yqzl-server"
+    "host": "reference-host"
   },
   "browser": {
     "status": "PASS",

@@ -23,7 +23,7 @@ node compat-tests/c17/run-c17-compatibility.mjs --server --browser
 
 The driver imports server/src/language-profiles.js and uses the C17
 officialJudge.compileCommand; it does not duplicate the GCC14 flags. It uploads
-sources to ssh yqzl-server, probes gcc-14 --version, compiles/runs the
+sources to the configured GCC 14 reference host, probes gcc-14 --version, compiles/runs the
 scoreable cases, and records compiler diagnostics. SSH is BatchMode-only with a
 bounded connection timeout and transient connection retries.
 

@@ -6,7 +6,7 @@ Mini-OJ 是一个面向课程与程序设计竞赛的零安装 OJ。选手可直
 
 当前生产环境的六种语言均已开放正式提交；C17/C++17 的 sandbox、GCC 14 编译器证据、真实浏览器、SSE、榜单和旧语言回归已经通过[最终启用验收](./docs/C17_CPP17_FORMAL_SUBMIT_ENABLEMENT.md)。
 
-研究计划见 [plan.md](./plan.md)，接口见 [docs/api.md](./docs/api.md)，正式立项书见 [paper/项目申请书.pdf](./paper/项目申请书.pdf)。
+研究计划见 [plan.md](./plan.md)，接口见 [docs/api.md](./docs/api.md)。
 
 ## 架构
 
@@ -111,34 +111,34 @@ node src/app.js
 
 ## 测试
 
-服务器运行后执行：
+每次提交必须运行不依赖已启动服务的正式门禁：
+
+```powershell
+cd server
+npm test
+npm run test:runtime-catalog
+```
+
+`npm test` 只发现 `*.test.js` 与 `*.test.mjs`，不会误把需要服务进程的 `*.e2e.js` 当成单元测试。涉及 HTTP 路由、正式提交、浏览器 Runtime、SSE 或榜单时，先启动本地 Contestant/OJ Core，再按变更范围执行：
 
 ```powershell
 cd server
 
-# 旧语言正式提交主链路：含 C11/C++11/Python 3.12 的 AC、WA、CE、RE、TLE 等
+# 健康、就绪、Contest HTML 与六种公开 Runtime profile
+npm run test:release-smoke -- http://localhost:3001
+
+# C11/C++11/Python 3.12 正式提交主链路
 npm run test:e2e -- http://localhost:3001
 
-# 真实 Chrome Browser Runtime 边界：C++11、长 stdin、大输出、缓存头
-npm run test:web-runtime -- http://localhost:3001
-
 # Scoreboard / SSE / Cache Lease / Rejudge
-node ..\scripts\e2e\phase5-scoreboard-sse.js http://localhost:3001
+npm run test:scoreboard -- http://localhost:3001
+
+# 真实 Chrome Browser Runtime 边界与 C++11 warning 兼容
+npm run test:web-runtime -- http://localhost:3001
+npm run test:cpp11-browser -- http://localhost:3001
 ```
 
-仓库根目录还可执行关键静态/回归门禁：
-
-```powershell
-node server/test/language-preview.test.js
-node server/test/judge-sandbox.test.js
-node server/test/gcc14-header-check.test.mjs
-node scripts/verify-modern-runtime-v2-overlay.mjs
-node scripts/verify-modern-runtime-evidence.mjs
-node --test scripts/e2e/codeforces-browser-compat.test.mjs
-node --test server/test/*.test.js
-```
-
-C17/C++17 正式提交验收器默认只做只读预检；仅在明确准备创建测试提交时附加 `--execute`。Codeforces 回放器默认读取已构建语料，真实 Chrome 执行时需要 Playwright；语料下载/重建属于研究流程，不应放进普通部署门禁。用法和生产验收证据见 [C17/C++17 正式提交启用报告](./docs/C17_CPP17_FORMAL_SUBMIT_ENABLEMENT.md)。能力矩阵脚本与冻结数据位于 `compat-tests/`，压力测试位于 `scripts/stress/`。
+兼容性语料、冻结证据生成器和压力测试不属于普通提交门禁，但必须保留以复现已发布的 Runtime 能力结论。脚本分类规则与长期入口见 [scripts/README.md](./scripts/README.md)。C17/C++17 正式提交验收器默认只做只读预检；仅在明确准备创建测试提交时附加 `--execute`。语料下载或重建属于研究流程，不应放进普通部署门禁。
 
 ## API 快速索引
 
@@ -218,7 +218,7 @@ pm2 list
 
 首选回滚方式是在一个干净工作区检出目标提交，重新运行同一发布脚本，保证运行代码与 Git 提交完全一致。紧急情况下可使用脚本输出的 `<RemoteBackupRoot>/<release>/` 代码归档恢复 Contest/Admin；同一目录还包含部署前两个 SQLite 数据库的一致性快照。代码回滚不得覆盖 `data/`；只有 schema 或数据确实需要回退时，才停止 OJ Core、再次备份现状、恢复指定数据库并执行 `PRAGMA integrity_check`。回滚后重复全部 health/readiness 检查。
 
-Runtime 资产、版本升级与 COOP/COEP 细节见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)，增量发布与回滚记录见 [Phase 9 部署报告](./docs/PHASE9_INCREMENTAL_RUNTIME_DEPLOYMENT.md)。`deploy/deploy-remote.sh` 是服务器初始化参考；日常增量发布使用 `deploy/deploy-server.ps1`，不要使用 `scripts/e2e/remote-deploy.sh`（它仅服务隔离的 Phase 4 测试环境）。
+Runtime 资产、版本升级与 COOP/COEP 细节见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)。`deploy/deploy-remote.sh` 是服务器初始化参考；日常增量发布使用 `deploy/deploy-server.ps1`。真实域名、主机别名、远端目录和发布记录只保存在部署环境，不进入仓库。
 
 ## 信任边界
 

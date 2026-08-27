@@ -7,7 +7,7 @@ and runtime cpp-modern-engine-v2. Both source records were generated at
 - [cpp17-compatibility-matrix.json](../compat-tests/cpp17/cpp17-compatibility-matrix.json)
   records the real-Chrome browser matrix.
 - [reference-cpp17.json](../compat-tests/cpp17/reference-cpp17.json) records
-  the GCC14 reference matrix from yqzl-server.
+  the GCC14 reference matrix from the configured reference host.
 
 The corpus is indexed by compat-tests/cpp17/matrix-manifest.json. The runner
 reads server/src/language-profiles.js for the profile-derived compiler flags.
@@ -21,7 +21,7 @@ GCC14_REFERENCE_READY. The recorded flags are:
 g++-14 -std=c++17 -O2 -Wall -Wextra -DONLINE_JUDGE <src> -o <out>
 ~~~
 
-The reference backend is SSH to yqzl-server with a recorded 10-second
+The reference backend is SSH to the configured reference host with a recorded 10-second
 timeout. Browser execution uses real Chrome through
 compat-tests/java21/e2e/harness.mjs, mode real-chrome, profile
 cpp17-gcc14-compat-v2, and -O2. The browser matrix selected 105 cases and

@@ -9,6 +9,7 @@ This file applies to people and AI assistants working in this repository.
 - Treat `server/public/js/runno/`, `server/public/js/pyodide/`, generated runtime binaries, compatibility corpora, and `server/data/` as read-only unless the task explicitly names them.
 - Never write credentials, tokens, private keys, production domains, personal server aliases, or absolute deployment paths into source, reports, examples, or logs.
 - Do not add or upgrade dependencies unless the task explicitly requires it and the relevant manifest and lockfile changes are reviewed together.
+- Do not commit one-off probes, local captures, or task-specific harnesses. Keep them under ignored `tmp/` or `output/`. A permanent script must be referenced by an npm command, repository documentation, or a reproducible committed evidence artifact.
 
 ## Completion gate
 
@@ -19,13 +20,14 @@ A task is complete only when all of the following are true:
 3. Existing relevant smoke tests still pass when the task can affect them.
 4. `git diff --check` reports no whitespace errors, and `git status --short` contains no unexplained files.
 
-For the Day 6 work, run:
+For every change, run the repository unit/static gates:
 
 ```powershell
-node scripts/harness/check-day6-scope.mjs
-node scripts/e2e/day6-readiness-smoke.mjs $env:WEBJUDGE_BASE_URL
-node scripts/e2e/day6-runtime-catalog.mjs $env:WEBJUDGE_BASE_URL
+Push-Location server
+npm test
+npm run test:runtime-catalog
+Pop-Location
 git diff --check
 ```
 
-Supply `WEBJUDGE_BASE_URL` through the environment; do not commit a production address. The first command is the boundary check. A file outside the Day 6 allowlist, a dependency manifest change, or a likely secret makes it fail before the work is accepted.
+When a change affects HTTP routes, browser runtimes, submissions, SSE, or the scoreboard, also start the local contestant service and run the relevant E2E commands documented in `README.md`. Pass the base URL as a command argument; do not commit a production address.

@@ -35,7 +35,7 @@ optimization level (16 runs per level):
 - C++17: `cpp17-structured-bindings`, `cpp17-optional`, `cpp17-vector`, `cpp17-algorithm`
 
 Each browser run passed compilation and execution and matched the expected
-output. The corresponding GCC 14 reference runs on `yqzl-server` also passed.
+output. The corresponding GCC 14 reference runs on the configured reference host also passed.
 The reference versions recorded were:
 
 - `gcc-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0`

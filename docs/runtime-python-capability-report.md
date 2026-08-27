@@ -12,7 +12,7 @@ py312-cpython-compat-v1
 
 版本实测冻结（先实测后冻结，不凭印象）：
 - **Browser**：CPython 3.12.1（Pyodide 0.26.4 WebAssembly，`sys.version_info(major=3, minor=12, micro=1, releaselevel='final', serial=0)`）
-- **Server**：CPython 3.12.3（Ubuntu 24.04 LTS，yqzl-server，`python3 --version` = `Python 3.12.3`）
+- **Server**：CPython 3.12.3（Ubuntu 24.04 LTS 参考环境，`python3 --version` = `Python 3.12.3`）
 - 两端口径：minor 3.12 完全对齐；micro 差异（1 vs 3）经 87 例三方比对确认无行为差异
 
 ## 2. 测试规模（机器生成）
@@ -33,7 +33,7 @@ python3 -m py_compile <src>.py
 python3 <src>.py < <in>
 ```
 
-- SSH：`yqzl-server`（生产部署机，Ubuntu 24.04 LTS）
+- SSH：通过环境变量配置的参考主机（Ubuntu 24.04 LTS）
 - 版本行：`Python 3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]`
 
 ## 4. Browser Runtime（冻结）

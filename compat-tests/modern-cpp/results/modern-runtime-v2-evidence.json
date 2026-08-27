@@ -1,14 +1,14 @@
 {
   "schemaVersion": "modern-runtime-v2-overlay-evidence-v1",
   "evidenceId": "MODERN_CPP_PHASE8_RUNTIME_V2_OVERLAY_EVIDENCE",
-  "generatedAt": "2026-08-23T02:55:25.311Z",
+  "generatedAt": "2026-08-27T02:34:34.533Z",
   "runtimeId": "cpp-modern-engine-v2",
   "manifest": {
     "path": "server/public/js/runtime/cpp-modern-engine-v2/runtime-manifest.json",
-    "bytes": 11267,
-    "externalRawSha256": "7bfbf1f7584ec5c3857f3807f86aeea14d6092f8c008892d32b745ef49058302",
-    "declaredCanonicalRuntimeAssetHash": "c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987",
-    "calculatedCanonicalRuntimeAssetHash": "c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987",
+    "bytes": 11334,
+    "externalRawSha256": "2a89abdb5f487594f1784fbe1298be36e56b95996644757b53ebc0e522f7d68b",
+    "declaredCanonicalRuntimeAssetHash": "5ff5765d2a0b71efed2011e74ef04a3d1a2c105404f216140895f03726209711",
+    "calculatedCanonicalRuntimeAssetHash": "5ff5765d2a0b71efed2011e74ef04a3d1a2c105404f216140895f03726209711",
     "hashAlgorithm": "canonical-runtime-identity-v1",
     "canonicalInput": "JSON.stringify(canonical(runtimeIdentity))",
     "rawHashIsExternal": true
@@ -117,10 +117,10 @@
       "file": "bits/stdc++.h",
       "localPath": "server/public/js/runtime/cpp-modern-engine-v2/bits/stdc++.h",
       "url": "/runtime/cpp-modern-engine-v2/bits/stdc++.h",
-      "bytes": 913,
-      "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1",
-      "declaredBytes": 913,
-      "declaredSha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1",
+      "bytes": 2178,
+      "sha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad",
+      "declaredBytes": 2178,
+      "declaredSha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad",
       "status": "PASS"
     },
     {
@@ -150,10 +150,10 @@
       "file": "code/controller.mjs",
       "localPath": "server/public/js/contest/ide-wasi-worker-modern.js",
       "url": "/js/contest/ide-wasi-worker-modern.js",
-      "bytes": 55940,
-      "sha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e",
-      "declaredBytes": 55940,
-      "declaredSha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e",
+      "bytes": 63817,
+      "sha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59",
+      "declaredBytes": 63817,
+      "declaredSha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59",
       "status": "PASS"
     },
     {
@@ -161,10 +161,10 @@
       "file": "code/executor.mjs",
       "localPath": "server/public/js/contest/ide-wasi-execution-worker-modern.js",
       "url": "/js/contest/ide-wasi-execution-worker-modern.js",
-      "bytes": 4947,
-      "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166",
-      "declaredBytes": 4947,
-      "declaredSha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166",
+      "bytes": 5892,
+      "sha256": "cae8aa766cbae0bbdc34997984ee5b8c742b3abb52322e2382d163fed2e833e7",
+      "declaredBytes": 5892,
+      "declaredSha256": "cae8aa766cbae0bbdc34997984ee5b8c742b3abb52322e2382d163fed2e833e7",
       "status": "PASS"
     }
   ],
@@ -173,8 +173,8 @@
     "files": [
       {
         "file": "bits/stdc++.h",
-        "bytes": 913,
-        "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+        "bytes": 2178,
+        "sha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad"
       },
       {
         "file": "ext/pb_ds/assoc_container.hpp",
@@ -188,15 +188,15 @@
       },
       {
         "file": "runtime-manifest.json",
-        "bytes": 11267,
-        "sha256": "7bfbf1f7584ec5c3857f3807f86aeea14d6092f8c008892d32b745ef49058302"
+        "bytes": 11334,
+        "sha256": "2a89abdb5f487594f1784fbe1298be36e56b95996644757b53ebc0e522f7d68b"
       }
     ],
     "physicalAssetFiles": [
       {
         "file": "bits/stdc++.h",
-        "bytes": 913,
-        "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+        "bytes": 2178,
+        "sha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad"
       },
       {
         "file": "ext/pb_ds/assoc_container.hpp",
@@ -255,7 +255,7 @@
         {
           "file": "scripts/build-modern-runtime-v2-overlay.mjs",
           "exists": true,
-          "bytes": 5224
+          "bytes": 5272
         },
         {
           "file": "scripts/verify-modern-runtime-evidence.mjs",
@@ -285,13 +285,13 @@
     "canonicalRuntimeAssetHash": {
       "status": "PASS",
       "algorithm": "canonical-runtime-identity-v1",
-      "calculated": "c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987",
-      "declared": "c654bb0427b26d28715776ebbf5fbb1f7292ab7be7ff95f98db7b3016711e987"
+      "calculated": "5ff5765d2a0b71efed2011e74ef04a3d1a2c105404f216140895f03726209711",
+      "declared": "5ff5765d2a0b71efed2011e74ef04a3d1a2c105404f216140895f03726209711"
     },
     "externalRawManifestSha256": {
       "status": "PASS",
-      "bytes": 11267,
-      "sha256": "7bfbf1f7584ec5c3857f3807f86aeea14d6092f8c008892d32b745ef49058302",
+      "bytes": 11334,
+      "sha256": "2a89abdb5f487594f1784fbe1298be36e56b95996644757b53ebc0e522f7d68b",
       "distinctFromCanonicalHash": true
     },
     "assetInventoryMatchesAssets": {
@@ -456,12 +456,12 @@
         "kind": "header-shim",
         "role": "gcc14-compatible-standard-header-aggregate",
         "mountPath": "/sys/include/c++/v1/bits/stdc++.h",
-        "bytes": 913,
-        "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+        "bytes": 2178,
+        "sha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad"
       },
       "actual": {
-        "bytes": 913,
-        "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+        "bytes": 2178,
+        "sha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad"
       },
       "expected": {
         "url": "/runtime/cpp-modern-engine-v2/bits/stdc++.h",
@@ -524,12 +524,12 @@
         "url": "/js/contest/ide-wasi-worker-modern.js",
         "kind": "metadata",
         "role": "control-code",
-        "bytes": 55940,
-        "sha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e"
+        "bytes": 63817,
+        "sha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59"
       },
       "actual": {
-        "bytes": 55940,
-        "sha256": "47643c503334ff9c3511fef0cf6beb983e6c816c680a02419e9a30c7613bc02e"
+        "bytes": 63817,
+        "sha256": "0da927f8ab64d5cf8cb64a5ec314c8f0ad2fcd1830b5dffad799aa9b3c2c0d59"
       },
       "expected": {
         "url": "/js/contest/ide-wasi-worker-modern.js",
@@ -545,12 +545,12 @@
         "url": "/js/contest/ide-wasi-execution-worker-modern.js",
         "kind": "metadata",
         "role": "execution-code",
-        "bytes": 4947,
-        "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166"
+        "bytes": 5892,
+        "sha256": "cae8aa766cbae0bbdc34997984ee5b8c742b3abb52322e2382d163fed2e833e7"
       },
       "actual": {
-        "bytes": 4947,
-        "sha256": "7988db9163199e0fca7fc6bfcafe5590ea8e82a306625fff84066bfd30f5a166"
+        "bytes": 5892,
+        "sha256": "cae8aa766cbae0bbdc34997984ee5b8c742b3abb52322e2382d163fed2e833e7"
       },
       "expected": {
         "url": "/js/contest/ide-wasi-execution-worker-modern.js",
@@ -565,8 +565,8 @@
       "physicalFiles": [
         {
           "file": "bits/stdc++.h",
-          "bytes": 913,
-          "sha256": "eb125843e3ff7aeda857dc8204a2f121470c43b8bcf646ab63f659cbe99762c1"
+          "bytes": 2178,
+          "sha256": "6deffd2d120881cdb98a254723a87ae2d1396715137735563a843c9475578fad"
         },
         {
           "file": "ext/pb_ds/assoc_container.hpp",
@@ -580,8 +580,8 @@
         },
         {
           "file": "runtime-manifest.json",
-          "bytes": 11267,
-          "sha256": "7bfbf1f7584ec5c3857f3807f86aeea14d6092f8c008892d32b745ef49058302"
+          "bytes": 11334,
+          "sha256": "2a89abdb5f487594f1784fbe1298be36e56b95996644757b53ebc0e522f7d68b"
         }
       ],
       "largeBinaryFiles": [],
@@ -621,7 +621,7 @@
         {
           "file": "scripts/build-modern-runtime-v2-overlay.mjs",
           "exists": true,
-          "bytes": 5224
+          "bytes": 5272
         },
         {
           "file": "scripts/verify-modern-runtime-evidence.mjs",

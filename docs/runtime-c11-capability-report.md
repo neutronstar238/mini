@@ -20,10 +20,10 @@
 
 | 项 | 值 |
 |----|-----|
-| 编译器 | **gcc-11**（`11.5.0-1ubuntu1~24.04.1`，Ubuntu 24.04.4 LTS，yqzl-server） |
+| 编译器 | **gcc-11**（`11.5.0-1ubuntu1~24.04.1`，Ubuntu 24.04.4 LTS，参考环境） |
 | 语言标准 | `-std=c11` |
 | 编译命令 | `gcc-11 -std=c11 <src> -lm -o <out>`（`-lm` 置于源文件后，v2 冻结，保证链接顺序；runtime 数学输入依赖真实 libm symbol） |
-| 运行命令 | `<out> < <in>`（经 `ssh yqzl-server`） |
+| 运行命令 | `<out> < <in>`（经配置的 SSH 参考环境） |
 | 判定 | **match Server Compile Result（GCC11 实际 exit code）**，不臆断 CE |
 
 > 元数据见 `compat-tests/reference-c11.json`。
