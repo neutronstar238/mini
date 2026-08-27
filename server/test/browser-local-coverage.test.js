@@ -178,6 +178,12 @@ function createPageHarness(runResult, samples) {
     abortRun: null,
     runVersion: 0,
     $: id => elements.get(id),
+    selectConsoleTab: targetId => {
+      ['ide-output-wrap', 'ide-samples-wrap', 'ide-input-wrap'].forEach(id => {
+        const section = elements.get(id);
+        if (section) section.style.display = id === targetId ? '' : 'none';
+      });
+    },
     newAbort: () => ({_killers: []}),
     runIde: async () => runResult,
     toast() {},
