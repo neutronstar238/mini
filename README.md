@@ -169,18 +169,23 @@ Nginx 必须保留真实 `Host` 与 `X-Forwarded-*`，对 SSE 关闭 `proxy_buff
 
 发布脚本只接受已经提交的 `server/` 工作区。它会生成带 Git 短 SHA 的精确归档，上传到服务器 staging，在重启前使用 SQLite 在线备份两个数据库并分别备份 Contest/Admin 代码，保留 `data/`、`node_modules/` 和站点 `.env`，同步两套应用目录，按 lockfile 安装生产依赖，重启 PM2，最后验证两个进程的 liveness/readiness 和公开 Runtime API。Runtime 发布包必须同时包含 Runno、Pyodide、Java v2、Modern v2 以及 PBDS overlay。
 
-先在仓库根目录完成测试、提交并推送，再执行：
+部署目标、目录、端口、进程名和工具链路径统一写在本地 `deploy/deploy.env`；完整字段说明见 [deploy/README.md](./deploy/README.md)。先复制模板并校验：
+
+```powershell
+Copy-Item .\deploy\deploy.env.example .\deploy\deploy.env
+notepad .\deploy\deploy.env
+pwsh -File .\deploy\deploy-server.ps1 -ConfigFile .\deploy\deploy.env -ValidateOnly
+```
+
+确认校验通过后，先完成测试、提交和推送，再发布：
 
 ```powershell
 git status --short
 git push origin main
-pwsh -File .\deploy\deploy-server.ps1 `
-  -ServerHost <your-ssh-host> `
-  -DomainContest contest.example.com `
-  -DomainAdmin admin.example.com
+pwsh -File .\deploy\deploy-server.ps1 -ConfigFile .\deploy\deploy.env
 ```
 
-默认远端布局为 `/var/www/mini-oj/<domain>`、`/var/backups/mini-oj`、`/etc/mini-oj`，Node/PM2 从 `/usr/local/bin` 查找。若服务器布局不同，显式传入 `-RemoteWebRoot`、`-RemoteBackupRoot`、`-RemoteSecretsDir` 和 `-RemoteNodeBin`；这些值只属于部署者自己的命令或 CI Secret，不应提交到仓库。`-ServerHost` 可以是部署者 `~/.ssh/config` 中的别名，也可以是 `user@host`。
+`deploy/deploy.env` 已被 Git 忽略；仓库中只保留可安全分发的 `deploy/deploy.env.example`。原有命令行参数继续兼容并覆盖配置文件值，供 CI 或单次发布使用，不再建议人工把完整参数散落在命令历史中。
 
 脚本首次运行会在 `<RemoteSecretsDir>/mini-oj.env`（默认 `/etc/mini-oj/mini-oj.env`）创建权限为 `0600` 的密钥文件，保存随机生成的 `JWT_SECRET`、`HMAC_SECRET` 和 `INTERNAL_API_SECRET`；密钥不会上传或写入 Git。Contest 与 Admin 必须加载同一组 JWT/Internal 密钥。若此前使用开发默认密钥，首次安全发布会使既有登录 Cookie 失效，用户重新登录即可。
 
@@ -218,7 +223,7 @@ pm2 list
 
 首选回滚方式是在一个干净工作区检出目标提交，重新运行同一发布脚本，保证运行代码与 Git 提交完全一致。紧急情况下可使用脚本输出的 `<RemoteBackupRoot>/<release>/` 代码归档恢复 Contest/Admin；同一目录还包含部署前两个 SQLite 数据库的一致性快照。代码回滚不得覆盖 `data/`；只有 schema 或数据确实需要回退时，才停止 OJ Core、再次备份现状、恢复指定数据库并执行 `PRAGMA integrity_check`。回滚后重复全部 health/readiness 检查。
 
-Runtime 资产、版本升级与 COOP/COEP 细节见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)。`deploy/deploy-remote.sh` 是服务器初始化参考；日常增量发布使用 `deploy/deploy-server.ps1`。真实域名、主机别名、远端目录和发布记录只保存在部署环境，不进入仓库。
+Runtime 资产、版本升级与 COOP/COEP 细节见 [deploy/RUNNO-RUNTIME.md](./deploy/RUNNO-RUNTIME.md)。`deploy/deploy-remote.sh` 是服务器初始化参考，并读取同一个 `deploy.env`；日常增量发布使用 `deploy/deploy-server.ps1`。真实域名、主机别名、远端目录和发布记录只保存在部署环境，不进入仓库。
 
 ## 信任边界
 

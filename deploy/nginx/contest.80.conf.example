@@ -1,9 +1,10 @@
+# Reference template. deploy-remote.sh renders the active vhost from deploy.env.
 server {
     listen 80;
     listen [::]:80;
-    server_name contest.example.com;
+    server_name ${DOMAIN_CONTEST};
     location ^~ /.well-known/acme-challenge/ {
-        root /www/wwwroot/contest.example.com;
+        root ${REMOTE_WEB_ROOT}/${DOMAIN_CONTEST};
         allow all;
         default_type text/plain;
     }

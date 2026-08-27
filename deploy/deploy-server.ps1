@@ -1,20 +1,105 @@
 # Mini-OJ deployment (PowerShell 7+)
 # Exact release archive -> remote staging -> backup -> rsync -> PM2 restart -> health checks.
 param(
-  [Parameter(Mandatory = $true)]
+  [string]$ConfigFile,
+  [switch]$ValidateOnly,
   [string]$ServerHost,
-  [string]$LocalDir = (Join-Path $PSScriptRoot "..\server"),
-  [Parameter(Mandatory = $true)]
+  [string]$LocalDir,
   [string]$DomainContest,
-  [Parameter(Mandatory = $true)]
   [string]$DomainAdmin,
-  [string]$RemoteWebRoot = "/var/www/mini-oj",
-  [string]$RemoteBackupRoot = "/var/backups/mini-oj",
-  [string]$RemoteSecretsDir = "/etc/mini-oj",
-  [string]$RemoteNodeBin = "/usr/local/bin"
+  [string]$RemoteWebRoot,
+  [string]$RemoteBackupRoot,
+  [string]$RemoteSecretsDir,
+  [string]$RemoteNodeBin,
+  [int]$ContestPort,
+  [int]$AdminPort,
+  [string]$Pm2ContestName,
+  [string]$Pm2AdminName,
+  [string]$CCompiler,
+  [string]$CppCompiler,
+  [string]$JavaJavacBin,
+  [string]$JavaBin,
+  [string]$NginxVhostDir,
+  [string]$NginxLogDir,
+  [string]$NginxBin,
+  [string]$CertbotBin,
+  [int]$ComposeHttpPort
 )
 
 $ErrorActionPreference = "Stop"
+$scriptBoundValues = @{}
+foreach ($parameterName in $PSBoundParameters.Keys) {
+  $scriptBoundValues[$parameterName] = $PSBoundParameters[$parameterName]
+}
+
+$allowedConfigKeys = @(
+  "SERVER_HOST", "DOMAIN_CONTEST", "DOMAIN_ADMIN", "LOCAL_DIR",
+  "REMOTE_WEB_ROOT", "REMOTE_BACKUP_ROOT", "REMOTE_SECRETS_DIR", "REMOTE_NODE_BIN",
+  "CONTEST_PORT", "ADMIN_PORT", "PM2_CONTEST_NAME", "PM2_ADMIN_NAME",
+  "C_COMPILER", "CPP_COMPILER", "JAVA_JAVAC_BIN", "JAVA_BIN",
+  "NGINX_VHOST_DIR", "NGINX_LOG_DIR", "NGINX_BIN", "CERTBOT_BIN", "COMPOSE_HTTP_PORT"
+)
+
+function Read-DeployConfig([string]$Path) {
+  $resolved = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+  $values = @{}
+  $lineNumber = 0
+  foreach ($rawLine in Get-Content -LiteralPath $resolved) {
+    $lineNumber++
+    $line = $rawLine.Trim()
+    if (-not $line -or $line.StartsWith("#")) { continue }
+    if ($line -notmatch '^([A-Z][A-Z0-9_]*)=(.*)$') {
+      throw "Invalid deployment config line $lineNumber in $resolved"
+    }
+    $key = $Matches[1]
+    $value = $Matches[2].Trim()
+    if ($allowedConfigKeys -notcontains $key) { throw "Unknown deployment config key: $key" }
+    if ($values.ContainsKey($key)) { throw "Duplicate deployment config key: $key" }
+    $isDoubleQuoted = $value.Length -ge 2 -and $value.StartsWith('"') -and $value.EndsWith('"')
+    $isSingleQuoted = $value.Length -ge 2 -and $value.StartsWith("'") -and $value.EndsWith("'")
+    if ($isDoubleQuoted -or $isSingleQuoted) {
+      $value = $value.Substring(1, $value.Length - 2)
+    }
+    $values[$key] = $value
+  }
+  return @{ Path = $resolved; Values = $values }
+}
+
+$config = @{ Path = $null; Values = @{} }
+if ($ConfigFile) { $config = Read-DeployConfig $ConfigFile }
+
+function Resolve-DeployValue([string]$ParameterName, [string]$ConfigKey, $DefaultValue) {
+  if ($scriptBoundValues.ContainsKey($ParameterName)) { return $scriptBoundValues[$ParameterName] }
+  if ($config.Values.ContainsKey($ConfigKey)) { return $config.Values[$ConfigKey] }
+  return $DefaultValue
+}
+
+$ServerHost = Resolve-DeployValue "ServerHost" "SERVER_HOST" ""
+$DomainContest = Resolve-DeployValue "DomainContest" "DOMAIN_CONTEST" ""
+$DomainAdmin = Resolve-DeployValue "DomainAdmin" "DOMAIN_ADMIN" ""
+$LocalDir = Resolve-DeployValue "LocalDir" "LOCAL_DIR" (Join-Path $PSScriptRoot "..\server")
+$RemoteWebRoot = Resolve-DeployValue "RemoteWebRoot" "REMOTE_WEB_ROOT" "/var/www/mini-oj"
+$RemoteBackupRoot = Resolve-DeployValue "RemoteBackupRoot" "REMOTE_BACKUP_ROOT" "/var/backups/mini-oj"
+$RemoteSecretsDir = Resolve-DeployValue "RemoteSecretsDir" "REMOTE_SECRETS_DIR" "/etc/mini-oj"
+$RemoteNodeBin = Resolve-DeployValue "RemoteNodeBin" "REMOTE_NODE_BIN" "/usr/local/bin"
+$ContestPort = [int](Resolve-DeployValue "ContestPort" "CONTEST_PORT" 3001)
+$AdminPort = [int](Resolve-DeployValue "AdminPort" "ADMIN_PORT" 3002)
+$Pm2ContestName = Resolve-DeployValue "Pm2ContestName" "PM2_CONTEST_NAME" "mini-oj-contest"
+$Pm2AdminName = Resolve-DeployValue "Pm2AdminName" "PM2_ADMIN_NAME" "mini-oj-admin"
+$CCompiler = Resolve-DeployValue "CCompiler" "C_COMPILER" "/usr/bin/gcc-11"
+$CppCompiler = Resolve-DeployValue "CppCompiler" "CPP_COMPILER" "/usr/bin/g++-11"
+$JavaJavacBin = Resolve-DeployValue "JavaJavacBin" "JAVA_JAVAC_BIN" "/usr/lib/jvm/java-21-openjdk-amd64/bin/javac"
+$JavaBin = Resolve-DeployValue "JavaBin" "JAVA_BIN" "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+$NginxVhostDir = Resolve-DeployValue "NginxVhostDir" "NGINX_VHOST_DIR" "/etc/nginx/conf.d"
+$NginxLogDir = Resolve-DeployValue "NginxLogDir" "NGINX_LOG_DIR" "/var/log/nginx"
+$NginxBin = Resolve-DeployValue "NginxBin" "NGINX_BIN" "nginx"
+$CertbotBin = Resolve-DeployValue "CertbotBin" "CERTBOT_BIN" "certbot"
+$ComposeHttpPort = [int](Resolve-DeployValue "ComposeHttpPort" "COMPOSE_HTTP_PORT" 8080)
+
+if (-not $ServerHost -or $ServerHost -notmatch '^[a-zA-Z0-9._@:-]+$' -or $ServerHost.StartsWith('-')) {
+  throw "SERVER_HOST is missing or invalid"
+}
+if ($ServerHost -eq "your-ssh-host") { throw "Replace the SERVER_HOST placeholder before deployment" }
 $gitCommand = if ($IsWindows) { "git.exe" } else { "git" }
 $tarCommand = if ($IsWindows) { "tar.exe" } else { "tar" }
 $scpCommand = if ($IsWindows) { "scp.exe" } else { "scp" }
@@ -24,20 +109,53 @@ foreach ($domain in @($DomainContest, $DomainAdmin)) {
   if ($domain -notmatch '^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$') {
     throw "Invalid deployment domain: $domain"
   }
+  if ($domain.EndsWith(".example.com")) { throw "Replace the example domain before deployment: $domain" }
 }
-foreach ($remotePath in @($RemoteWebRoot, $RemoteBackupRoot, $RemoteSecretsDir, $RemoteNodeBin)) {
+if ($DomainContest -eq $DomainAdmin) { throw "DOMAIN_CONTEST and DOMAIN_ADMIN must be different" }
+foreach ($remotePath in @($RemoteWebRoot, $RemoteBackupRoot, $RemoteSecretsDir, $RemoteNodeBin, $NginxVhostDir, $NginxLogDir)) {
   if ($remotePath -notmatch '^/[a-zA-Z0-9._/-]+$' -or $remotePath -match '(^|/)\.\.(/|$)') {
     throw "Invalid remote path: $remotePath"
   }
+}
+foreach ($binaryPath in @($CCompiler, $CppCompiler, $JavaJavacBin, $JavaBin)) {
+  if ($binaryPath -notmatch '^/[a-zA-Z0-9._+/-]+$' -or $binaryPath -match '(^|/)\.\.(/|$)') {
+    throw "Invalid remote binary path: $binaryPath"
+  }
+}
+foreach ($commandName in @($NginxBin, $CertbotBin)) {
+  if ($commandName -notmatch '^[a-zA-Z0-9._+/-]+$') { throw "Invalid remote command name or path: $commandName" }
+}
+if ($ContestPort -lt 1 -or $ContestPort -gt 65535 -or $AdminPort -lt 1 -or $AdminPort -gt 65535 -or $ContestPort -eq $AdminPort) {
+  throw "CONTEST_PORT and ADMIN_PORT must be distinct values from 1 to 65535"
+}
+foreach ($processName in @($Pm2ContestName, $Pm2AdminName)) {
+  if ($processName -notmatch '^[a-zA-Z0-9._-]+$') { throw "Invalid PM2 process name: $processName" }
+}
+if ($ComposeHttpPort -lt 1 -or $ComposeHttpPort -gt 65535) {
+  throw "COMPOSE_HTTP_PORT must be from 1 to 65535"
 }
 
 function Step([string]$Message) {
   Write-Host "`n==> $Message" -ForegroundColor Cyan
 }
 
-$localRoot = [System.IO.Path]::GetFullPath($LocalDir)
+$localRoot = if ([System.IO.Path]::IsPathRooted($LocalDir)) {
+  [System.IO.Path]::GetFullPath($LocalDir)
+} else {
+  $localDirBase = if ($config.Path) { Split-Path -Parent $config.Path } else { (Get-Location).Path }
+  [System.IO.Path]::GetFullPath((Join-Path $localDirBase $LocalDir))
+}
 if (-not (Test-Path -LiteralPath (Join-Path $localRoot "src\app.js"))) {
   throw "Local server directory is invalid: $localRoot"
+}
+
+if ($ValidateOnly) {
+  Write-Host "Deployment configuration: PASS" -ForegroundColor Green
+  Write-Host "  Config:  $($config.Path ?? '<command line>')"
+  Write-Host "  Contest: https://$DomainContest ($ContestPort)"
+  Write-Host "  Admin:   https://$DomainAdmin ($AdminPort)"
+  Write-Host "  Source:  $localRoot"
+  exit 0
 }
 
 $dirtyServerFiles = & $gitCommand -C $localRoot status --porcelain -- .
@@ -85,6 +203,14 @@ SHARED_DB="$CONTEST/data/mini-oj.db"
 OJ_DB="$CONTEST/data/oj-main-path.db"
 SECRETS_DIR="__SECRETS_DIR__"
 SECRETS_FILE="$SECRETS_DIR/mini-oj.env"
+CONTEST_PORT="__CONTEST_PORT__"
+ADMIN_PORT="__ADMIN_PORT__"
+PM2_CONTEST_NAME="__PM2_CONTEST_NAME__"
+PM2_ADMIN_NAME="__PM2_ADMIN_NAME__"
+C_COMPILER="__C_COMPILER__"
+CPP_COMPILER="__CPP_COMPILER__"
+JAVA_JAVAC_BIN="__JAVA_JAVAC_BIN__"
+JAVA_BIN="__JAVA_BIN__"
 
 case "$CONTEST" in "$WEB_ROOT"/*) ;; *) echo "unsafe contest target" >&2; exit 2 ;; esac
 case "$ADMIN" in "$WEB_ROOT"/*) ;; *) echo "unsafe admin target" >&2; exit 2 ;; esac
@@ -144,39 +270,37 @@ npm ci --omit=dev --no-audit --no-fund
 cd "$ADMIN"
 npm ci --omit=dev --no-audit --no-fund
 
-if pm2 describe mini-oj-contest >/dev/null 2>&1; then
-  NODE_ENV=production APP_ENTRY=contest PORT=3001 DB_FILE="$SHARED_DB" \
-    C_COMPILER=/usr/bin/gcc-11 CPP_COMPILER=/usr/bin/g++-11 \
-    JAVA_JAVAC_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/javac \
-    JAVA_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/java \
+if pm2 describe "$PM2_CONTEST_NAME" >/dev/null 2>&1; then
+  NODE_ENV=production APP_ENTRY=contest PORT="$CONTEST_PORT" DB_FILE="$SHARED_DB" \
+    C_COMPILER="$C_COMPILER" CPP_COMPILER="$CPP_COMPILER" \
+    JAVA_JAVAC_BIN="$JAVA_JAVAC_BIN" JAVA_BIN="$JAVA_BIN" \
     JUDGE_SANDBOX_MODE=systemd JUDGE_SANDBOX_REQUIRED=1 \
     DOMAIN_CONTEST="__DOMAIN_CONTEST__" DOMAIN_ADMIN="__DOMAIN_ADMIN__" \
     JWT_SECRET="$JWT_SECRET" HMAC_SECRET="$HMAC_SECRET" INTERNAL_API_SECRET="$INTERNAL_API_SECRET" \
-    pm2 restart mini-oj-contest --update-env >/dev/null
+    pm2 restart "$PM2_CONTEST_NAME" --update-env >/dev/null
 else
   cd "$CONTEST"
-  NODE_ENV=production APP_ENTRY=contest PORT=3001 DB_FILE="$SHARED_DB" \
-    C_COMPILER=/usr/bin/gcc-11 CPP_COMPILER=/usr/bin/g++-11 \
-    JAVA_JAVAC_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/javac \
-    JAVA_BIN=/usr/lib/jvm/java-21-openjdk-amd64/bin/java \
+  NODE_ENV=production APP_ENTRY=contest PORT="$CONTEST_PORT" DB_FILE="$SHARED_DB" \
+    C_COMPILER="$C_COMPILER" CPP_COMPILER="$CPP_COMPILER" \
+    JAVA_JAVAC_BIN="$JAVA_JAVAC_BIN" JAVA_BIN="$JAVA_BIN" \
     JUDGE_SANDBOX_MODE=systemd JUDGE_SANDBOX_REQUIRED=1 \
     DOMAIN_CONTEST="__DOMAIN_CONTEST__" DOMAIN_ADMIN="__DOMAIN_ADMIN__" \
     JWT_SECRET="$JWT_SECRET" HMAC_SECRET="$HMAC_SECRET" INTERNAL_API_SECRET="$INTERNAL_API_SECRET" \
-    pm2 start src/app.js --name mini-oj-contest >/dev/null
+    pm2 start src/app.js --name "$PM2_CONTEST_NAME" >/dev/null
 fi
 
-if pm2 describe mini-oj-admin >/dev/null 2>&1; then
-  NODE_ENV=production APP_ENTRY=admin PORT=3002 DB_FILE="$SHARED_DB" \
-    CORE_BASE_URL=http://127.0.0.1:3001 \
+if pm2 describe "$PM2_ADMIN_NAME" >/dev/null 2>&1; then
+  NODE_ENV=production APP_ENTRY=admin PORT="$ADMIN_PORT" DB_FILE="$SHARED_DB" \
+    CORE_BASE_URL="http://127.0.0.1:$CONTEST_PORT" \
     DOMAIN_CONTEST="__DOMAIN_CONTEST__" DOMAIN_ADMIN="__DOMAIN_ADMIN__" \
     JWT_SECRET="$JWT_SECRET" HMAC_SECRET="$HMAC_SECRET" INTERNAL_API_SECRET="$INTERNAL_API_SECRET" \
-    pm2 restart mini-oj-admin --update-env >/dev/null
+    pm2 restart "$PM2_ADMIN_NAME" --update-env >/dev/null
 else
   cd "$ADMIN"
-  NODE_ENV=production APP_ENTRY=admin PORT=3002 DB_FILE="$SHARED_DB" CORE_BASE_URL=http://127.0.0.1:3001 \
+  NODE_ENV=production APP_ENTRY=admin PORT="$ADMIN_PORT" DB_FILE="$SHARED_DB" CORE_BASE_URL="http://127.0.0.1:$CONTEST_PORT" \
     DOMAIN_CONTEST="__DOMAIN_CONTEST__" DOMAIN_ADMIN="__DOMAIN_ADMIN__" \
     JWT_SECRET="$JWT_SECRET" HMAC_SECRET="$HMAC_SECRET" INTERNAL_API_SECRET="$INTERNAL_API_SECRET" \
-    pm2 start src/app.js --name mini-oj-admin >/dev/null
+    pm2 start src/app.js --name "$PM2_ADMIN_NAME" >/dev/null
 fi
 
 health_check() {
@@ -188,11 +312,11 @@ health_check() {
   return 1
 }
 
-health_check 3001 "__DOMAIN_CONTEST__" /healthz
-health_check 3001 "__DOMAIN_CONTEST__" /readyz
-health_check 3002 "__DOMAIN_ADMIN__" /healthz
-health_check 3002 "__DOMAIN_ADMIN__" /readyz
-health_check 3001 "__DOMAIN_CONTEST__" /api/public/runtime-profiles
+health_check "$CONTEST_PORT" "__DOMAIN_CONTEST__" /healthz
+health_check "$CONTEST_PORT" "__DOMAIN_CONTEST__" /readyz
+health_check "$ADMIN_PORT" "__DOMAIN_ADMIN__" /healthz
+health_check "$ADMIN_PORT" "__DOMAIN_ADMIN__" /readyz
+health_check "$CONTEST_PORT" "__DOMAIN_CONTEST__" /api/public/runtime-profiles
 pm2 save >/dev/null
 
 rm -rf -- "$STAGE"
@@ -206,7 +330,15 @@ echo "DEPLOY_OK release=$RELEASE_ID backup=$BACKUP"
     Replace('__WEB_ROOT__', $RemoteWebRoot.TrimEnd('/')).
     Replace('__BACKUP_ROOT__', $RemoteBackupRoot.TrimEnd('/')).
     Replace('__SECRETS_DIR__', $RemoteSecretsDir.TrimEnd('/')).
-    Replace('__NODE_BIN__', $RemoteNodeBin.TrimEnd('/'))
+    Replace('__NODE_BIN__', $RemoteNodeBin.TrimEnd('/')).
+    Replace('__CONTEST_PORT__', [string]$ContestPort).
+    Replace('__ADMIN_PORT__', [string]$AdminPort).
+    Replace('__PM2_CONTEST_NAME__', $Pm2ContestName).
+    Replace('__PM2_ADMIN_NAME__', $Pm2AdminName).
+    Replace('__C_COMPILER__', $CCompiler).
+    Replace('__CPP_COMPILER__', $CppCompiler).
+    Replace('__JAVA_JAVAC_BIN__', $JavaJavacBin).
+    Replace('__JAVA_BIN__', $JavaBin)
 
   $remoteScript | & $sshCommand $ServerHost "bash -s"
   if ($LASTEXITCODE -ne 0) { throw "remote deployment failed with exit code $LASTEXITCODE" }
